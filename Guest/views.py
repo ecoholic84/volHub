@@ -31,3 +31,4 @@ def login(request):
             return render(request,'Guest/login.html',{'msg':"invalid login"})
     else:
         return render(request,'Guest/login.html')
+    

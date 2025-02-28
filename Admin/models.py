@@ -31,3 +31,7 @@ class tbl_country(models.Model):
 class tbl_state(models.Model):
     name = models.CharField(max_length=100)
     country = models.ForeignKey(tbl_country, on_delete=models.CASCADE)
+
+class tbl_city(models.Model):
+    name = models.CharField(max_length=100)
+    state = models.ForeignKey(tbl_state, on_delete=models.CASCADE)
