@@ -1,0 +1,39 @@
+<html>
+    <body>
+        <h1 align="center">Feedback</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <table border="1" align="center">
+                <tr>
+                    <td>Feedback</td>
+                    <td><textarea name="txt_feedback" id="txt_feedback"></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
+
+<html>
+    <body>
+        <h1 align="center">Previous Feedbacks</h1>
+        <form method="POST">
+            <table border="1" align="center">
+                <tr>
+                    <td>SL Number</td>
+                    <td>Feedback</td>
+                    <td>Action</td>
+                </tr>
+                {% for i in feed %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.feedback_content }}</td>
+                    <td><a href="{% url 'User:deleteFeedback' i.id  %}">Delete</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </form>
+    </body>
+</html>

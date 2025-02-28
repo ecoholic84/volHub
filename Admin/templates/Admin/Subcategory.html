@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST">
+        <table align="center" border="1">
+            <tr>
+                <td>Category</td>
+                <td>
+                    <select name="sel_category" id="">
+                        <option value="">Select</option>
+                        {% for i in category %}
+                        <option 
+                        {% if i.id == editsub.category_id %}
+                        selected
+                        {% endif %}
+                        value="{{i.id}}">{{i.category_name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Subcategory</td>
+                <td><input type="text" name="txt_subcategory" id="txt_subcategory" value="{{editsub.subcategory_name}}"></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="Submit"></td>
+                
+            </tr>
+        </table>
+        {% csrf_token %}
+        <table align="center" border="1"><br><br>
+            <tr>
+                <td>Sl No</td>
+                <td>Category</td>
+                <td>Subcategory</td>
+                <td>Action</td>
+            </tr>
+            {% for i in subcategory %}
+            <tr>
+             
+                <td>{{forloop.counter}}</td>
+                <td>{{ i.category.category_name }}</td>
+                <td>{{ i.subcategory_name }}</td>
+                <td><a href="{% url 'Admin:deleteSubcategory' i.id %}">Delete</a></td>
+                <td><a href="{% url 'Admin:editSubcategory' i.id %}">Edit</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+    
+</body>
+</html>

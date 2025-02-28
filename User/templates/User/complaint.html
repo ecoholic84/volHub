@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h1 align="center">User Complaints</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <table border="1" align="center">
+                <tr>
+                    <td>Complaint Title</td>
+                    <td><input type="text" name="txt_complaint_title" id="txt_complaint_title" value="{{ editComplaint.complaint_title }}" required></td>
+                </tr>
+                <tr>
+                    <td>Complaint</td>
+                    <td><textarea name="txt_complaint_content" id="txt_complaint_content" required>{{ editComplaint.complaint_content }}</textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
+
+<html>
+    <body>
+        <h1 align="center">Previous Complaints</h1>
+        <table border="1" align="center">
+            <tr>
+                <td>SL No.</td>
+                <td>Title</td>
+                <td>Complaint</td>
+                <td>Date</td>
+                <td>Reply</td>
+                <td>Status</td>
+                <td>Action</td>
+            </tr>
+            {% for complaint in comp %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ complaint.complaint_title }}</td>
+                <td>{{ complaint.complaint_content }}</td>
+                <td>{{ complaint.complaint_date }}</td>
+                <td>{{ complaint.complaint_reply }}</td>
+                <td>{{ complaint.complaint_status }}</td>
+                <td><a href="{% url 'User:deleteComplaint' complaint.id %}">Delete</a>
+                <a href="{% url 'User:editComplaint' complaint.id %}">Edit</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+</html>

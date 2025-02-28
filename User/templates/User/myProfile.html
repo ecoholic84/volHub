@@ -1,0 +1,42 @@
+<!-- Crate a my profile page with profile photo at the top of the table, name, email, contact, address, district, place at the sie of the table. A Edit profile button should be present at the bottom of the table and there should also be a change password button.-->
+
+<html>
+    <body>
+        <h1 align="center">My Profile</h1>
+        <table align="center" border="1">
+            <tr>
+                <td colspan="2" align="center"><img src=" {{ thisProfile.user_photo.url }} " alt="" srcset="" height="100px" width="100px"></td>
+            </tr>
+            <tr>
+                <td>Name</td>
+                <td>{{ thisProfile.user_name }}</td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td>{{ thisProfile.user_email }}</td>
+            </tr>
+            <tr>
+                <td>Contact</td>
+                <td>{{ thisProfile.user_contact }}</td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td>{{ thisProfile.user_address }}</td>
+            </tr>
+            <tr>
+                <td>District</td>
+                <td>{{ thisProfile.place.district.district_name }}</td>
+            </tr>
+            <tr>
+                <td>Place</td>
+                <td>{{ thisProfile.place.place_name }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <a href="{% url 'User:editProfile' %}">Edit Profile</a>
+                    <a href="{% url 'User:changePassword' %}">Change Password</button>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

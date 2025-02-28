@@ -1,0 +1,26 @@
+<html>
+    <body>
+        <h1 align="center">Complaint Inbox</h1>
+        <table border="1" align="center">
+            <tr>
+                <td>SL No.</td>
+                <td>User</td>
+                <td>Title</td>
+                <td>Complaint</td>
+                <td>Date</td>
+                <td>Action</td>
+            </tr>
+            {% for i in complaintsInbox %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.user_id.user_name }}</td>
+                <td>{{ i.complaint_title }}</td>
+                <td>{{ i.complaint_content }}</td>
+                <td>{{ i.complaint_date }}</td>
+                <td><a href="{% url 'Admin:replyCompliant' i.id %}">Reply</a></td>
+                
+            </tr>
+            {% endfor %}
+        </table>
+    </body>     
+</html>

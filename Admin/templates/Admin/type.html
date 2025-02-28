@@ -1,0 +1,44 @@
+<html>
+    <body>
+        <h1 align="center">Type</h1>
+        <form method="POST">
+            {% csrf_token %}
+            <table border="1" align="center">
+                <tr>
+                    <td>Type Name</td>
+                    <td><input type="text" name="txt_type_name" id="txt_type_name" value="{{editType.type_name}}"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><input type="submit" value="Submit"></td>
+                </tr>
+            </table>
+        </form>
+    </body>
+</html>
+
+<html>
+    <body>
+        <h1 align="center">Inputs</h1>
+        <form method="'POST">
+            <table border="1" align="center">
+                <tr>
+                    <td>SL Number</td>
+                    <td>Type</td>
+                    <td>Action</td>
+                </tr>
+                {% for i in type %}
+                <tr>
+
+                    <td>{{forloop.counter}}</td>
+                    <td>{{i.type_name}}</td>
+                    <td colspan="2" align="center">
+                        <a href="{% url 'Admin:deleteType' i.id %}">Delete</a>
+                        <a href="{% url 'Admin:editType' i.id %}">Edit</a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </table>
+        </form>
+    </body>
+</html>

@@ -1,0 +1,25 @@
+<html>
+    <body>
+        <h1 align="center">Admin Registration</h1>
+        <form method="POST">
+        {% csrf_token %}
+        <table border="1" align="center">
+            <tr>
+                <td>Admin Name</td>
+                <td><input type="text" name="txt_name" id="txt_name"></td>
+            </tr>
+            <tr>
+                <td>Admin Email</td>
+                <td><input type="text" name="txt_email" id="txt_email"></td>
+            </tr>
+            <tr>
+                <td>Admin Password</td>
+                <td><input type="text" name="txt_password" id="txt_password"></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="Submit"></td>
+            </tr>
+        </table>
+        </form>
+    </body>
+</html>

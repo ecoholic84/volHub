@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST">
+    <table border="1" align="center">
+        <tr>
+            <td>Category</td>
+            <td><input type="text" name="txt_category" id="txt_category" value="{{editcat.category_name}}"></td>
+            
+        </tr>
+        <tr>
+            <td colspan="2" align="center"><input type="submit" value="Add"></td>
+        </tr>
+    </table>
+    {% csrf_token %}
+    <table border="1" align="center"><br><br>
+        <tr>
+            <td>Sl No</td>
+            <td>Category</td>
+            <td>Action</td>
+        </tr>
+        <tr>
+            {% for i in category %}
+            <td>{{forloop.counter}}</td>
+            <td>{{i.category_name}}</td>
+            <td colspan="2" align="center">
+                <a href="{% url 'Admin:deleteCategory' i.id %}">Delete</a>
+                <a href="{% url 'Admin:editCategory' i.id %}">Edit</a>
+            </td>
+            
+        </tr>
+            {% endfor %}
+    </table>
+    </form>
+</body>
+</html>
