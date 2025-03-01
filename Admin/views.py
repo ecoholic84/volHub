@@ -13,9 +13,11 @@ def district(request):
         return redirect('Admin:district')
     else:    
         return render(request,'Admin/District.html',{"district":district})
+    
 def deletedistrict(request,did):
     tbl_district.objects.get(id=did).delete()
     return redirect('Admin:district')
+
 def editdistrict(request,eid):
     dist=tbl_district.objects.get(id=eid)
     if request.method=="POST":
@@ -165,3 +167,25 @@ def replyCompliant(request,rid):
         return redirect('Admin:complaintInbox')  
     else:
         return render(request,'Admin/replyCompliant.html')
+    
+# Industry
+def Industry(request):
+    industry=tbl_industry.objects.all()
+    if request.method=='POST':
+        tbl_industry.objects.create(industry_name=request.POST.get('txt_industry_name'))
+        return redirect('Admin:industries')
+    else:
+        return render(request, 'Admin/industry.html', {'industries':industry})
+
+def editIndustry(request, eid):
+    thisIndustry = tbl_industry.objects.get(id=eid)
+    if request.method=='POST':
+        thisIndustry.industry_name=request.POST.get('txt_industry_name')
+        thisIndustry.save()
+        return redirect('Admin:industries')
+    else:
+        return render(request, 'Admin/industry.html', {'editIndustry':thisIndustry})
+
+def deleteIndustry(request, did):
+    tbl_industry.objects.get(id=did).delete()
+    return redirect('Admin:industries')

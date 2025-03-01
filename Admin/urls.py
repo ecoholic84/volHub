@@ -29,4 +29,9 @@ urlpatterns = [
 
     path('complaintInbox/',views.complaintInbox,name="complaintInbox"),
     path('replyCompliant/<int:rid>',views.replyCompliant, name='replyCompliant'),
+
+    path('industries/', views.Industry, name='industries'),
+    path('editIndustry/<int:eid>', views.editIndustry, name='editIndustry'),
+    path('deleteIndustry/<int:did>', views.deleteIndustry, name='deleteIndustry'),
+
 ]

@@ -35,3 +35,10 @@ class tbl_state(models.Model):
 class tbl_city(models.Model):
     name = models.CharField(max_length=100)
     state = models.ForeignKey(tbl_state, on_delete=models.CASCADE)
+
+class tbl_industry(models.Model):
+    industry_name = models.CharField(max_length=100, unique=True)
+    
+class tbl_skill(models.Model):
+    industry = models.ForeignKey(tbl_industry, on_delete=models.CASCADE)
+    skill_name = models.CharField(max_length=100)
