@@ -31,9 +31,24 @@ def userRegistration(request):
         user.user_username=request.POST.get('txt_username')
         user.user_password=request.POST.get('txt_password')
         user.save()
-        return redirect('User:userDashboard')
+        return redirect('Guest:userWho')
     else:
         return render(request,'Guest/userRegistration.html')
+    
+
+def userWho(request):
+    if request.method=="POST":
+        user = tbl_user.objects.get(id=request.session.get('regId'))
+        selectedType = request.POST.get('user_type')
+        user.user_type = selectedType
+        user.save()
+        return redirect('User:userDashboard')
+    else: 
+        return render(request, 'Guest/userType.html', {"message": "Please select a type"})
+
+
+    
+
 
 
 def ajaxPlace(request):
