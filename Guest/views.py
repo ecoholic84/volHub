@@ -26,12 +26,15 @@ def userEmail(request):
 def userRegistration(request):
     city=tbl_city.objects.all()
     if request.method=="POST":
-        user=tbl_user.objects.get(id=request.session('regId'))
+        user = tbl_user.objects.get(id=request.session.get('regId'))
         user.user_name=request.POST.get('txt_name')
         user.user_username=request.POST.get('txt_username')
         user.user_password=request.POST.get('txt_password')
         user.save()
-    return render(request,'Guest/userRegistration.html')
+        return redirect('User:userDashboard')
+    else:
+        return render(request,'Guest/userRegistration.html')
+
 
 def ajaxPlace(request):
     place=tbl_place.objects.filter(district=request.GET.get("did"))
