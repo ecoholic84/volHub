@@ -3,11 +3,35 @@ from Admin.models import *
 from Guest.models import *
 from User.models import *
 # Create your views here.
+
+def Index(request):
+    return render(request, 'Guest/index.html')
+
+def userEmail(request):
+    if request.method=='POST':
+        email=request.POST.get('txt_email')
+        if tbl_user.objects.filter(user_email=email).exists():
+            message = "Email already exists!"
+            return render(request, 'Guest/signUp.html',{'failed': message})
+        else:
+            user = tbl_user.objects.create(user_email=email)
+            request.session['regId']=user.id
+            message = "Email created successfully!"
+            return render(request, 'Guest/signUp.html',{'success': message})
+    else:
+        return render(request, 'Guest/signUp.html',)
+
+        
+
 def userRegistration(request):
-    dis=tbl_district.objects.all()
+    city=tbl_city.objects.all()
     if request.method=="POST":
-        tbl_user.objects.create(user_name=request.POST.get('txt_name'), user_email=request.POST.get('txt_email'),user_contact=request.POST.get('txt_contact'),user_address=request.POST.get('txt_address'),user_password=request.POST.get('txt_password'), place=tbl_place.objects.get(id=request.POST.get('sel_place')), user_photo=request.FILES.get('txt_photo'))
-    return render(request,'Guest/userRegistration.html', {"district":dis})
+        user=tbl_user.objects.get(id=request.session('regId'))
+        user.user_name=request.POST.get('txt_name')
+        user.user_username=request.POST.get('txt_username')
+        user.user_password=request.POST.get('txt_password')
+        user.save()
+    return render(request,'Guest/userRegistration.html')
 
 def ajaxPlace(request):
     place=tbl_place.objects.filter(district=request.GET.get("did"))
