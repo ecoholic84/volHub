@@ -34,4 +34,10 @@ urlpatterns = [
     path('editIndustry/<int:eid>', views.editIndustry, name='editIndustry'),
     path('deleteIndustry/<int:did>', views.deleteIndustry, name='deleteIndustry'),
 
+    path('skills/', views.industry_list, name='skills'),
+    path("add-industry/", views.add_industry, name="add_industry"),
+    path("add-skill/", views.add_skill, name="add_skill"),
+    path("edit-skill/", views.edit_skill, name="edit_skill"),
+    path("delete-skill/", views.delete_skill, name="delete_skill"),
+
 ]

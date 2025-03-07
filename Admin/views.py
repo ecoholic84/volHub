@@ -1,7 +1,9 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
+from django.http import JsonResponse
 from Admin.models import *
 from User.models import *
 from datetime import datetime
+from django.urls import reverse
 
 # Create your views here.
 
@@ -189,3 +191,42 @@ def editIndustry(request, eid):
 def deleteIndustry(request, did):
     tbl_industry.objects.get(id=did).delete()
     return redirect('Admin:industries')
+
+
+# Skills page
+def industry_list(request):
+    industries = tbl_industry.objects.prefetch_related("skills").all()
+    return render(request, "Admin/skills.html", {"industries": industries})
+
+def add_industry(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        if name:
+            tbl_industry.objects.get_or_create(industry_name=name)
+    return redirect("/Admin/skills/")  # Direct URL redirection
+
+def add_skill(request):
+    if request.method == "POST":
+        industry_id = request.POST.get("industry_id")
+        skill_name = request.POST.get("skill_name")
+        industry = get_object_or_404(tbl_industry, id=industry_id)
+        if skill_name:
+            tbl_skill.objects.create(industry=industry, skill_name=skill_name)
+    return redirect("/Admin/skills/")
+
+def edit_skill(request):
+    if request.method == "POST":
+        skill_id = request.POST.get("skill_id")
+        new_name = request.POST.get("new_name")
+        skill = get_object_or_404(tbl_skill, id=skill_id)
+        if new_name:
+            skill.skill_name = new_name
+            skill.save()
+    return redirect("/Admin/skills/")
+
+def delete_skill(request):
+    if request.method == "POST":
+        skill_id = request.POST.get("skill_id")
+        skill = get_object_or_404(tbl_skill, id=skill_id)
+        skill.delete()
+    return redirect("/Admin/skills/")
