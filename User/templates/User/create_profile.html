@@ -1,0 +1,112 @@
+<html lang="en">
+<head>
+    <title align="center">Profile Creation</title>
+</head>
+<body>
+    <h1 align="center">Profile Creation</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table align="center" border="1">
+            <tr>
+                <td>Full Name</td>
+                <td><input type="text" name="txt_name" id="txt_name"></td>
+            </tr>
+            <tr>
+                <td>Volhub Username</td>
+                <td><input type="text" name="txt_username" id="txt_username"></td>
+            </tr>
+            <tr>
+                <td>Email</td>
+                <td><input type="email" name="txt_email" id="txt_email"></td>
+            </tr>
+            <tr>
+                <td>I Identify As</td>
+                <td>
+                    <select name="txt_gender" id="gender">
+                        <option value="Gender" disabled selected>Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                        <option value="Prefer not to say">Prefer not to say</option>
+                    </select>
+                </td>
+            </tr>
+            
+            <tr>
+                <td>Country</td>
+                <td>
+                    <select name="sel_country" id="sel_country">
+                        <option value="">Select</option>
+                        {% for i in country %}
+                        <option 
+                        {% if i.id == editPlace.country_id %}
+                        selected
+                        {% endif %}
+                        value="{{i.id}}">{{i.country_name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>State</td>
+                <td>
+                    <select name="sel_state" id="sel_state">
+                        <option value="">Select</option>
+                        
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>City</td>
+                <td>
+                    <select name="sel_city" id="sel_city">
+                        <option value="">Select</option>
+
+                    </select>
+                </td>
+            <tr>
+                <td>Bio</td>
+                <td>
+                    <textarea id="txt_bio" name="txt_bio" rows="4" placeholder="Write a few sentences about yourself." required></textarea>
+                </td>
+                </div>
+            </tr>
+            <tr >
+                <td colspan="2" align="center"><input type="submit" value="Continue"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<!-- This script is used to get the state of the selected country -->
+<script>
+    $("#sel_country").change(function () {
+        var did = $(this).val();
+        var ur = "{% url 'User:profile_country_ajax' %}"
+        $.ajax({
+            url: ur,
+            data: { did: did, },
+            success: function (data) {
+                $("#sel_state").html(data);
+            },
+        });
+    });
+</script>
+
+<!-- This script is used to get the city of the selected state -->
+<script>
+    $("#sel_state").change(function () {
+        var did = $(this).val();
+        var ur = "{% url 'User:profile_state_ajax' %}"
+        $.ajax({
+            url: ur,
+            data: { did: did, },
+            success: function (data) {
+                $("#sel_city").html(data);
+            },
+        });
+    });
+</script>

@@ -76,3 +76,29 @@ def editComplaint(request,eid):
         return redirect('User:complaint') #complaint here is the url which we have defined in urls.py, Django looks for a URL pattern name that matches 'User/complaint' in your urls.py file.
     else:
         return render(request,'User/complaint.html', {"editComplaint":thisComplaint})
+    
+
+# Profile Creation
+def create_profile(request):
+    country = tbl_country.objects.all()
+    state = tbl_state.objects.all()
+    thisUser = tbl_user.objects.get(id = request.session['u_id'])
+    if request.method=="POST":
+        thisUser.user_name=request.POST.get('txt_name')
+        thisUser.user_username=request.POST.get('txt_username')
+        thisUser.user_email=request.POST.get('txt_email')
+        thisUser.user_contact=request.POST.get('txt_contact')
+        thisUser.user_address=request.POST.get('txt_address')
+        thisUser.save()
+        return redirect('User:create_profile')
+    else:
+        return render(request, 'User/create_profile.html', {'editProfile':editProfile, 'country':country, 'state':state})
+    
+def profile_country_ajax(request):
+    state=tbl_state.objects.filter(country=request.GET.get("did"))
+    return render(request,'User/profile_country_ajax.html', {"state":state})
+    
+
+def profile_state_ajax(request):
+    city=tbl_city.objects.filter(state=request.GET.get("did"))
+    return render(request,'User/profile_state_ajax.html', {"city":city})

@@ -15,4 +15,8 @@ urlpatterns = [
     path('complaint/', views.Complaint, name='complaint'),
     path('deleteComplaint/<int:did>', views.deleteComplaint, name='deleteComplaint'),
     path('editComplaint/<int:eid>', views.editComplaint, name='editComplaint'),
+
+    path('create-profile/', views.create_profile, name='create_profile'),
+    path('profile-country-ajax/', views.profile_country_ajax, name='profile_country_ajax'),
+    path('profile-state-ajax/', views.profile_state_ajax, name='profile_state_ajax'),
 ]
