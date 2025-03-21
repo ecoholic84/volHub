@@ -30,6 +30,7 @@ def userRegistration(request):
         user.user_name=request.POST.get('txt_name')
         user.user_username=request.POST.get('txt_username')
         user.user_password=request.POST.get('txt_password')
+        request.session['u_id']=user.id
         user.save()
         return redirect('Guest:userWho')
     else:
@@ -41,6 +42,7 @@ def userWho(request):
         user = tbl_user.objects.get(id=request.session.get('regId'))
         selectedType = request.POST.get('user_type')
         user.user_type = selectedType
+        request.session['u_id']=user.id
         user.save()
         return redirect('User:userDashboard')
     else: 

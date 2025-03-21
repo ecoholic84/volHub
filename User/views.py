@@ -82,23 +82,24 @@ def editComplaint(request,eid):
 def create_profile(request):
     country = tbl_country.objects.all()
     state = tbl_state.objects.all()
-    thisUser = tbl_user.objects.get(id = request.session['u_id'])
+    thisUser = tbl_user.objects.get(id=request.session['u_id'])
     if request.method=="POST":
+        print("POST data:", request.POST)  # Debug line
         thisUser.user_name=request.POST.get('txt_name')
         thisUser.user_username=request.POST.get('txt_username')
         thisUser.user_email=request.POST.get('txt_email')
-        thisUser.user_contact=request.POST.get('txt_contact')
-        thisUser.user_address=request.POST.get('txt_address')
+        thisUser.user_gender=request.POST.get('txt_gender')
+        thisUser.user_city=tbl_city.objects.get(id=request.POST.get('sel_city'))
+        thisUser.user_bio=request.POST.get('txt_bio')
         thisUser.save()
         return redirect('User:create_profile')
     else:
-        return render(request, 'User/create_profile.html', {'editProfile':editProfile, 'country':country, 'state':state})
+        return render(request, 'User/create_profile.html', {'country':country, 'state':state})
     
 def profile_country_ajax(request):
     state=tbl_state.objects.filter(country=request.GET.get("did"))
     return render(request,'User/profile_country_ajax.html', {"state":state})
     
-
 def profile_state_ajax(request):
     city=tbl_city.objects.filter(state=request.GET.get("did"))
     return render(request,'User/profile_state_ajax.html', {"city":city})

@@ -12,11 +12,11 @@ USER_TYPES = [
 class tbl_user(models.Model):
     user_email = models.EmailField(max_length=50, unique=True)
     user_name = models.CharField(max_length=50, null=True, blank=True)
-    user_username = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    user_username = models.CharField(max_length=50, null=True, blank=True)
     user_contact = models.CharField(max_length=10, null=True, blank=True)
     user_address = models.CharField(max_length=100, null=True, blank=True)
     user_password = models.CharField(max_length=128, null=True, blank=True)  # Store hashed password
-    user_city = models.CharField(max_length=50, null=True, blank=True)
+    user_city = models.ForeignKey(tbl_city, on_delete=models.CASCADE, null=True)
     user_photo = models.FileField(upload_to='assets/File/user/', null=True, blank=True)
     user_gender = models.CharField(max_length=100, null=True, blank=True)  
     user_bio = models.TextField(null=True, blank=True)
