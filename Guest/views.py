@@ -46,11 +46,11 @@ def userWho(request):
         request.session['u_id'] = user.id
         user.save()
         if selectedType == "volunteer":
-            return redirect('User:volunteerDashboard')
+            return redirect('User:volunteer_dashboard')
         elif selectedType == "organizer":
-            return redirect('User:organizerDashboard')
+            return redirect('User:organizer_dashboard')
         else:
-            return redirect('User:userDashboard')  # Fallback to generic dashboard
+            return redirect('User:user_dashboard')  # Fallback to generic dashboard
     else:
         return render(request, 'Guest/userType.html', {"message": "Please select a type"})
 

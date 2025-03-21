@@ -36,3 +36,17 @@ class tbl_event(models.Model):
     event_stipend=models.CharField(max_length=200)
     event_status=models.IntegerField(default=0)
     user=models.ForeignKey(tbl_user, on_delete=models.CASCADE)
+
+class tbl_request(models.Model):
+    request_datetime = models.DateTimeField(auto_now_add=True)  # Combines date and time, set on creation
+    event = models.ForeignKey(tbl_event, on_delete=models.CASCADE, related_name='requests')
+    user = models.ForeignKey(tbl_user, on_delete=models.CASCADE, related_name='volunteer_requests')
+    request_status = models.IntegerField(default=0)  # 0: Pending, 1: Approved, 2: Rejected
+
+    class Meta:
+        unique_together = ('user', 'event')  # Prevent duplicate requests
+        verbose_name = 'Request'
+        verbose_name_plural = 'Requests'
+
+    def __str__(self):
+        return f"{self.user.user_name} - {self.event.event_title} ({self.request_datetime})"

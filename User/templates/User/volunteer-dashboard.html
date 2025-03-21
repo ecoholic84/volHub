@@ -1,4 +1,90 @@
-<html>
-    <body>
-        <h1 align="center">Volunteer Dashboard</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; }
+        h1 { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .request-btn { padding: 5px 10px; background-color: #28a745; color: white; border: none; cursor: pointer; }
+        .request-btn:hover { background-color: #218838; }
+        .request-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <h1>Volunteer Dashboard</h1>
+    
+    {% if events %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Content</th>
+                    <th>Time</th>
+                    <th>File</th>
+                    <th>Industry</th>
+                    <th>Address</th>
+                    <th>City</th>
+                    <th>Stipend</th>
+                    <th>Status</th>
+                    <th>Organiser</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                    <tr>
+                        <td>{{ event.event_title }}</td>
+                        <td>{{ event.event_content }}</td>
+                        <td>{{ event.event_time }}</td>
+                        <td>
+                            {% if event.event_file %}
+                                <a href="{{ event.event_file.url }}" target="_blank">View File</a>
+                            {% else %}
+                                No File
+                            {% endif %}
+                        </td>
+                        <td>{{ event.industry.industry_name }}</td>
+                        <td>{{ event.event_address }}</td>
+                        <td>{{ event.event_city.city_name }}</td>
+                        <td>
+                            {% if event.event_stipend %}
+                                {{ event.event_stipend }}
+                            {% else %}
+                                Not Provided
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if event.event_status == 0 %}
+                                Pending
+                            {% elif event.event_status == 1 %}
+                                Approved
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </td>
+                        <td>{{ event.user.user_name }}</td>
+                        <td>
+                            <form method="post" action="{% url 'User:request_to_volunteer' event.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="request-btn" 
+                                    {% if event.id in user_requests %}disabled{% endif %}>
+                                    {% if event.id in user_requests %}Requested{% else %}Request{% endif %}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No events available at the moment.</p>
+    {% endif %}
+</body>
 </html>

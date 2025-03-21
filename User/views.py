@@ -120,25 +120,48 @@ def Event(request):
     else:
         return render(request,'User/event.html',{'country':country,'industry':industry})
 
-
-# Dashboards
-def userDashboard(request):
-    return render(request,'User/userDashboard.html')
-
-# Volunteer Dashboard redirection
-def volunteerDashboard(request):
+# Volunteer dashboard redirection and listing
+def volunteer_dashboard(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "volunteer":
-        return redirect('User:userDashboard')  # Redirect if not volunteer
-    return render(request, 'User/volunteer-dashboard.html')
+        return redirect('User:user_dashboard')
+    
+    events = tbl_event.objects.all().select_related('industry', 'event_city', 'user')
+    user_requests = tbl_request.objects.filter(user=user).values_list('event_id', flat=True)  # Now just 'event_id'
+    return render(request, 'User/volunteer-dashboard.html', {
+        'events': events,
+        'user_requests': user_requests
+    })
 
-# Organizer Dashboard redirection
-def organizerDashboard(request):
+# Volunteer request
+def request_to_volunteer(request, event_id):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    if user.user_type != "volunteer":
+        return redirect('User:user_dashboard')
+    
+    if request.method == "POST":
+        event = tbl_event.objects.get(id=event_id)
+        if not tbl_request.objects.filter(user=user, event=event).exists():
+            tbl_request.objects.create(
+                user=user,
+                event=event
+                # request_datetime is auto-set
+            )
+        return redirect('User:volunteer_dashboard')
+    return redirect('User:volunteer_dashboard')
+
+# Organizer dashboard
+def organizer_dashboard(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "organizer":
-        return redirect('User:userDashboard')  # Redirect if not organizer
+        return redirect('User:user_dashboard')
     return render(request, 'User/organizer-dashboard.html')
+
+def user_dashboard(request):
+    return render(request, 'User/userDashboard.html')
