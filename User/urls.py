@@ -19,4 +19,6 @@ urlpatterns = [
     path('create-profile/', views.create_profile, name='create_profile'),
     path('profile-country-ajax/', views.profile_country_ajax, name='profile_country_ajax'),
     path('profile-state-ajax/', views.profile_state_ajax, name='profile_state_ajax'),
+
+    path('event/',views.Event,name="Event"),
 ]

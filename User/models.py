@@ -16,3 +16,23 @@ class tbl_complaint(models.Model):
     complaint_reply_date=models.DateField(null=True)
     complaint_status=models.IntegerField(default=0)
     user_id=models.ForeignKey(tbl_user, on_delete=models.CASCADE)
+
+class tbl_industry(models.Model):
+    user_id = models.ForeignKey(tbl_user, on_delete=models.CASCADE)
+    industry_name = models.CharField(max_length=100, unique=True)
+
+class tbl_skill(models.Model):
+    industry = models.ForeignKey(tbl_industry, on_delete=models.CASCADE, related_name="skills")
+    skill_name = models.CharField(max_length=100)
+
+class tbl_event(models.Model):
+    event_title=models.CharField(max_length=100)
+    event_content=models.CharField(max_length=2000)
+    event_time=models.TimeField()
+    event_file=models.FileField(upload_to='assets/File/user')
+    industry=models.ForeignKey(tbl_industry, on_delete=models.CASCADE)
+    event_address=models.CharField(max_length=200)
+    event_city=models.ForeignKey(tbl_city, on_delete=models.CASCADE)
+    event_stipend=models.CharField(max_length=200)
+    event_status=models.IntegerField(default=0)
+    user=models.ForeignKey(tbl_user, on_delete=models.CASCADE)

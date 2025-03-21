@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event</title>
+</head>
+<body>
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table border="1">
+            <tr>
+                <td>Title</td>
+                <td><input type="text" name="txt_title" id=""></td>
+            </tr>
+            <tr>
+                <td>Content</td>
+                <td><input type="text" name="txt_content" id=""></td>
+            </tr>
+            <tr>
+                <td>File</td>
+                <td><input type="file" name="txt_file" id=""></td>
+            </tr>
+            <tr>
+                <td>Time</td>
+                <td><input type="time" name="txt_time" id=""></td>
+            </tr>
+            <tr>
+                <td>Industry</td>
+                <td>
+                    <select name="sel_industry">
+                        <option value="">----Select----</option>
+                        {% for i in industry %}
+                        <option 
+                        value="{{i.id}}">{{i.industry_name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td><input type="text" name="txt_address" id=""></td>
+            </tr>
+            <tr>
+                <td>Country</td>
+                <td>
+                    <select name="sel_country" id="sel_country">
+                        <option value="">----Select----</option>
+                        {% for i in country %}
+                        <option 
+                        value="{{i.id}}">{{i.country_name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>State</td>
+                <td>
+                    <select name="sel_state" id="sel_state">
+                        <option value="">----Select----</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>City</td>
+                <td>
+                    <select name="sel_city" id="sel_city">
+                        <option value="">----Select----</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>Stipend</td>
+                <td><input type="text" name="txt_stipend" id=""></td>
+            </tr>
+            <tr>
+                <td><input type="submit" name="submit" value="Submit"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    $("#sel_country").change(function () {
+        var did = $(this).val();
+        var ur = "{% url 'User:profile_country_ajax' %}"
+        $.ajax({
+            url: ur,
+            data: { did: did, },
+            success: function (data) {
+                $("#sel_state").html(data);
+            },
+        });
+    });
+</script>
+
+<!-- This script is used to get the city of the selected state -->
+<script>
+    $("#sel_state").change(function () {
+        var did = $(this).val();
+        var ur = "{% url 'User:profile_state_ajax' %}"
+        $.ajax({
+            url: ur,
+            data: { did: did, },
+            success: function (data) {
+                $("#sel_city").html(data);
+            },
+        });
+    });
+</script>

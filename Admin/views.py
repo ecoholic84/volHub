@@ -169,64 +169,65 @@ def replyCompliant(request,rid):
         return redirect('Admin:complaintInbox')  
     else:
         return render(request,'Admin/replyCompliant.html')
-    
-# Industry
-def Industry(request):
-    industry=tbl_industry.objects.all()
-    if request.method=='POST':
-        tbl_industry.objects.create(industry_name=request.POST.get('txt_industry_name'))
-        return redirect('Admin:industries')
-    else:
-        return render(request, 'Admin/industry.html', {'industries':industry})
 
-def editIndustry(request, eid):
-    thisIndustry = tbl_industry.objects.get(id=eid)
-    if request.method=='POST':
-        thisIndustry.industry_name=request.POST.get('txt_industry_name')
-        thisIndustry.save()
-        return redirect('Admin:industries')
-    else:
-        return render(request, 'Admin/industry.html', {'editIndustry':thisIndustry})
+# Industry and Skills Views
+def industrySkills(request):
+    if 'u_id' not in request.session:  # Assuming admin uses same session key
+        return redirect('Guest:login')  # Adjust to your admin login URL if different
+    industries = tbl_industry.objects.all().prefetch_related('skills')  # No user filter for admin
+    return render(request, 'Admin/industry_skills.html', {'industries': industries})
 
-def deleteIndustry(request, did):
-    tbl_industry.objects.get(id=did).delete()
-    return redirect('Admin:industries')
-
-
-# Skills page
-def industry_list(request):
-    industries = tbl_industry.objects.prefetch_related("skills").all()
-    return render(request, "Admin/skills.html", {"industries": industries})
-
-def add_industry(request):
+def addIndustry(request):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
     if request.method == "POST":
-        name = request.POST.get("name")
-        if name:
-            tbl_industry.objects.get_or_create(industry_name=name)
-    return redirect("/Admin/skills/")  # Direct URL redirection
+        industry_name = request.POST.get('txt_industry_name')
+        admin_user = tbl_user.objects.get(id=request.session['u_id'])  # Assuming admin is a user
+        try:
+            tbl_industry.objects.create(user_id=admin_user, industry_name=industry_name)
+            return redirect('Admin:industrySkills')
+        except IntegrityError:
+            industries = tbl_industry.objects.all().prefetch_related('skills')
+            return render(request, 'Admin/industry_skills.html', {
+                'industries': industries,
+                'error': 'Industry name must be unique'
+            })
+    return render(request, 'Admin/industry_skills.html')
 
-def add_skill(request):
+def addSkill(request):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    industries = tbl_industry.objects.all().prefetch_related('skills')
     if request.method == "POST":
-        industry_id = request.POST.get("industry_id")
-        skill_name = request.POST.get("skill_name")
-        industry = get_object_or_404(tbl_industry, id=industry_id)
-        if skill_name:
-            tbl_skill.objects.create(industry=industry, skill_name=skill_name)
-    return redirect("/Admin/skills/")
+        industry_id = request.POST.get('industry_id')
+        skill_name = request.POST.get('txt_skill_name')
+        industry = tbl_industry.objects.get(id=industry_id)
+        tbl_skill.objects.create(industry=industry, skill_name=skill_name)
+        return redirect('Admin:industrySkills')
+    return render(request, 'Admin/industry_skills.html', {'industries': industries})
 
-def edit_skill(request):
+def editSkill(request, sid):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    industries = tbl_industry.objects.all().prefetch_related('skills')
+    thisSkill = tbl_skill.objects.get(id=sid)
     if request.method == "POST":
-        skill_id = request.POST.get("skill_id")
-        new_name = request.POST.get("new_name")
-        skill = get_object_or_404(tbl_skill, id=skill_id)
-        if new_name:
-            skill.skill_name = new_name
-            skill.save()
-    return redirect("/Admin/skills/")
+        thisSkill.skill_name = request.POST.get('txt_skill_name')
+        thisSkill.save()
+        return redirect('Admin:industrySkills')
+    return render(request, 'Admin/industry_skills.html', {
+        'industries': industries,
+        'editSkill': thisSkill
+    })
 
-def delete_skill(request):
-    if request.method == "POST":
-        skill_id = request.POST.get("skill_id")
-        skill = get_object_or_404(tbl_skill, id=skill_id)
-        skill.delete()
-    return redirect("/Admin/skills/")
+def deleteSkill(request, sid):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    tbl_skill.objects.get(id=sid).delete()
+    return redirect('Admin:industrySkills')
+
+def deleteIndustry(request, iid):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    tbl_industry.objects.get(id=iid).delete()
+    return redirect('Admin:industrySkills')

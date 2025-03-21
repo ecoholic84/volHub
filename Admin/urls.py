@@ -30,14 +30,10 @@ urlpatterns = [
     path('complaintInbox/',views.complaintInbox,name="complaintInbox"),
     path('replyCompliant/<int:rid>',views.replyCompliant, name='replyCompliant'),
 
-    path('industries/', views.Industry, name='industries'),
-    path('editIndustry/<int:eid>', views.editIndustry, name='editIndustry'),
-    path('deleteIndustry/<int:did>', views.deleteIndustry, name='deleteIndustry'),
-
-    path('skills/', views.industry_list, name='skills'),
-    path("add-industry/", views.add_industry, name="add_industry"),
-    path("add-skill/", views.add_skill, name="add_skill"),
-    path("edit-skill/", views.edit_skill, name="edit_skill"),
-    path("delete-skill/", views.delete_skill, name="delete_skill"),
-
+    path('industry-skills/', views.industrySkills, name='industrySkills'),
+    path('add-industry/', views.addIndustry, name='addIndustry'),
+    path('add-skill/', views.addSkill, name='addSkill'),
+    path('edit-skill/<int:sid>/', views.editSkill, name='editSkill'),
+    path('delete-skill/<int:sid>/', views.deleteSkill, name='deleteSkill'),
+    path('delete-industry/<int:iid>/', views.deleteIndustry, name='deleteIndustry'),
 ]

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Industry & Skills Table</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        button, input[type="submit"] {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        button:hover, input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+        .edit-btn {
+            background-color: #ffc107;
+            color: black;
+        }
+        .edit-btn:hover {
+            background-color: #e0a800;
+        }
+        .form-container {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h2>Industry & Skills Table</h2>
+    
+    <!-- Error Message -->
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Add Industry Form -->
+    <form method="post" action="{% url 'Admin:addIndustry' %}" class="form-container">
+        {% csrf_token %}
+        <input type="text" name="txt_industry_name" placeholder="New Industry Name" required>
+        <input type="submit" value="Add Industry">
+    </form>
+
+    <!-- Edit Skill Form (shown only when editing) -->
+    {% if editSkill %}
+        <form method="post" action="{% url 'Admin:editSkill' editSkill.id %}" class="form-container">
+            {% csrf_token %}
+            <input type="text" name="txt_skill_name" value="{{ editSkill.skill_name }}" required>
+            <input type="submit" value="Update Skill" class="edit-btn">
+        </form>
+    {% endif %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Industry</th>
+                <th>Related Skills</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for industry in industries %}
+                <tr>
+                    <td>{{ industry.industry_name }}</td>
+                    <td>
+                        <ul>
+                            {% for skill in industry.skills.all %}
+                                <li>
+                                    {{ skill.skill_name }}
+                                    <form method="get" action="{% url 'Admin:editSkill' skill.id %}" style="display: inline;">
+                                        <input type="submit" value="Edit" class="edit-btn">
+                                    </form>
+                                    <form method="post" action="{% url 'Admin:deleteSkill' skill.id %}" style="display: inline;">
+                                        {% csrf_token %}
+                                        <input type="submit" value="Delete" class="delete-btn">
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <!-- Add Skill Form -->
+                        <form method="post" action="{% url 'Admin:addSkill' %}" class="form-container">
+                            {% csrf_token %}
+                            <input type="hidden" name="industry_id" value="{{ industry.id }}">
+                            <input type="text" name="txt_skill_name" placeholder="New Skill" required>
+                            <input type="submit" value="Add Skill">
+                        </form>
+                    </td>
+                    <td>
+                        <form method="post" action="{% url 'Admin:deleteIndustry' industry.id %}">
+                            {% csrf_token %}
+                            <input type="submit" value="Delete Industry" class="delete-btn">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -103,3 +103,22 @@ def profile_country_ajax(request):
 def profile_state_ajax(request):
     city=tbl_city.objects.filter(state=request.GET.get("did"))
     return render(request,'User/profile_state_ajax.html', {"city":city})
+
+def Event(request):
+    country=tbl_country.objects.all()
+    industry=tbl_industry.objects.all()
+    user=tbl_user.objects.get(id=request.session['u_id'])
+    if request.method=="POST":
+        title=request.POST.get("txt_title")
+        content=request.POST.get("txt_content")
+        file=request.FILES.get("txt_file")
+        industry=tbl_industry.objects.get(id=request.POST.get('sel_industry'))
+        address=request.POST.get("txt_address")
+        time=request.POST.get('txt_time')
+        country=tbl_country.objects.get(id=request.POST.get('sel_country'))
+        city=tbl_city.objects.get(id=request.POST.get('sel_city'))
+        stipend=request.POST.get('txt_stipend')
+        tbl_event.objects.create(event_title=title,event_content=content,event_file=file,industry=industry,event_address=address,event_time=time,event_city=city,event_stipend=stipend,user=user)
+        return redirect("User:Event")
+    else:
+        return render(request,'User/event.html',{'country':country,'industry':industry})
