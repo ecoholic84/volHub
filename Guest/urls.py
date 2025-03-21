@@ -6,8 +6,10 @@ urlpatterns = [
     path('', views.Index, name='index'),
     path('signUp/', views.userEmail, name='signUp'),
     path('userRegistration/', views.userRegistration, name='userRegistration'),
-    path('type/', views.userWho, name='userWho'),
+    path('user-type/', views.userWho, name='userWho'),
+
 
     path('ajaxPlace/',views.ajaxPlace,name='ajaxPlace'),
     path('login/',views.login,name='login'),
+
 ]

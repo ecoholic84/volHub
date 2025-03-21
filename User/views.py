@@ -3,9 +3,6 @@ from Guest.models import *
 from User.models import *
 
 # Create your views here.
-def userDashboard(request):
-    return render(request,'User/userDashboard.html')
-
 def myProfile(request):
     thisProfile=tbl_user.objects.get(id=request.session['u_id'])
     return render(request,'User/myProfile.html', {'thisProfile':thisProfile})
@@ -122,3 +119,26 @@ def Event(request):
         return redirect("User:Event")
     else:
         return render(request,'User/event.html',{'country':country,'industry':industry})
+
+
+# Dashboards
+def userDashboard(request):
+    return render(request,'User/userDashboard.html')
+
+# Volunteer Dashboard redirection
+def volunteerDashboard(request):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    if user.user_type != "volunteer":
+        return redirect('User:userDashboard')  # Redirect if not volunteer
+    return render(request, 'User/volunteer-dashboard.html')
+
+# Organizer Dashboard redirection
+def organizerDashboard(request):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    if user.user_type != "organizer":
+        return redirect('User:userDashboard')  # Redirect if not organizer
+    return render(request, 'User/organizer-dashboard.html')

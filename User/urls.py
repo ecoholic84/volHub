@@ -2,8 +2,6 @@ from django.urls import path,include
 from User import views
 app_name='User'
 urlpatterns = [
-    path('userDashboard/', views.userDashboard, name='userDashboard'),
-
     path('myProfile/', views.myProfile, name='myProfile'),
     path('editProfile/', views.editProfile, name='editProfile'),
 
@@ -21,4 +19,8 @@ urlpatterns = [
     path('profile-state-ajax/', views.profile_state_ajax, name='profile_state_ajax'),
 
     path('event/',views.Event,name="Event"),
+
+    path('user-dashboard/', views.userDashboard, name='userDashboard'),
+    path('volunteer-dashboard/', views.volunteerDashboard, name='volunteerDashboard'),
+    path('organizer-dashboard/', views.organizerDashboard, name='organizerDashboard'),
 ]

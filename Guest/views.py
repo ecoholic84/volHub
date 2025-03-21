@@ -37,20 +37,22 @@ def userRegistration(request):
         return render(request,'Guest/userRegistration.html')
     
 
+# User Type Selection
 def userWho(request):
-    if request.method=="POST":
+    if request.method == "POST":
         user = tbl_user.objects.get(id=request.session.get('regId'))
         selectedType = request.POST.get('user_type')
         user.user_type = selectedType
-        request.session['u_id']=user.id
+        request.session['u_id'] = user.id
         user.save()
-        return redirect('User:userDashboard')
-    else: 
+        if selectedType == "volunteer":
+            return redirect('User:volunteerDashboard')
+        elif selectedType == "organizer":
+            return redirect('User:organizerDashboard')
+        else:
+            return redirect('User:userDashboard')  # Fallback to generic dashboard
+    else:
         return render(request, 'Guest/userType.html', {"message": "Please select a type"})
-
-
-    
-
 
 
 def ajaxPlace(request):
