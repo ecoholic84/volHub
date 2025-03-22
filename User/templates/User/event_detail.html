@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Event Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+            color: #007BFF;
+        }
+        .event-details {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .event-details p {
+            margin: 10px 0;
+        }
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .requests-table th, .requests-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .requests-table th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .status-pending {
+            color: orange;
+        }
+        .status-approved {
+            color: green;
+        }
+        .status-rejected {
+            color: red;
+        }
+        .accept-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        .accept-btn:hover {
+            background-color: #218838;
+        }
+        .reject-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .reject-btn:hover {
+            background-color: #c82333;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Event Details</h2>
+
+    <!-- Success/Error Messages -->
+    {% if success %}
+        <p style="color: green; text-align: center;">{{ success }}</p>
+    {% endif %}
+    {% if error %}
+        <p style="color: red; text-align: center;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Event Details -->
+    {% if event %}
+        <div class="event-details">
+            <p><strong>Title:</strong> {{ event.event_title }}</p>
+            <p><strong>Content:</strong> {{ event.event_content }}</p>
+            <p><strong>Venue:</strong> {{ event.event_venue }}</p>
+            <p><strong>City:</strong> {{ event.event_city.name }}</p>
+            <p><strong>Industry:</strong> {{ event.industry.industry_name }}</p>
+            <p><strong>Date & Time:</strong> {{ event.event_datetime }}</p>
+            <p><strong>Stipend:</strong> {{ event.event_stipend }}</p>
+            <p><strong>Status:</strong> 
+                <span class="{% if event.event_status == 0 %}status-pending{% elif event.event_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
+                    {% if event.event_status == 0 %}Pending{% elif event.event_status == 1 %}Approved{% else %}Rejected{% endif %}
+                </span>
+            </p>
+            <p><strong>Created At:</strong> {{ event.event_created_at }}</p>
+            <p><strong>File:</strong> 
+                {% if event.event_file %}
+                    <a href="{{ event.event_file.url }}" target="_blank">Download</a>
+                {% else %}
+                    None
+                {% endif %}
+            </p>
+
+            <!-- Volunteer Requests -->
+            <h3>Volunteer Requests</h3>
+            <table class="requests-table">
+                <thead>
+                    <tr>
+                        <th>Volunteer Email</th>
+                        <th>Request Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                        <tr>
+                            <td>{{ req.user.user_email }}</td>
+                            <td>{{ req.request_datetime }}</td>
+                            <td class="{% if req.request_status == 0 %}status-pending{% elif req.request_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
+                                {% if req.request_status == 0 %}Pending{% elif req.request_status == 1 %}Accepted{% else %}Rejected{% endif %}
+                            </td>
+                            <td>
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="request_id" value="{{ req.id }}">
+                                    <input type="hidden" name="action" value="accept">
+                                    <input type="submit" value="Accept" class="accept-btn">
+                                </form>
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="request_id" value="{{ req.id }}">
+                                    <input type="hidden" name="action" value="reject">
+                                    <input type="submit" value="Reject" class="reject-btn">
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No volunteer requests yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <a href="{% url 'User:organizer_dashboard' %}">Back to Dashboard</a>
+        </div>
+    {% endif %}
+</body>
+</html>

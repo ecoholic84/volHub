@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from Guest.models import *
 from User.models import *
+from Admin.models import *
 
 # Create your views here.
 def logout(request):
@@ -158,14 +159,65 @@ def request_to_volunteer(request, event_id):
         return redirect('User:volunteer_dashboard')
     return redirect('User:volunteer_dashboard')
 
-# Organizer dashboard
+
+# Organizer dashboard and event detail page
 def organizer_dashboard(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
+    
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "organizer":
-        return redirect('User:user_dashboard')
-    return render(request, 'User/organizer-dashboard.html')
+        return redirect('User:user_dashboard')  # Matches your initial redirect
+    
+    # Fetch events created by this organizer
+    organizer_events = tbl_event.objects.filter(user=user).select_related('industry', 'event_city')
+    
+    return render(request, 'User/organizer-dashboard.html', {
+        'events': organizer_events,
+        'organizer': user
+    })
 
-def user_dashboard(request):
-    return render(request, 'User/userDashboard.html')
+def event_detail(request, event_id):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    if user.user_type != "organizer":
+        return redirect('Guest:userWho')  # Updated redirect per your preference
+    
+    # Fetch the specific event, ensuring it belongs to this organizer
+    try:
+        event = tbl_event.objects.get(id=event_id, user=user)
+    except tbl_event.DoesNotExist:
+        return render(request, 'User/event_detail.html', {'error': "Event not found or you don’t have access."})
+    
+    # Fetch all requests for this event
+    requests = tbl_request.objects.filter(event=event).select_related('user')
+    
+    # Handle accept/reject actions
+    if request.method == "POST":
+        request_id = request.POST.get('request_id')
+        action = request.POST.get('action')
+        req = tbl_request.objects.get(id=request_id, event=event)  # Ensure request belongs to this event
+        
+        if action == "accept":
+            req.request_status = 1  # Accepted
+            req.save()
+            message = f"Request from {req.user.user_email} accepted successfully!"
+        elif action == "reject":
+            req.request_status = 2  # Rejected
+            req.save()
+            message = f"Request from {req.user.user_email} rejected successfully!"
+        
+        # Refresh requests after action
+        requests = tbl_request.objects.filter(event=event).select_related('user')
+        return render(request, 'User/event_detail.html', {
+            'event': event,
+            'requests': requests,
+            'success': message
+        })
+    
+    return render(request, 'User/event_detail.html', {
+        'event': event,
+        'requests': requests
+    })

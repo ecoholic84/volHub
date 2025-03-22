@@ -23,10 +23,11 @@ urlpatterns = [
     path('event/',views.Event,name="Event"),
 
     # Dashboard redirection views
-    path('user-dashboard/', views.user_dashboard, name='user_dashboard'),
     path('volunteer-dashboard/', views.volunteer_dashboard, name='volunteer_dashboard'),
     path('organizer-dashboard/', views.organizer_dashboard, name='organizer_dashboard'),
 
     # Volunteer request action
     path('request-to-volunteer/<int:event_id>/', views.request_to_volunteer, name='request_to_volunteer'),
+
+    path('event-detail/<int:event_id>/', views.event_detail, name='event_detail'),
 ]
