@@ -30,4 +30,5 @@ urlpatterns = [
     path('request-to-volunteer/<int:event_id>/', views.request_to_volunteer, name='request_to_volunteer'),
 
     path('event-detail/<int:event_id>/', views.event_detail, name='event_detail'),
+
 ]

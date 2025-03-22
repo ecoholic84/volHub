@@ -1,90 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volunteer Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; }
-        h1 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid black; padding: 10px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        a { color: #007bff; text-decoration: none; }
-        a:hover { text-decoration: underline; }
-        .request-btn { padding: 5px 10px; background-color: #28a745; color: white; border: none; cursor: pointer; }
-        .request-btn:hover { background-color: #218838; }
-        .request-btn:disabled { background-color: #cccccc; cursor: not-allowed; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+        }
+        .requests-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        .requests-table th, .requests-table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .requests-table th {
+            background-color: #007BFF;
+            color: white;
+        }
+        .status-pending {
+            color: orange;
+        }
+        .status-approved {
+            color: green;
+        }
+        .status-rejected {
+            color: red;
+        }
     </style>
 </head>
 <body>
-    <h1>Volunteer Dashboard</h1>
-    
-    {% if events %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Content</th>
-                    <th>Time</th>
-                    <th>File</th>
-                    <th>Industry</th>
-                    <th>Address</th>
-                    <th>City</th>
-                    <th>Stipend</th>
-                    <th>Status</th>
-                    <th>Organizer</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for event in events %}
-                    <tr>
-                        <td>{{ event.event_title }}</td>
-                        <td>{{ event.event_content }}</td>
-                        <td>{{ event.event_datetime }}</td>
-                        <td>
-                            {% if event.event_file %}
-                                <a href="{{ event.event_file.url }}" target="_blank">View File</a>
-                            {% else %}
-                                No File
-                            {% endif %}
-                        </td>
-                        <td>{{ event.industry.industry_name }}</td>
-                        <td>{{ event.event_venue }}</td>
-                        <td>{{ event.event_city.name }}</td>
-                        <td>
-                            {% if event.event_stipend %}
-                                {{ event.event_stipend }}
-                            {% else %}
-                                Not Provided
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if event.event_status == 0 %}
-                                Pending
-                            {% elif event.event_status == 1 %}
-                                Approved
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </td>
-                        <td>{{ event.user.user_name }}</td>
-                        <td>
-                            <form method="post" action="{% url 'User:request_to_volunteer' event.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="request-btn" 
-                                    {% if event.id in user_requests %}disabled{% endif %}>
-                                    {% if event.id in user_requests %}Requested{% else %}Request{% endif %}
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No events available at the moment.</p>
+    <h2>Volunteer Dashboard - Your Requests</h2>
+
+    <!-- Success/Error Messages -->
+    {% if success %}
+        <p style="color: green;">{{ success }}</p>
     {% endif %}
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Requests Table -->
+    <table class="requests-table">
+        <thead>
+            <tr>
+                <th>Event Title</th>
+                <th>Organizer Email</th>
+                <th>Request Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in requests %}
+                <tr>
+                    <td>{{ request.event.event_title }}</td>
+                    <td>{{ request.event.user.user_email }}</td>
+                    <td>{{ request.request_datetime }}</td>
+                    <td class="{% if request.request_status == 0 %}status-pending{% elif request.request_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
+                        {% if request.request_status == 0 %}Pending{% elif request.request_status == 1 %}Accepted{% else %}Rejected{% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No requests made yet.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

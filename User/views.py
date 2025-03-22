@@ -125,38 +125,48 @@ def Event(request):
     else:
         return render(request,'User/event.html',{'country':country,'industry':industry})
 
-# Volunteer dashboard redirection and listing
 def volunteer_dashboard(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
+    
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "volunteer":
-        return redirect('User:user_dashboard')
+        return redirect('Guest:userWho')  # Consistent redirect
     
-    events = tbl_event.objects.all().select_related('industry', 'event_city', 'user')
-    user_requests = tbl_request.objects.filter(user=user).values_list('event_id', flat=True)  # Now just 'event_id'
+    # Fetch all requests made by this volunteer
+    user_requests = tbl_request.objects.filter(user=user).select_related('event', 'event__industry', 'event__event_city')
+    
     return render(request, 'User/volunteer-dashboard.html', {
-        'events': events,
-        'user_requests': user_requests
+        'requests': user_requests
     })
 
-# Volunteer request
 def request_to_volunteer(request, event_id):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
+    
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "volunteer":
-        return redirect('User:user_dashboard')
+        return redirect('Guest:userWho')
     
     if request.method == "POST":
         event = tbl_event.objects.get(id=event_id)
         if not tbl_request.objects.filter(user=user, event=event).exists():
-            tbl_request.objects.create(
-                user=user,
-                event=event
-                # request_datetime is auto-set
-            )
-        return redirect('User:volunteer_dashboard')
+            tbl_request.objects.create(user=user, event=event, request_status=0)
+            message = "Request submitted successfully!"
+        else:
+            message = "You have already requested this event."
+        
+        events = tbl_event.objects.filter(event_status=1).select_related('industry', 'event_city', 'user')
+        user_requests = tbl_request.objects.filter(user=user).select_related('event')
+        request_dict = {req.event.id: req.request_status for req in user_requests}
+        
+        return render(request, 'User/volunteer-dashboard.html', {
+            'events': events,
+            'user_requests': request_dict,
+            'volunteer': user,
+            'success': message
+        })
+    
     return redirect('User:volunteer_dashboard')
 
 
@@ -177,28 +187,26 @@ def organizer_dashboard(request):
         'organizer': user
     })
 
+# Ensure organizer event_detail view is correct for request updates
 def event_detail(request, event_id):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
     
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "organizer":
-        return redirect('Guest:userWho')  # Updated redirect per your preference
+        return redirect('Guest:userWho')
     
-    # Fetch the specific event, ensuring it belongs to this organizer
     try:
         event = tbl_event.objects.get(id=event_id, user=user)
     except tbl_event.DoesNotExist:
         return render(request, 'User/event_detail.html', {'error': "Event not found or you don’t have access."})
     
-    # Fetch all requests for this event
     requests = tbl_request.objects.filter(event=event).select_related('user')
     
-    # Handle accept/reject actions
     if request.method == "POST":
         request_id = request.POST.get('request_id')
         action = request.POST.get('action')
-        req = tbl_request.objects.get(id=request_id, event=event)  # Ensure request belongs to this event
+        req = tbl_request.objects.get(id=request_id, event=event)
         
         if action == "accept":
             req.request_status = 1  # Accepted
@@ -208,9 +216,7 @@ def event_detail(request, event_id):
             req.request_status = 2  # Rejected
             req.save()
             message = f"Request from {req.user.user_email} rejected successfully!"
-        
-        # Refresh requests after action
-        requests = tbl_request.objects.filter(event=event).select_related('user')
+            requests = tbl_request.objects.filter(event=event).select_related('user')
         return render(request, 'User/event_detail.html', {
             'event': event,
             'requests': requests,
