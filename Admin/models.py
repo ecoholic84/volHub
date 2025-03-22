@@ -26,7 +26,7 @@ class tbl_type(models.Model):
 class tbl_country(models.Model):
     country_code=models.CharField(max_length=10)
     country_name=models.CharField(max_length=50)
-    country_phone_code=models.IntegerField(max_length=10)
+    country_phone_code=models.IntegerField()
 
 class tbl_state(models.Model):
     name = models.CharField(max_length=100)
