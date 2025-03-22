@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Country, State & City Insertion</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        input[type="submit"] {
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        input[type="submit"]:hover {
+            background-color: #218838;
+        }
+        .form-container {
+            margin: 5px 0;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Country, State & City Insertion</h2>
+    
+    <!-- Success/Error Messages -->
+    {% if success %}
+        <p style="color: green;">{{ success }}</p>
+    {% endif %}
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Add Country Form -->
+    <form method="post" action="{% url 'Admin:add_country' %}" class="form-container">
+        {% csrf_token %}
+        <input type="text" name="txt_country_code" placeholder="Country Code (e.g., US)" required>
+        <input type="text" name="txt_country_name" placeholder="Country Name (e.g., United States)" required>
+        <input type="number" name="txt_phone_code" placeholder="Phone Code (e.g., 1)" required>
+        <input type="submit" value="Add Country">
+    </form>
+
+    <!-- Country List with Nested State and City Forms -->
+    <table>
+        <thead>
+            <tr>
+                <th>Country</th>
+                <th>States & Cities</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for country in countries %}
+                <tr>
+                    <td>{{ country.country_name }} ({{ country.country_code }}, +{{ country.country_phone_code }})</td>
+                    <td>
+                        <ul>
+                            {% for state in country.tbl_state_set.all %}
+                                <li>
+                                    {{ state.name }}
+                                    <ul>
+                                        {% for city in state.tbl_city_set.all %}
+                                            <li>{{ city.name }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <!-- Add City Form -->
+                                    <form method="post" action="{% url 'Admin:add_city' %}" class="form-container">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="state_id" value="{{ state.id }}">
+                                        <input type="text" name="txt_city_name" placeholder="New City (e.g., New York)" required>
+                                        <input type="submit" value="Add City">
+                                    </form>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <!-- Add State Form -->
+                        <form method="post" action="{% url 'Admin:add_state' %}" class="form-container">
+                            {% csrf_token %}
+                            <input type="hidden" name="country_id" value="{{ country.id }}">
+                            <input type="text" name="txt_state_name" placeholder="New State (e.g., California)" required>
+                            <input type="submit" value="Add State">
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

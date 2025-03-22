@@ -4,30 +4,9 @@ from Admin.models import *
 from User.models import *
 from datetime import datetime
 from django.urls import reverse
+from django.db import IntegrityError
 
 # Create your views here.
-
-# District Section
-def district(request):    
-    district=tbl_district.objects.all()
-    if request.method=="POST":
-        tbl_district.objects.create(district_name=request.POST.get('txt_district'))
-        return redirect('Admin:district')
-    else:    
-        return render(request,'Admin/District.html',{"district":district})
-    
-def deletedistrict(request,did):
-    tbl_district.objects.get(id=did).delete()
-    return redirect('Admin:district')
-
-def editdistrict(request,eid):
-    dist=tbl_district.objects.get(id=eid)
-    if request.method=="POST":
-        dist.district_name=request.POST.get('txt_district')
-        dist.save()
-        return redirect('Admin:district')
-    else:    
-        return render(request,'Admin/District.html',{"editdist":dist})
 
 # Admin Section
 def adminRegistration(request):
@@ -54,33 +33,6 @@ def editAdmin(request,eid):
     else:
         return render(request,'Admin/adminRegistration.html',{"editadmin":editadmin})
 
-#Place Section
-def Place(request):
-    district=tbl_district.objects.all()
-    Place=tbl_place.objects.all()
-    if request.method=="POST":
-        dist=tbl_district.objects.get(id=request.POST.get("sel_district"))
-        place_name=request.POST.get("txt_place")
-        tbl_place.objects.create(district=dist,place_name=place_name)
-        return redirect('Admin:Place')
-    else:
-        return render(request,'Admin/Place.html',{"district":district,"place":Place})
-    
-def editPlace(request, eid):
-    plac=tbl_place.objects.get(id=eid)
-    district=tbl_district.objects.all()
-    if request.method=="POST":
-        plac.district=tbl_district.objects.get(id=request.POST.get("sel_district"))
-        plac.place_name=request.POST.get('txt_place')
-        plac.save()
-        return redirect('Admin:Place')
-    else:
-        return render(request,'Admin/Place.html',{"editPlace":plac, "district":district})
-    
-def deletePlace(request,did):
-    tbl_place.objects.get(id=did).delete()
-    return redirect('Admin:Place')
-
 # Category Section
 def category(request):
     category=tbl_category.objects.all()
@@ -100,33 +52,6 @@ def editCategory(request,eid):
         return redirect('Admin:category')
     else:
         return render(request,'Admin/Category.html',{"editcat":cat})
-
-#Subcategory
-def Subcategory(request):
-    category=tbl_category.objects.all()
-    subcategory=tbl_subcategory.objects.all()
-    if request.method=="POST":
-        cat=tbl_category.objects.get(id=request.POST.get("sel_category"))
-        sub=request.POST.get("txt_subcategory")
-        tbl_subcategory.objects.create(category=cat,subcategory_name=sub)
-        return render(request,'Admin/Subcategory.html',{"category":category,"subcategory":subcategory})
-    else:
-        return render(request,'Admin/Subcategory.html',{"category":category,"subcategory":subcategory})
-    
-def deleteSubcategory(request,did):
-    tbl_subcategory.objects.get(id=did).delete()
-    return redirect('Admin:subcategory')
-
-def editSubcategory(request,eid):
-    sub=tbl_subcategory.objects.get(id=eid)
-    category=tbl_category.objects.all()
-    if request.method=="POST":
-        sub.category=tbl_category.objects.get(id=request.POST.get("sel_category"))
-        sub.subcategory_name=request.POST.get('txt_subcategory')
-        sub.save()
-        return redirect('Admin:subcategory')
-    else:
-        return render(request,'Admin/Subcategory.html',{"editsub":sub, "category":category})
 
 # Dashboard
 def adminDashboard(request):
@@ -172,17 +97,17 @@ def replyCompliant(request,rid):
 
 # Industry and Skills Views
 def industrySkills(request):
-    if 'u_id' not in request.session:  # Assuming admin uses same session key
+    if 'a_id' not in request.session:  # Assuming admin uses same session key
         return redirect('Guest:login')  # Adjust to your admin login URL if different
     industries = tbl_industry.objects.all().prefetch_related('skills')  # No user filter for admin
     return render(request, 'Admin/industry_skills.html', {'industries': industries})
 
 def addIndustry(request):
-    if 'u_id' not in request.session:
+    if 'a_id' not in request.session:
         return redirect('Guest:login')
     if request.method == "POST":
         industry_name = request.POST.get('txt_industry_name')
-        admin_user = tbl_user.objects.get(id=request.session['u_id'])  # Assuming admin is a user
+        admin_user = tbl_user.objects.get(id=request.session['a_id'])
         try:
             tbl_industry.objects.create(user_id=admin_user, industry_name=industry_name)
             return redirect('Admin:industrySkills')
@@ -195,7 +120,7 @@ def addIndustry(request):
     return render(request, 'Admin/industry_skills.html')
 
 def addSkill(request):
-    if 'u_id' not in request.session:
+    if 'a_id' not in request.session:
         return redirect('Guest:login')
     industries = tbl_industry.objects.all().prefetch_related('skills')
     if request.method == "POST":
@@ -207,7 +132,7 @@ def addSkill(request):
     return render(request, 'Admin/industry_skills.html', {'industries': industries})
 
 def editSkill(request, sid):
-    if 'u_id' not in request.session:
+    if 'a_id' not in request.session:
         return redirect('Guest:login')
     industries = tbl_industry.objects.all().prefetch_related('skills')
     thisSkill = tbl_skill.objects.get(id=sid)
@@ -221,13 +146,94 @@ def editSkill(request, sid):
     })
 
 def deleteSkill(request, sid):
-    if 'u_id' not in request.session:
+    if 'a_id' not in request.session:
         return redirect('Guest:login')
     tbl_skill.objects.get(id=sid).delete()
     return redirect('Admin:industrySkills')
 
 def deleteIndustry(request, iid):
-    if 'u_id' not in request.session:
+    if 'a_id' not in request.session:
         return redirect('Guest:login')
     tbl_industry.objects.get(id=iid).delete()
     return redirect('Admin:industrySkills')
+
+# Admin/views.py
+from django.shortcuts import render, redirect
+from Admin.models import *
+from Guest.models import *
+from User.models import *
+
+# Country, State, City Insertion Page
+def country_state_city(request):
+    if 'a_id' not in request.session:  # Matches your login view's session key
+        return redirect('Admin:login')
+    
+    countries = tbl_country.objects.all()
+    return render(request, 'Admin/country_state_city.html', {'countries': countries})
+
+# Add Country
+def add_country(request):
+    if request.method == 'POST':
+        country_code = request.POST.get('txt_country_code')
+        country_name = request.POST.get('txt_country_name')
+        phone_code = request.POST.get('txt_phone_code')
+        if tbl_country.objects.filter(country_name=country_name).exists():
+            message = "Country already exists!"
+            return render(request, 'Admin/country_state_city.html', {
+                'countries': tbl_country.objects.all(),
+                'error': message
+            })
+        else:
+            tbl_country.objects.create(
+                country_code=country_code,
+                country_name=country_name,
+                country_phone_code=phone_code
+            )
+            message = "Country added successfully!"
+            return render(request, 'Admin/country_state_city.html', {
+                'countries': tbl_country.objects.all(),
+                'success': message
+            })
+    return redirect('Admin:country_state_city')
+
+# Add State
+def add_state(request):
+    if request.method == 'POST':
+        country_id = request.POST.get('country_id')
+        state_name = request.POST.get('txt_state_name')
+        country = tbl_country.objects.get(id=country_id)
+        if tbl_state.objects.filter(name=state_name, country=country).exists():
+            message = "State already exists in this country!"
+            return render(request, 'Admin/country_state_city.html', {
+                'countries': tbl_country.objects.all(),
+                'error': message
+            })
+        else:
+            tbl_state.objects.create(name=state_name, country=country)
+            message = "State added successfully!"
+            return render(request, 'Admin/country_state_city.html', {
+                'countries': tbl_country.objects.all(),
+                'success': message
+            })
+    return redirect('Admin:country_state_city')
+
+# Add City
+def add_city(request):
+    if request.method == 'POST':
+        state_id = request.POST.get('state_id')
+        city_name = request.POST.get('txt_city_name')
+        state = tbl_state.objects.get(id=state_id)
+        if tbl_city.objects.filter(name=city_name, state=state).exists():
+            message = "City already exists in this state!"
+            return render(request, 'Admin/country_state_city.html', {
+                'countries': tbl_country.objects.all(),
+                'error': message
+            })
+        else:
+            tbl_city.objects.create(name=city_name, state=state)
+            message = "City added successfully!"
+            return render(request, 'Admin/country_state_city.html', {
+                'countries': tbl_country.objects.all(),
+                'success': message
+            })
+    return redirect('Admin:country_state_city')

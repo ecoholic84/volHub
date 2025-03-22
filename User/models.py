@@ -37,3 +37,9 @@ class tbl_event(models.Model):
     event_status=models.IntegerField(default=0)
     industry=models.ForeignKey(tbl_industry,on_delete=models.CASCADE)
     user=models.ForeignKey(tbl_user,on_delete=models.CASCADE)
+
+class tbl_request(models.Model):
+    request_datetime = models.DateTimeField(auto_now_add=True)
+    event = models.ForeignKey(tbl_event, on_delete=models.CASCADE, related_name='requests')
+    user = models.ForeignKey(tbl_user, on_delete=models.CASCADE, related_name='volunteer_requests')
+    request_status = models.IntegerField(default=0)
