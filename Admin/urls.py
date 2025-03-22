@@ -2,6 +2,7 @@ from django.urls import path,include
 from Admin import views
 app_name='Admin'
 urlpatterns = [
+    path('logout/', views.logout, name='logout'),
 
     path('adminRegistration/',views.adminRegistration,name='adminRegistration'),
     path('deleteAdmin/<int:did>',views.deleteAdmin,name='deleteAdmin'),

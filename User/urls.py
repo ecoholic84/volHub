@@ -2,6 +2,8 @@ from django.urls import path,include
 from User import views
 app_name='User'
 urlpatterns = [
+    path('logout/', views.logout, name='logout'),
+
     path('myProfile/', views.myProfile, name='myProfile'),
     path('editProfile/', views.editProfile, name='editProfile'),
 

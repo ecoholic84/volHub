@@ -33,7 +33,7 @@
                     <th>City</th>
                     <th>Stipend</th>
                     <th>Status</th>
-                    <th>Organiser</th>
+                    <th>Organizer</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -42,7 +42,7 @@
                     <tr>
                         <td>{{ event.event_title }}</td>
                         <td>{{ event.event_content }}</td>
-                        <td>{{ event.event_time }}</td>
+                        <td>{{ event.event_datetime }}</td>
                         <td>
                             {% if event.event_file %}
                                 <a href="{{ event.event_file.url }}" target="_blank">View File</a>
@@ -51,8 +51,8 @@
                             {% endif %}
                         </td>
                         <td>{{ event.industry.industry_name }}</td>
-                        <td>{{ event.event_address }}</td>
-                        <td>{{ event.event_city.city_name }}</td>
+                        <td>{{ event.event_venue }}</td>
+                        <td>{{ event.event_city.name }}</td>
                         <td>
                             {% if event.event_stipend %}
                                 {{ event.event_stipend }}

@@ -8,6 +8,11 @@ from django.db import IntegrityError
 
 # Create your views here.
 
+# Logout
+def logout(request):
+    del request.session["a_id"]
+    return redirect("Guest:login")
+
 # Admin Section
 def adminRegistration(request):
     admin=tbl_admin.objects.all()
@@ -52,10 +57,6 @@ def editCategory(request,eid):
         return redirect('Admin:category')
     else:
         return render(request,'Admin/Category.html',{"editcat":cat})
-
-# Dashboard
-def adminDashboard(request):
-    return render(request,'Admin/adminDashboard.html')
 
 # Type
 def types(request):
@@ -237,3 +238,37 @@ def add_city(request):
                 'success': message
             })
     return redirect('Admin:country_state_city')
+
+# List events in the Admin Dashboard
+def adminDashboard(request):
+    if 'a_id' not in request.session:  # Matches your login view
+        return redirect('Admin:login')
+    
+    # Fetch events created by organizers
+    organizer_events = tbl_event.objects.filter(user__user_type="organizer").select_related('user', 'industry', 'event_city')
+    
+    if request.method == "POST":
+        event_id = request.POST.get('event_id')
+        action = request.POST.get('action')
+        event = tbl_event.objects.get(id=event_id)
+        
+        if action == "accept":
+            event.event_status = 1  # Accepted
+            event.save()
+            message = f"Event '{event.event_title}' accepted successfully!"
+            return render(request, 'Admin/adminDashboard.html', {
+                'events': organizer_events,
+                'success': message
+            })
+        elif action == "reject":
+            event.event_status = 2  # Rejected
+            event.save()
+            message = f"Event '{event.event_title}' rejected successfully!"
+            return render(request, 'Admin/adminDashboard.html', {
+                'events': organizer_events,
+                'success': message
+            })
+    
+    return render(request, 'Admin/adminDashboard.html', {
+        'events': organizer_events
+    })

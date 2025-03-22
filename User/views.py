@@ -3,6 +3,10 @@ from Guest.models import *
 from User.models import *
 
 # Create your views here.
+def logout(request):
+    del request.session["u_id"]
+    return redirect("Guest:login")
+
 def myProfile(request):
     thisProfile=tbl_user.objects.get(id=request.session['u_id'])
     return render(request,'User/myProfile.html', {'thisProfile':thisProfile})
