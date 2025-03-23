@@ -31,4 +31,6 @@ urlpatterns = [
 
     path('event-detail/<int:event_id>/', views.event_detail, name='event_detail'),
 
+    path('profile/edit/<int:page>/', views.edit_profile, name='edit_profile'),
+
 ]

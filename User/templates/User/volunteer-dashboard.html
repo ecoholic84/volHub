@@ -12,19 +12,19 @@
         h2 {
             text-align: center;
         }
-        .requests-table {
+        table {
             width: 100%;
             border-collapse: collapse;
             background: white;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             margin-top: 20px;
         }
-        .requests-table th, .requests-table td {
+        th, td {
             padding: 10px;
             text-align: left;
             border: 1px solid #ddd;
         }
-        .requests-table th {
+        th {
             background-color: #007BFF;
             color: white;
         }
@@ -37,10 +37,37 @@
         .status-rejected {
             color: red;
         }
+        .request-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .request-btn:hover {
+            background-color: #218838;
+        }
+        .request-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        a {
+            display: inline-block;
+            margin: 10px 5px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
-    <h2>Volunteer Dashboard - Your Requests</h2>
+    <h2>Volunteer Dashboard</h2>
+
+    <!-- Quick-Fix Back Link and Edit Profile Link -->
+    <a href="{% url 'Guest:user_who' %}">Back to User Selection</a>
+    <a href="{% url 'User:edit_profile' 1 %}">Edit Profile</a>
 
     <!-- Success/Error Messages -->
     {% if success %}
@@ -50,29 +77,41 @@
         <p style="color: red;">{{ error }}</p>
     {% endif %}
 
-    <!-- Requests Table -->
-    <table class="requests-table">
+    <!-- Events Table -->
+    <table>
         <thead>
             <tr>
                 <th>Event Title</th>
-                <th>Organizer Email</th>
-                <th>Request Date</th>
+                <th>Venue</th>
+                <th>City</th>
+                <th>Date & Time</th>
+                <th>Stipend</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
-            {% for request in requests %}
+            {% for event in events %}
                 <tr>
-                    <td>{{ request.event.event_title }}</td>
-                    <td>{{ request.event.user.user_email }}</td>
-                    <td>{{ request.request_datetime }}</td>
-                    <td class="{% if request.request_status == 0 %}status-pending{% elif request.request_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
-                        {% if request.request_status == 0 %}Pending{% elif request.request_status == 1 %}Accepted{% else %}Rejected{% endif %}
+                    <td>{{ event.event_title }}</td>
+                    <td>{{ event.event_venue }}</td>
+                    <td>{{ event.event_city.name }}</td>
+                    <td>{{ event.event_datetime }}</td>
+                    <td>{{ event.event_stipend }}</td>
+                    <td class="{% if event.event_status == 0 %}status-pending{% elif event.event_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
+                        {% if event.event_status == 0 %}Pending{% elif event.event_status == 1 %}Approved{% else %}Rejected{% endif %}
+                    </td>
+                    <td>
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="event_id" value="{{ event.id }}">
+                            <button type="submit" class="request-btn" {% if event.event_status != 0 %}disabled{% endif %}>Request</button>
+                        </form>
                     </td>
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="4">No requests made yet.</td>
+                    <td colspan="7">No events available.</td>
                 </tr>
             {% endfor %}
         </tbody>

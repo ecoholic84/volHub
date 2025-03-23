@@ -227,3 +227,95 @@ def event_detail(request, event_id):
         'event': event,
         'requests': requests
     })
+
+def edit_profile(request, page=1):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    
+    # Validate page number
+    if page < 1 or page > 5:
+        page = 1
+    
+    # Define months for the dropdown
+    months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
+    
+    # Define years for the dropdown
+    years = [str(year) for year in range(2020, 2031)]
+    
+    if request.method == "POST":
+        if 'autosave' in request.POST:
+            # Handle auto-save via AJAX
+            field = request.POST.get('field')
+            value = request.POST.get('value')
+            if field == 'user_name':
+                user.user_name = value
+            elif field == 'user_gender':
+                user.user_gender = value
+            elif field == 'user_bio':
+                user.user_bio = value
+            elif field == 'user_degree_type':
+                user.user_degree_type = value
+            elif field == 'user_institution':
+                user.user_institution = value
+            elif field == 'user_field_of_study':
+                user.user_field_of_study = value
+            elif field == 'user_graduation_month':
+                user.user_graduation_month = int(value) if value else None
+            elif field == 'user_graduation_year':
+                user.user_graduation_year = int(value) if value else None
+            elif field == 'user_organization_name':
+                user.user_organization_name = value
+            elif field == 'user_job_title':
+                user.user_job_title = value
+            elif field == 'user_industry':
+                user.user_industry = value
+            elif field == 'user_location':
+                user.user_location = value
+            elif field == 'user_links':
+                user.user_links = value
+            elif field == 'user_contact':
+                user.user_contact = value
+            elif field == 'user_emergency_name':
+                user.user_emergency_name = value
+            elif field == 'user_emergency_phone':
+                user.user_emergency_phone = value
+            user.save()
+            return JsonResponse({'status': 'success'})
+        else:
+            # Handle form submission (Next/Previous)
+            user.user_name = request.POST.get('user_name', user.user_name)
+            user.user_gender = request.POST.get('user_gender', user.user_gender)
+            user.user_bio = request.POST.get('user_bio', user.user_bio)
+            user.user_degree_type = request.POST.get('user_degree_type', user.user_degree_type)
+            user.user_institution = request.POST.get('user_institution', user.user_institution)
+            user.user_field_of_study = request.POST.get('user_field_of_study', user.user_field_of_study)
+            user.user_graduation_month = int(request.POST.get('user_graduation_month')) if request.POST.get('user_graduation_month') else user.user_graduation_month
+            user.user_graduation_year = int(request.POST.get('user_graduation_year')) if request.POST.get('user_graduation_year') else user.user_graduation_year
+            user.user_organization_name = request.POST.get('user_organization_name', user.user_organization_name)
+            user.user_job_title = request.POST.get('user_job_title', user.user_job_title)
+            user.user_industry = request.POST.get('user_industry', user.user_industry)
+            user.user_location = request.POST.get('user_location', user.user_location)
+            user.user_links = request.POST.get('user_links', user.user_links)
+            user.user_contact = request.POST.get('user_contact', user.user_contact)
+            user.user_emergency_name = request.POST.get('user_emergency_name', user.user_emergency_name)
+            user.user_emergency_phone = request.POST.get('user_emergency_phone', user.user_emergency_phone)
+            user.save()
+            
+            if 'next' in request.POST:
+                page = int(page) + 1
+            elif 'previous' in request.POST:
+                page = int(page) - 1
+            return redirect('User:edit_profile', page=page)
+    
+    return render(request, 'User/edit_profile.html', {  # Update template path to User/
+        'user': user,
+        'page': page,
+        'user_type': user.user_type,
+        'months': months,
+        'years': years,
+    })

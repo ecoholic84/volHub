@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit Profile Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        .tabs a {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #007BFF;
+            border-bottom: 2px solid transparent;
+        }
+        .tabs a.active {
+            border-bottom: 2px solid #007BFF;
+            font-weight: bold;
+        }
+        .container {
+            display: flex;
+            max-width: 1000px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        .section {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+        .section label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        .section input, .section select, .section textarea {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .section textarea {
+            height: 100px;
+        }
+        .nav-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .nav-buttons button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-buttons button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        a {
+            display: inline-block;
+            margin: 10px 0;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        #save-status {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Edit Profile Page</h2>
+
+    <!-- Quick-Fix Back Link -->
+    {% if user_type == "organizer" %}
+        <a href="{% url 'User:organizer_dashboard' %}">Back to Organizer Dashboard</a>
+    {% elif user_type == "volunteer" %}
+        <a href="{% url 'User:volunteer_dashboard' %}">Back to Volunteer Dashboard</a>
+    {% else %}
+        <a href="{% url 'Guest:user_who' %}">Back to User Selection</a>
+    {% endif %}
+
+    <!-- Save Status Indicator -->
+    <div id="save-status">All Changes Saved</div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <a href="{% url 'User:edit_profile' 1 %}" class="{% if page == 1 %}active{% endif %}">About</a>
+        <a href="{% url 'User:edit_profile' 2 %}" class="{% if page == 2 %}active{% endif %}">Education</a>
+        <a href="{% url 'User:edit_profile' 3 %}" class="{% if page == 3 %}active{% endif %}">Experience</a>
+        <a href="{% url 'User:edit_profile' 4 %}" class="{% if page == 4 %}active{% endif %}">Links</a>
+        <a href="{% url 'User:edit_profile' 5 %}" class="{% if page == 5 %}active{% endif %}">Contact</a>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="container">
+            {% if page == 1 %}
+                <!-- Tab 1: About -->
+                <div class="section">
+                    <h3>Basic Information</h3>
+                    <label for="user_name">Name:</label>
+                    <input type="text" name="user_name" id="user_name" value="{{ user.user_name }}" data-field="user_name">
+                    
+                    <label for="user_gender">Gender:</label>
+                    <select name="user_gender" id="user_gender" data-field="user_gender">
+                        <option value="" {% if not user.user_gender %}selected{% endif %}>-- Select --</option>
+                        <option value="Male" {% if user.user_gender == "Male" %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if user.user_gender == "Female" %}selected{% endif %}>Female</option>
+                        <option value="Other" {% if user.user_gender == "Other" %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+                <div class="section">
+                    <h3>About You</h3>
+                    <label for="user_bio">Bio:</label>
+                    <textarea name="user_bio" id="user_bio" data-field="user_bio">{{ user.user_bio }}</textarea>
+                </div>
+            {% elif page == 2 %}
+                <!-- Tab 2: Education -->
+                <div class="section">
+                    <h3>Education</h3>
+                    <label for="user_degree_type">Degree Type:</label>
+                    <select name="user_degree_type" id="user_degree_type" data-field="user_degree_type">
+                        <option value="" {% if not user.user_degree_type %}selected{% endif %}>-- Select --</option>
+                        <option value="Bachelor's" {% if user.user_degree_type == "Bachelor's" %}selected{% endif %}>Bachelor's</option>
+                        <option value="Master's" {% if user.user_degree_type == "Master's" %}selected{% endif %}>Master's</option>
+                        <option value="PhD" {% if user.user_degree_type == "PhD" %}selected{% endif %}>PhD</option>
+                    </select>
+                    
+                    <label for="user_institution">Educational Institution:</label>
+                    <input type="text" name="user_institution" id="user_institution" value="{{ user.user_institution }}" data-field="user_institution">
+                    
+                    <label for="user_field_of_study">Field of Study:</label>
+                    <input type="text" name="user_field_of_study" id="user_field_of_study" value="{{ user.user_field_of_study }}" data-field="user_field_of_study">
+                    
+                    <label for="user_graduation_month">Month of Graduation:</label>
+                    <select name="user_graduation_month" id="user_graduation_month" data-field="user_graduation_month">
+                        <option value="" {% if not user.user_graduation_month %}selected{% endif %}>-- Select --</option>
+                        {% for month in months %}
+                            <option value="{{ forloop.counter }}" {% if user.user_graduation_month == forloop.counter %}selected{% endif %}>{{ month }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <label for="user_graduation_year">Year of Graduation:</label>
+                    <select name="user_graduation_year" id="user_graduation_year" data-field="user_graduation_year">
+                        <option value="" {% if not user.user_graduation_year %}selected{% endif %}>-- Select --</option>
+                        {% for year in years %}
+                            <option value="{{ year }}" {% if user.user_graduation_year == year %}selected{% endif %}>{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            {% elif page == 3 %}
+                <!-- Tab 3: Experience -->
+                <div class="section">
+                    <h3>Experience</h3>
+                    <label for="user_organization_name">Organization Name:</label>
+                    <input type="text" name="user_organization_name" id="user_organization_name" value="{{ user.user_organization_name }}" data-field="user_organization_name">
+                    
+                    <label for="user_job_title">Job Title:</label>
+                    <input type="text" name="user_job_title" id="user_job_title" value="{{ user.user_job_title }}" data-field="user_job_title">
+                    
+                    <label for="user_industry">Industry:</label>
+                    <input type="text" name="user_industry" id="user_industry" value="{{ user.user_industry }}" data-field="user_industry">
+                    
+                    <label for="user_location">Location:</label>
+                    <input type="text" name="user_location" id="user_location" value="{{ user.user_location }}" data-field="user_location">
+                </div>
+            {% elif page == 4 %}
+                <!-- Tab 4: Links -->
+                <div class="section">
+                    <h3>Links</h3>
+                    <label for="user_links">Links (e.g., GitHub, LinkedIn):</label>
+                    <textarea name="user_links" id="user_links" data-field="user_links">{{ user.user_links }}</textarea>
+                </div>
+            {% elif page == 5 %}
+                <!-- Tab 5: Contact -->
+                <div class="section">
+                    <h3>How can we reach you?</h3>
+                    <label for="user_email">Email:</label>
+                    <input type="email" name="user_email" id="user_email" value="{{ user.user_email }}" readonly>
+                    
+                    <label for="user_contact">Phone Number:</label>
+                    <input type="text" name="user_contact" id="user_contact" value="{{ user.user_contact }}" data-field="user_contact">
+                    
+                    <label for="user_city">City:</label>
+                    <select name="user_city" id="user_city" data-field="user_city">
+                        <option value="" {% if not user.user_city %}selected{% endif %}>-- Select --</option>
+                        {% for city in user_city.get_all_cities %}
+                            <option value="{{ city.id }}" {% if user.user_city.id == city.id %}selected{% endif %}>{{ city.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="section">
+                    <h3>Emergency Contact</h3>
+                    <label for="user_emergency_name">Emergency Contact Name:</label>
+                    <input type="text" name="user_emergency_name" id="user_emergency_name" value="{{ user.user_emergency_name }}" data-field="user_emergency_name">
+                    
+                    <label for="user_emergency_phone">Emergency Contact Number:</label>
+                    <input type="text" name="user_emergency_phone" id="user_emergency_phone" value="{{ user.user_emergency_phone }}" data-field="user_emergency_phone">
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <button type="submit" name="previous" {% if page == 1 %}disabled{% endif %}>Previous</button>
+            <button type="submit" name="next" {% if page == 5 %}disabled{% endif %}>Next</button>
+        </div>
+    </form>
+
+    <!-- Auto-Save Script -->
+    <script>
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            element.addEventListener('input', function() {
+                const field = this.getAttribute('data-field');
+                const value = this.value;
+                saveField(field, value);
+            });
+        });
+
+        function saveField(field, value) {
+            fetch("{% url 'User:edit_profile' page %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: `autosave=true&field=${field}&value=${encodeURIComponent(value)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    const saveStatus = document.getElementById('save-status');
+                    saveStatus.style.display = 'block';
+                    setTimeout(() => saveStatus.style.display = 'none', 2000);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
