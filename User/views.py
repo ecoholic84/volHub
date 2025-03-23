@@ -131,7 +131,7 @@ def volunteer_dashboard(request):
     
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "volunteer":
-        return redirect('Guest:userWho')  # Consistent redirect
+        return redirect('Guest:user_who')  # Consistent redirect
     
     # Fetch all requests made by this volunteer
     user_requests = tbl_request.objects.filter(user=user).select_related('event', 'event__industry', 'event__event_city')
@@ -146,7 +146,7 @@ def request_to_volunteer(request, event_id):
     
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "volunteer":
-        return redirect('Guest:userWho')
+        return redirect('Guest:user_who')
     
     if request.method == "POST":
         event = tbl_event.objects.get(id=event_id)
@@ -194,7 +194,7 @@ def event_detail(request, event_id):
     
     user = tbl_user.objects.get(id=request.session['u_id'])
     if user.user_type != "organizer":
-        return redirect('Guest:userWho')
+        return redirect('Guest:user_who')
     
     try:
         event = tbl_event.objects.get(id=event_id, user=user)

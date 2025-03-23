@@ -239,13 +239,13 @@ def add_city(request):
             })
     return redirect('Admin:country_state_city')
 
-# List events in the Admin Dashboard
 def adminDashboard(request):
     if 'a_id' not in request.session:  # Matches your login view
         return redirect('Admin:login')
     
-    # Fetch events created by organizers
-    organizer_events = tbl_event.objects.filter(user__user_type="organizer").select_related('user', 'industry', 'event_city')
+    # Fetch all events (no user_type filter)
+    all_events = tbl_event.objects.all().select_related('user', 'industry', 'event_city')
+    print(f"Number of events: {all_events.count()}")  # Debug line to verify count
     
     if request.method == "POST":
         event_id = request.POST.get('event_id')
@@ -257,7 +257,7 @@ def adminDashboard(request):
             event.save()
             message = f"Event '{event.event_title}' accepted successfully!"
             return render(request, 'Admin/adminDashboard.html', {
-                'events': organizer_events,
+                'events': all_events,
                 'success': message
             })
         elif action == "reject":
@@ -265,10 +265,10 @@ def adminDashboard(request):
             event.save()
             message = f"Event '{event.event_title}' rejected successfully!"
             return render(request, 'Admin/adminDashboard.html', {
-                'events': organizer_events,
+                'events': all_events,
                 'success': message
             })
     
     return render(request, 'Admin/adminDashboard.html', {
-        'events': organizer_events
+        'events': all_events
     })

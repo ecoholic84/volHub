@@ -3,13 +3,13 @@ from Guest import views
 app_name='Guest'
 
 urlpatterns = [
-    path('', views.Index, name='index'),
-    path('signUp/', views.userEmail, name='signUp'),
-    path('userRegistration/', views.userRegistration, name='userRegistration'),
-    path('user-type/', views.userWho, name='userWho'),
+    path('', views.index, name='index'),
+    path('sign-up/', views.get_email, name='sign_up'),
+    path('user-registration/', views.user_registration, name='user_registration'),
+    path('user-type/', views.user_who, name='user_who'),
 
 
-    path('ajaxPlace/',views.ajaxPlace,name='ajaxPlace'),
+    path('ajax-place/',views.ajax_place,name='ajax_place'),
     path('login/',views.login,name='login'),
 
 ]

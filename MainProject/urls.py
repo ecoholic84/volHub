@@ -18,10 +18,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-from Guest.views import Index
+from Guest.views import index
 
 urlpatterns = [
-    path('', Index, name='index'),
+    path('', index, name='index'),
     path('Admin/', include('Admin.urls')),
     path('Guest/', include('Guest.urls')),
     path('User/', include('User.urls')),
