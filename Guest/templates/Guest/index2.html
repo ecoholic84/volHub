@@ -4,46 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volhub - Connect Volunteers with Organizers</title>
+    <title>Volhub - Make Volunteering Fun & Purposeful</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
     <link href="{% static 'Guest/index.css' %}" type="text/css" rel="stylesheet">
 </head>
 <body class="light-theme">
-    <!-- Animated shapes in background -->
-    <div class="shape shape-circle"></div>
-    <div class="shape shape-spiky"></div>
-    <div class="shape shape-arc"></div>
-    <div class="shape shape-quarter-circle-1"></div>
-    <div class="shape shape-quarter-circle-2"></div>
-
     <!-- Header -->
-    <header>
+    <header id="main-header">
         <div class="container">
-            <div class="logo">
+            <div class="logo" id="logo">
                 <span>Vol<span class="highlight">Hub</span></span>
             </div>
             <nav>
                 <ul>
                     <li><a href="#about">About</a></li>
                     <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
                     <li><a href="#community">Community</a></li>
                 </ul>
             </nav>
-            <div class="mobile-menu-btn">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
+            <div class="header-right">
+                <button class="btn btn-secondary signup-btn">Sign Up</button>
+                <div class="theme-toggle" aria-label="Toggle dark mode">
+                    <label class="switch">
+                        <input type="checkbox" id="theme-switch" aria-label="Switch between light and dark mode">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
             </div>
-        </div>
-        <div class="header-right">
-            <button class="btn btn-secondary">Sign Up</button>
-            <div class="theme-toggle">
-                <label class="switch">
-                    <input type="checkbox" id="theme-switch">
-                    <span class="slider round"></span>
-                </label>
+            <div class="mobile-menu-btn" aria-label="Toggle mobile menu" role="button" tabindex="0">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
             </div>
         </div>
     </header>
@@ -51,25 +44,18 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container">
-            <div class="hero-content" data-aos="fade-up" data-aos-delay="200">
-                <h1>Connect Volunteers with Meaningful Opportunities</h1>
-                <p>Volhub bridges the gap between event organizers and passionate volunteers, creating communities that make a difference.</p>
+            <div class="hero-content">
+                <h1>Discover the Joy of Purposeful Volunteering</h1>
+                <p>Connect with events that match your skills and passions. Make a difference while doing what you love.</p>
                 <div class="hero-btns">
-                    <a href="#" class="btn btn-primary">Get Started</a>
-                    <a href="#" class="btn btn-outline">Learn More</a>
+                    <a href="#" class="btn btn-primary get-started-btn">Get Started</a>
+                    <a href="#about" class="btn btn-outline">Learn More</a>
                 </div>
             </div>
-            <div class="hero-image" data-aos="fade-left" data-aos-delay="400">
+            <div class="hero-image">
                 <div class="image-container">
-                    <img src="https://via.placeholder.com/600x400" alt="Volhub illustration">
-                    <div class="blob"></div>
+                    <img src="https://via.placeholder.com/600x400" alt="Volunteers collaborating at an event">
                 </div>
-            </div>
-        </div>
-        <div class="scroll-indicator">
-            <span>Scroll Down</span>
-            <div class="mouse">
-                <div class="wheel"></div>
             </div>
         </div>
     </section>
@@ -77,31 +63,30 @@
     <!-- About Section -->
     <section id="about" class="about">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
+            <div class="section-header">
                 <h2>About Volhub</h2>
                 <div class="underline"></div>
             </div>
             <div class="about-content">
-                <div class="about-image" data-aos="fade-right" data-aos-delay="200">
+                <div class="about-image">
                     <div class="image-wrapper">
-                        <img src="https://via.placeholder.com/500x350" alt="About Volhub">
-                        <div class="floating-shape"></div>
-                        <div class="floating-shape-2"></div>
+                        <img src="https://via.placeholder.com/500x350" alt="Diverse group of volunteers">
                     </div>
                 </div>
-                <div class="about-text" data-aos="fade-left" data-aos-delay="300">
-                    <h3>Bridging Volunteer Passion with Organizational Needs</h3>
-                    <p>Volhub is a platform designed to connect passionate volunteers with event organizers who need their skills and energy. From tech fests and hackathons to blood drives and community service, we make meaningful connections happen.</p>
+                <div class="about-text">
+                    <h3>Where Passion Meets Purpose</h3>
+                    <p>Volhub is more than just a platform—it's a community that celebrates the spirit of volunteering. We connect skilled individuals with meaningful opportunities that align with their expertise and interests, making volunteering both impactful and enjoyable.</p>
+                    <p>Our mission is to transform how people view volunteering—from an obligation to a fulfilling experience that builds skills, creates connections, and drives positive change.</p>
                     <div class="stats-container">
-                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
+                        <div class="stat-item">
                             <span class="count">500+</span>
                             <span>Events</span>
                         </div>
-                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="500">
+                        <div class="stat-item">
                             <span class="count">10K+</span>
                             <span>Volunteers</span>
                         </div>
-                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="600">
+                        <div class="stat-item">
                             <span class="count">250+</span>
                             <span>Organizers</span>
                         </div>
@@ -114,12 +99,12 @@
     <!-- Features Section -->
     <section id="features" class="features">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
+            <div class="section-header">
                 <h2>Key Features</h2>
                 <div class="underline"></div>
             </div>
             <div class="features-grid">
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-users-cog"></i>
                     </div>
@@ -128,21 +113,21 @@
                         <p>Seamlessly switch between volunteer and organizer roles with our intuitive dual dashboard system. Access all your events and applications in one place.</p>
                     </div>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-calendar-check"></i>
                     </div>
                     <h3>Event Management</h3>
-                    <p>Create, manage and organize events with powerful tools designed for seamless coordination.</p>
+                    <p>Create, manage and organize events with powerful tools designed for seamless coordination and volunteer engagement.</p>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-search"></i>
                     </div>
                     <h3>Smart Matching</h3>
-                    <p>Our algorithm helps volunteers find the perfect events that match their skills and interests.</p>
+                    <p>Our algorithm helps volunteers find the perfect events that match their skills and interests, ensuring meaningful contributions.</p>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-user-shield"></i>
                     </div>
@@ -151,58 +136,58 @@
                         <p>Build comprehensive profiles to highlight your skills, experience, and passion. Let organizers see what makes you the perfect volunteer for their events.</p>
                     </div>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-comments"></i>
                     </div>
                     <h3>Review System</h3>
-                    <p>Leave and receive feedback to build trust within the Volhub community.</p>
+                    <p>Leave and receive feedback to build trust within the Volhub community and improve future volunteering experiences.</p>
                 </div>
-                <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+                <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-mobile-alt"></i>
                     </div>
                     <h3>Mobile Friendly</h3>
-                    <p>Access Volhub on the go with our responsive design optimized for all devices.</p>
+                    <p>Access Volhub on the go with our responsive design optimized for all devices, making volunteering more accessible than ever.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- How It Works Section -->
-    <section class="how-it-works">
+    <section id="how-it-works" class="how-it-works">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
+            <div class="section-header">
                 <h2>How It Works</h2>
                 <div class="underline"></div>
             </div>
             <div class="timeline">
-                <div class="timeline-item" data-aos="fade-up" data-aos-delay="100">
+                <div class="timeline-item">
                     <div class="timeline-number">1</div>
                     <div class="timeline-content">
                         <h3>Create Your Account</h3>
                         <p>Sign up and choose whether you're a volunteer, organizer, or both. We'll guide you through the setup process to get you started quickly.</p>
                     </div>
                 </div>
-                <div class="timeline-item" data-aos="fade-up" data-aos-delay="200">
+                <div class="timeline-item">
                     <div class="timeline-number">2</div>
                     <div class="timeline-content">
                         <h3>Complete Your Profile</h3>
-                        <p>Add your skills, interests, and availability to help with better matching.</p>
+                        <p>Add your skills, interests, and availability to help with better matching and showcase what makes you unique.</p>
                     </div>
                 </div>
-                <div class="timeline-item" data-aos="fade-up" data-aos-delay="300">
+                <div class="timeline-item">
                     <div class="timeline-number">3</div>
                     <div class="timeline-content">
                         <h3>Find or Create Events</h3>
-                        <p>Browse events as a volunteer or create new opportunities as an organizer.</p>
+                        <p>Browse events as a volunteer or create new opportunities as an organizer, all tailored to your interests and expertise.</p>
                     </div>
                 </div>
-                <div class="timeline-item" data-aos="fade-up" data-aos-delay="400">
+                <div class="timeline-item">
                     <div class="timeline-number">4</div>
                     <div class="timeline-content">
                         <h3>Connect and Collaborate</h3>
-                        <p>Apply to events or review volunteer applications to build your community.</p>
+                        <p>Apply to events or review volunteer applications to build your community and create meaningful connections.</p>
                     </div>
                 </div>
             </div>
@@ -212,11 +197,11 @@
     <!-- Testimonials Section -->
     <section id="community" class="testimonials">
         <div class="container">
-            <div class="section-header" data-aos="fade-up">
+            <div class="section-header">
                 <h2>What Our Community Says</h2>
                 <div class="underline"></div>
             </div>
-            <div class="testimonial-slider" data-aos="fade-up" data-aos-delay="200">
+            <div class="testimonial-slider">
                 <div class="testimonial-slides">
                     <div class="testimonial-slide active">
                         <div class="testimonial-content">
@@ -259,13 +244,13 @@
                     </div>
                 </div>
                 <div class="slider-controls">
-                    <button class="prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="prev-btn" aria-label="Previous testimonial"><i class="fas fa-chevron-left"></i></button>
                     <div class="slider-dots">
-                        <span class="dot active"></span>
-                        <span class="dot"></span>
-                        <span class="dot"></span>
+                        <span class="dot active" aria-label="Testimonial 1" role="button" tabindex="0"></span>
+                        <span class="dot" aria-label="Testimonial 2" role="button" tabindex="0"></span>
+                        <span class="dot" aria-label="Testimonial 3" role="button" tabindex="0"></span>
                     </div>
-                    <button class="next-btn"><i class="fas fa-chevron-right"></i></button>
+                    <button class="next-btn" aria-label="Next testimonial"><i class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
         </div>
@@ -274,10 +259,10 @@
     <!-- CTA Section -->
     <section class="cta">
         <div class="container">
-            <div class="cta-content" data-aos="zoom-in">
+            <div class="cta-content">
                 <h2>Ready to Make a Difference?</h2>
                 <p>Join our community of passionate volunteers and organizers today.</p>
-                <a href="#" class="btn btn-primary">Get Started Now</a>
+                <a href="#" class="btn btn-primary cta-btn">Get Started Now</a>
             </div>
         </div>
     </section>
@@ -286,19 +271,19 @@
     <footer>
         <div class="container">
             <div class="footer-top">
-                <div class="footer-col" data-aos="fade-up" data-aos-delay="100">
+                <div class="footer-col">
                     <div class="footer-logo">
                         <span>Vol<span class="highlight">Hub</span></span>
                     </div>
                     <p>Connecting passionate volunteers with meaningful opportunities since 2023.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-                <div class="footer-col" data-aos="fade-up" data-aos-delay="200">
+                <div class="footer-col">
                     <h4>Quick Links</h4>
                     <ul>
                         <li><a href="#about">About Us</a></li>
@@ -308,7 +293,7 @@
                         <li><a href="#">FAQ</a></li>
                     </ul>
                 </div>
-                <div class="footer-col" data-aos="fade-up" data-aos-delay="300">
+                <div class="footer-col">
                     <h4>Resources</h4>
                     <ul>
                         <li><a href="#">Volunteer Guide</a></li>
@@ -318,11 +303,11 @@
                         <li><a href="#">Support</a></li>
                     </ul>
                 </div>
-                <div class="footer-col contact-form" data-aos="fade-up" data-aos-delay="400">
+                <div class="footer-col contact-form">
                     <h4>Contact Us</h4>
-                    <form>
-                        <input type="email" placeholder="Your Email">
-                        <textarea placeholder="Your Message"></textarea>
+                    <form id="contact-form">
+                        <input type="email" placeholder="Your Email" aria-label="Your Email" required>
+                        <textarea placeholder="Your Message" aria-label="Your Message" required></textarea>
                         <button type="submit" class="btn btn-secondary">Send Message</button>
                     </form>
                 </div>
@@ -338,556 +323,79 @@
         </div>
     </footer>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <!-- Signup Modal -->
+    <div class="modal" id="signup-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-steps">
+                <div class="step active" data-step="1">
+                    <h2>Join Volhub</h2>
+                    <p>Create your account to get started</p>
+                    <form id="signup-form-step1">
+                        <div class="form-group">
+                            <label for="fullname">Full Name</label>
+                            <input type="text" id="fullname" name="fullname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Continue</button>
+                    </form>
+                    <p class="modal-footer-text">Already have an account? <a href="#" class="login-link">Log in</a></p>
+                </div>
+                <div class="step" data-step="2">
+                    <h2>Tell us about yourself</h2>
+                    <p>This helps us match you with the right opportunities</p>
+                    <form id="signup-form-step2">
+                        <div class="form-group">
+                            <label>I am a:</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="role" value="volunteer"> Volunteer
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="role" value="organizer"> Organizer
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="interests">Areas of Interest</label>
+                            <select id="interests" name="interests" multiple>
+                                <option value="technology">Technology</option>
+                                <option value="education">Education</option>
+                                <option value="environment">Environment</option>
+                                <option value="health">Health</option>
+                                <option value="arts">Arts & Culture</option>
+                                <option value="community">Community Service</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="skills">Skills</label>
+                            <input type="text" id="skills" name="skills" placeholder="e.g., Programming, Teaching, Design">
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-outline prev-step">Back</button>
+                            <button type="submit" class="btn btn-primary">Continue</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="success-message">
+                        <i class="fas fa-check-circle"></i>
+                        <h2>Welcome to Volhub!</h2>
+                        <p>Your account has been created successfully.</p>
+                        <button class="btn btn-primary btn-block">Go to Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
-    <script>
-        // Initialize AOS (Animate On Scroll)
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize AOS with custom options
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: false,
-        mirror: true
-    });
-
-    // Theme Toggle Functionality
-    const themeSwitch = document.getElementById('theme-switch');
-    const body = document.body;
-
-    // Check for saved theme preference or respect OS preference
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDarkScheme.matches)) {
-        body.classList.add('dark-theme');
-        themeSwitch.checked = true;
-    }
-
-    // Theme toggle event listener
-    themeSwitch.addEventListener('change', function() {
-        if (this.checked) {
-            body.classList.add('dark-theme');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            body.classList.remove('dark-theme');
-            localStorage.setItem('theme', 'light');
-        }
-        
-        // Re-initialize AOS when theme changes to ensure proper animations
-        setTimeout(() => {
-            AOS.refresh();
-        }, 300);
-    });
-
-    // Mobile Menu Toggle
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navMenu = document.querySelector('nav ul');
-    
-    mobileMenuBtn.addEventListener('click', function() {
-        this.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        
-        // Animate menu bars
-        const bars = this.querySelectorAll('.bar');
-        if (this.classList.contains('active')) {
-            bars[0].style.transform = 'rotate(-45deg) translate(-5px, 6px)';
-            bars[1].style.opacity = '0';
-            bars[2].style.transform = 'rotate(45deg) translate(-5px, -6px)';
-        } else {
-            bars[0].style.transform = 'none';
-            bars[1].style.opacity = '1';
-            bars[2].style.transform = 'none';
-        }
-    });
-
-    // Add mobile menu styles
-    const style = document.createElement('style');
-    style.textContent = `
-        @media screen and (max-width: 768px) {
-            nav ul.active {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 80px;
-                left: 0;
-                width: 100%;
-                background-color: var(--bg-color);
-                box-shadow: 0 10px 15px var(--shadow-color);
-                padding: 20px;
-                gap: 20px;
-                z-index: 1000;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Testimonial Slider (for mobile only)
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const dots = document.querySelectorAll('.dot');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    let currentSlide = 0;
-
-    // Set initial state
-    function showSlide(index) {
-        // Only run slider functionality on mobile
-        if(window.innerWidth <= 1024) {
-            // Hide all slides
-            slides.forEach(slide => {
-                slide.style.display = 'none';
-            });
-            
-            // Remove active class from all dots
-            dots.forEach(dot => {
-                dot.classList.remove('active');
-            });
-            
-            // Show the selected slide and activate corresponding dot
-            slides[index].style.display = 'block';
-            dots[index].classList.add('active');
-        } else {
-            // On desktop, show all testimonials in grid
-            slides.forEach(slide => {
-                slide.style.display = 'block';
-            });
-        }
-    }
-
-    // Next slide function (mobile only)
-    function nextSlide() {
-        if(window.innerWidth <= 1024) {
-            currentSlide++;
-            if (currentSlide >= slides.length) {
-                currentSlide = 0;
-            }
-            showSlide(currentSlide);
-        }
-    }
-
-    // Previous slide function (mobile only)
-    function prevSlide() {
-        if(window.innerWidth <= 1024) {
-            currentSlide--;
-            if (currentSlide < 0) {
-                currentSlide = slides.length - 1;
-            }
-            showSlide(currentSlide);
-        }
-    }
-
-    // Event listeners for controls
-    if(nextBtn && prevBtn) {
-        nextBtn.addEventListener('click', nextSlide);
-        prevBtn.addEventListener('click', prevSlide);
-        
-        // Add click event to dots
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                if(window.innerWidth <= 1024) {
-                    currentSlide = index;
-                    showSlide(currentSlide);
-                }
-            });
-        });
-    }
-
-    // Add smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            
-            if (target) {
-                // Close mobile menu if open
-                if (mobileMenuBtn.classList.contains('active')) {
-                    mobileMenuBtn.click();
-                }
-                
-                window.scrollTo({
-                    top: target.offsetTop - 100,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-
-    // Animate count numbers
-    const stats = document.querySelectorAll('.count');
-    
-    const observerOptions = {
-        threshold: 0.5
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = entry.target;
-                const targetValue = parseInt(target.textContent.replace(/[^0-9]/g, ''));
-                let count = 0;
-                const duration = 2000; // 2 seconds
-                const interval = Math.floor(duration / targetValue);
-                
-                const counter = setInterval(() => {
-                    count += 1;
-                    if (count > targetValue) {
-                        clearInterval(counter);
-                        return;
-                    }
-                    
-                    // Format with K+ for thousands
-                    if (targetValue >= 1000) {
-                        target.textContent = count >= 1000 ? 
-                            `${Math.floor(count/1000)}K+` : 
-                            `${count}+`;
-                    } else {
-                        target.textContent = `${count}+`;
-                    }
-                }, interval);
-                
-                observer.unobserve(target);
-            }
-        });
-    }, observerOptions);
-    
-    stats.forEach(stat => {
-        observer.observe(stat);
-    });
-
-    // Header scroll effect
-    const header = document.querySelector('header');
-    
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.style.padding = '10px 0';
-            header.style.boxShadow = '0 5px 20px var(--shadow-color)';
-        } else {
-            header.style.padding = '20px 0';
-            header.style.boxShadow = '0 2px 10px var(--shadow-color)';
-        }
-    });
-
-    // Add interactive cursor effect
-    const cursor = document.createElement('div');
-    cursor.classList.add('custom-cursor');
-    document.body.appendChild(cursor);
-
-    // Add cursor styles
-    const cursorStyle = document.createElement('style');
-    cursorStyle.textContent = `
-        .custom-cursor {
-            position: fixed;
-            width: 30px;
-            height: 30px;
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            opacity: 0;
-            transition: transform 0.1s ease, opacity 0.3s ease;
-        }
-        body:hover .custom-cursor {
-            opacity: 0.6;
-        }
-        .custom-cursor.active {
-            transform: translate(-50%, -50%) scale(0.5);
-            background-color: var(--primary-color);
-        }
-        @media (max-width: 768px) {
-            .custom-cursor {
-                display: none;
-            }
-        }
-    `;
-    document.head.appendChild(cursorStyle);
-
-    // Update cursor position
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = `${e.clientX}px`;
-        cursor.style.top = `${e.clientY}px`;
-    });
-
-    // Cursor effects on interactive elements
-    const interactiveElements = document.querySelectorAll('a, button, .btn, input, textarea, .dot, .theme-toggle label');
-    
-    interactiveElements.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            cursor.classList.add('active');
-        });
-        
-        el.addEventListener('mouseleave', () => {
-            cursor.classList.remove('active');
-        });
-    });
-
-    // Hide cursor when leaving window
-    document.addEventListener('mouseleave', () => {
-        cursor.style.opacity = '0';
-    });
-    
-    document.addEventListener('mouseenter', () => {
-        cursor.style.opacity = '0.6';
-    });
-
-    // Particle animation in hero section
-    const heroSection = document.querySelector('.hero');
-    
-    for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div');
-        particle.classList.add('particle');
-        heroSection.appendChild(particle);
-        
-        // Set random properties
-        const size = Math.random() * 8 + 2;
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.left = `${Math.random() * 100}%`;
-        particle.style.top = `${Math.random() * 100}%`;
-        
-        // Animation
-        const duration = Math.random() * 20 + 10;
-        const delay = Math.random() * 5;
-        
-        particle.style.animation = `float-particle ${duration}s infinite alternate`;
-        particle.style.animationDelay = `${delay}s`;
-    }
-
-    // Add particle styles
-    const particleStyle = document.createElement('style');
-    particleStyle.textContent = `
-        .particle {
-            position: absolute;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            opacity: 0.3;
-            z-index: 1;
-        }
-        
-        @keyframes float-particle {
-            0% {
-                transform: translate(0, 0) rotate(0deg);
-            }
-            100% {
-                transform: translate(${Math.random() * 100 - 50}px, ${Math.random() * 100 - 50}px) rotate(360deg);
-            }
-        }
-    `;
-    document.head.appendChild(particleStyle);
-
-    // Form submission handling
-    const contactForm = document.querySelector('.contact-form form');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const email = this.querySelector('input[type="email"]').value;
-            const message = this.querySelector('textarea').value;
-            
-            // Basic validation
-            if (!email || !message) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            // Simulate form submission
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            
-            // Simulate API call with timeout
-            setTimeout(() => {
-                // Reset form
-                this.reset();
-                
-                // Create success message
-                const successMessage = document.createElement('div');
-                successMessage.classList.add('form-success');
-                successMessage.textContent = 'Message sent successfully!';
-                successMessage.style.color = 'var(--accent-green)';
-                successMessage.style.marginTop = '10px';
-                successMessage.style.fontWeight = '500';
-                
-                // Add success message to form
-                this.appendChild(successMessage);
-                
-                // Reset button
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
-                
-                // Remove success message after 3 seconds
-                setTimeout(() => {
-                    successMessage.remove();
-                }, 3000);
-                
-            }, 1500);
-        });
-    }
-
-    // Add parallax effect to hero section
-    window.addEventListener('scroll', function() {
-        const scrolled = window.scrollY;
-        
-        if (window.innerWidth > 768) {
-            const heroImage = document.querySelector('.hero-image');
-            const shapes = document.querySelectorAll('.shape');
-            
-            if (heroImage) {
-                heroImage.style.transform = `translateY(${scrolled * 0.1}px)`;
-            }
-            
-            shapes.forEach((shape, index) => {
-                const speed = (index + 1) * 0.05;
-                shape.style.transform = `translateY(${scrolled * speed}px)`;
-            });
-        }
-    });
-
-    // Add reveal animation for sections
-    const sections = document.querySelectorAll('section');
-    
-    const revealSection = function(entries, observer) {
-        const [entry] = entries;
-        
-        if (!entry.isIntersecting) return;
-        
-        entry.target.classList.add('section-visible');
-        observer.unobserve(entry.target);
-    };
-    
-    const sectionObserver = new IntersectionObserver(revealSection, {
-        root: null,
-        threshold: 0.15
-    });
-    
-    sections.forEach(function(section) {
-        section.classList.add('section-hidden');
-        sectionObserver.observe(section);
-    });
-
-    // Add section visibility styles
-    const sectionStyle = document.createElement('style');
-    sectionStyle.textContent = `
-        .section-hidden {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: opacity 1s ease, transform 1s ease;
-        }
-        
-        .section-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    `;
-    document.head.appendChild(sectionStyle);
-
-    // Add tilt effect to feature cards
-    const featureCards = document.querySelectorAll('.feature-card');
-    
-    featureCards.forEach(card => {
-        card.addEventListener('mousemove', e => {
-            const cardRect = card.getBoundingClientRect();
-            const cardCenterX = cardRect.left + cardRect.width / 2;
-            const cardCenterY = cardRect.top + cardRect.height / 2;
-            
-            const mouseX = e.clientX - cardCenterX;
-            const mouseY = e.clientY - cardCenterY;
-            
-            const rotateX = mouseY * -0.05;
-            const rotateY = mouseX * 0.05;
-            
-            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-5px)`;
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'rotateX(0) rotateY(0) translateY(0)';
-        });
-    });
-
-    // Add wave animation to CTA section
-    const cta = document.querySelector('.cta');
-    
-    if (cta) {
-        const wave = document.createElement('div');
-        wave.classList.add('wave');
-        cta.appendChild(wave);
-        
-        const waveStyle = document.createElement('style');
-        waveStyle.textContent = `
-            .wave {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 15px;
-                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="%23ffffff" /></svg>');
-                background-size: cover;
-                background-repeat: no-repeat;
-                animation: wave-animation 10s linear infinite;
-            }
-            
-            @keyframes wave-animation {
-                0% {
-                    background-position-x: 0;
-                }
-                100% {
-                    background-position-x: 1000px;
-                }
-            }
-        `;
-        document.head.appendChild(waveStyle);
-    }
-
-    // Add scroll progress indicator
-    const progressBar = document.createElement('div');
-    progressBar.classList.add('scroll-progress');
-    document.body.appendChild(progressBar);
-    
-    const progressStyle = document.createElement('style');
-    progressStyle.textContent = `
-        .scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background-color: var(--accent-color);
-            width: 0%;
-            z-index: 1001;
-            transition: width 0.1s ease;
-        }
-    `;
-    document.head.appendChild(progressStyle);
-    
-    window.addEventListener('scroll', () => {
-        const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const scrolled = window.scrollY;
-        const scrollPercentage = (scrolled / totalScroll) * 100;
-        
-        progressBar.style.width = `${scrollPercentage}%`;
-    });
-
-    // Initialize typewriter effect for hero headline
-    const heroHeading = document.querySelector('.hero-content h1');
-    
-    if (heroHeading) {
-        const originalText = heroHeading.textContent;
-        heroHeading.textContent = '';
-        
-        let charIndex = 0;
-        
-        const typeEffect = setInterval(() => {
-            if (charIndex < originalText.length) {
-                heroHeading.textContent += originalText.charAt(charIndex);
-                charIndex++;
-            } else {
-                clearInterval(typeEffect);
-            }
-        }, 50);
-    }
-});
-    </script>
 </body>
 </html>
