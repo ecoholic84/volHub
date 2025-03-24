@@ -5,7 +5,7 @@ from User.models import *
 # Create your views here.
 
 def index(request):
-    return render(request, 'Guest/index2.html')
+    return render(request, 'Guest/index.html')
 
 def get_email(request):
     if request.method=='POST':

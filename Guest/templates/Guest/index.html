@@ -1,563 +1,94 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Volhub - Connect Volunteers with Organizers</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
+    <title>Volhub - Make Volunteering Fun & Purposeful</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- AOS Library -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" />
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#386ff1',
-                        secondary: '#0de47f',
-                        accent: '#f5d24e',
-                        'accent-blue': '#92abf9',
-                        'text-dark': '#2c363a',
-                        'text-light': '#74747c',
-                        'bg-light': '#e8e6de',
-                        'border-color': '#dbe0e9'
-                    },
-                    fontFamily: {
-                        'outfit': ['Outfit', 'sans-serif']
-                    },
-                    keyframes: {
-                        'float-slow': {
-                            '0%': { transform: 'translate(0, 0) rotate(0deg)' },
-                            '100%': { transform: 'translate(30px, 30px) rotate(15deg)' }
-                        },
-                        'float-medium': {
-                            '0%': { transform: 'translate(0, 0) rotate(0deg)' },
-                            '100%': { transform: 'translate(-20px, 20px) rotate(-10deg)' }
-                        },
-                        'float-fast': {
-                            '0%': { transform: 'translate(0, 0) rotate(0deg)' },
-                            '100%': { transform: 'translate(15px, -15px) rotate(5deg)' }
-                        },
-                        'spiky-animation': {
-                            '0%': { 
-                                borderRadius: '42% 58% 72% 28% / 44% 56% 44% 56%',
-                                transform: 'rotate(0deg)'
-                            },
-                            '50%': { 
-                                borderRadius: '56% 44% 28% 72% / 56% 44% 56% 44%',
-                                transform: 'rotate(180deg)' 
-                            },
-                            '100%': { 
-                                borderRadius: '42% 58% 72% 28% / 44% 56% 44% 56%',
-                                transform: 'rotate(360deg)' 
-                            }
-                        },
-                        'blob-animation': {
-                            '0%': { borderRadius: '42% 58% 72% 28% / 44% 56% 44% 56%' },
-                            '50%': { borderRadius: '30% 60% 70% 40% / 50% 60% 30% 60%' },
-                            '100%': { borderRadius: '42% 58% 72% 28% / 44% 56% 44% 56%' }
-                        },
-                        'float-shape': {
-                            '0%': { transform: 'translate(0, 0) rotate(0deg)' },
-                            '100%': { transform: 'translate(15px, 15px) rotate(10deg)' }
-                        },
-                        'float-shape-2': {
-                            '0%': { transform: 'translate(0, 0) rotate(0deg)' },
-                            '100%': { transform: 'translate(-10px, -10px) rotate(-15deg)' }
-                        },
-                        'scroll-animation': {
-                            '0%': { 
-                                opacity: 1,
-                                transform: 'translateX(-50%) translateY(0)'
-                            },
-                            '100%': { 
-                                opacity: 0,
-                                transform: 'translateX(-50%) translateY(15px)'
-                            }
-                        },
-                        'slide-right': {
-                            '0%': { left: '-20px' },
-                            '100%': { left: '60px' }
-                        }
-                    },
-                    animation: {
-                        'float-slow': 'float-slow 15s infinite alternate',
-                        'float-medium': 'float-medium 12s infinite alternate',
-                        'float-fast': 'float-fast 10s infinite alternate',
-                        'float-shape': 'float-shape 6s infinite alternate',
-                        'float-shape-2': 'float-shape-2 7s infinite alternate',
-                        'spiky-animation': 'spiky-animation 15s infinite alternate',
-                        'blob-animation': 'blob-animation 8s infinite alternate',
-                        'scroll-animation': 'scroll-animation 2s infinite',
-                        'slide-right': 'slide-right 2s infinite alternate'
-                    }
-                }
-            }
-        }
-
-        // Initialize AOS (Animate On Scroll)
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize AOS with custom options
-    AOS.init({
-        duration: 800,
-        easing: 'ease-in-out',
-        once: false,
-        mirror: true
-    });
-
-    // Theme Toggle Functionality
-    const themeSwitch = document.getElementById('theme-switch');
-    const html = document.documentElement;
-    
-    // Check for saved theme preference or respect OS preference
-    const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
-    
-    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDarkScheme.matches)) {
-        html.classList.add('dark');
-        themeSwitch.checked = true;
-    }
-
-    // Theme toggle event listener
-    themeSwitch.addEventListener('change', function() {
-        if (this.checked) {
-            html.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            html.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-        
-        // Re-initialize AOS when theme changes to ensure proper animations
-        setTimeout(() => {
-            AOS.refresh();
-        }, 300);
-    });
-
-    // Mobile Menu Toggle
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navMenu = document.querySelector('nav ul');
-    
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', function() {
-            this.classList.toggle('active');
-            navMenu.classList.toggle('hidden');
-            navMenu.classList.toggle('flex');
-            navMenu.classList.toggle('flex-col');
-            navMenu.classList.toggle('absolute');
-            navMenu.classList.toggle('top-20');
-            navMenu.classList.toggle('left-0');
-            navMenu.classList.toggle('w-full');
-            navMenu.classList.toggle('bg-white');
-            navMenu.classList.toggle('dark:bg-gray-800');
-            navMenu.classList.toggle('shadow-md');
-            navMenu.classList.toggle('p-5');
-            navMenu.classList.toggle('z-50');
-            
-            // Animate menu bars
-            const bars = this.querySelectorAll('div');
-            if (this.classList.contains('active')) {
-                bars[0].style.transform = 'rotate(-45deg) translate(-5px, 6px)';
-                bars[1].style.opacity = '0';
-                bars[2].style.transform = 'rotate(45deg) translate(-5px, -6px)';
-            } else {
-                bars[0].style.transform = 'none';
-                bars[1].style.opacity = '1';
-                bars[2].style.transform = 'none';
-            }
-        });
-    }
-
-    // Testimonial Slider (for mobile only)
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const dots = document.querySelectorAll('.dot');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    let currentSlide = 0;
-
-    // Set initial state
-    function showSlide(index) {
-        // Only run slider functionality on mobile
-        if(window.innerWidth <= 768) {
-            // Hide all slides
-            slides.forEach(slide => {
-                slide.classList.add('hidden');
-            });
-            
-            // Remove active class from all dots
-            dots.forEach(dot => {
-                dot.classList.remove('active');
-                dot.classList.remove('bg-primary');
-                dot.classList.remove('scale-125');
-                dot.classList.add('bg-border-color');
-            });
-            
-            // Show the selected slide and activate corresponding dot
-            slides[index].classList.remove('hidden');
-            dots[index].classList.add('active');
-            dots[index].classList.add('bg-primary');
-            dots[index].classList.add('scale-125');
-        } else {
-            // On desktop, show all testimonials in grid
-            slides.forEach(slide => {
-                slide.classList.remove('hidden');
-            });
-            
-            // Show slider controls only on mobile
-            const sliderControls = document.querySelector('.slider-controls');
-            if (sliderControls) {
-                if (window.innerWidth <= 768) {
-                    sliderControls.classList.remove('hidden');
-                } else {
-                    sliderControls.classList.add('hidden');
-                }
-            }
-        }
-    }
-
-    // Check screen size and adjust testimonials view
-    function checkScreenSize() {
-        if (window.innerWidth <= 768) {
-            showSlide(currentSlide);
-            
-            // Show slider controls
-            const sliderControls = document.querySelector('.slider-controls');
-            if (sliderControls) {
-                sliderControls.classList.remove('hidden');
-            }
-        } else {
-            // Show all slides for desktop
-            slides.forEach(slide => {
-                slide.classList.remove('hidden');
-            });
-            
-            // Hide slider controls
-            const sliderControls = document.querySelector('.slider-controls');
-            if (sliderControls) {
-                sliderControls.classList.add('hidden');
-            }
-        }
-    }
-
-    // Next slide function (mobile only)
-    function nextSlide() {
-        if(window.innerWidth <= 768) {
-            currentSlide++;
-            if (currentSlide >= slides.length) {
-                currentSlide = 0;
-            }
-            showSlide(currentSlide);
-        }
-    }
-
-    // Previous slide function (mobile only)
-    function prevSlide() {
-        if(window.innerWidth <= 768) {
-            currentSlide--;
-            if (currentSlide < 0) {
-                currentSlide = slides.length - 1;
-            }
-            showSlide(currentSlide);
-        }
-    }
-
-    // Event listeners for controls
-    if(nextBtn && prevBtn) {
-        nextBtn.addEventListener('click', nextSlide);
-        prevBtn.addEventListener('click', prevSlide);
-        
-        // Add click event to dots
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                if(window.innerWidth <= 768) {
-                    currentSlide = index;
-                    showSlide(currentSlide);
-                }
-            });
-        });
-    }
-
-    // Run on page load and resize
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    // Add smooth scrolling for anchor links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            
-            if (target) {
-                // Close mobile menu if open
-                if (mobileMenuBtn && mobileMenuBtn.classList.contains('active')) {
-                    mobileMenuBtn.click();
-                }
-                
-                window.scrollTo({
-                    top: target.offsetTop - 100,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-
-    // Animate count numbers
-    const stats = document.querySelectorAll('.count');
-    
-    const observerOptions = {
-        threshold: 0.5
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = entry.target;
-                const targetValue = parseInt(target.textContent.replace(/[^0-9]/g, ''));
-                let count = 0;
-                const duration = 2000; // 2 seconds
-                const interval = Math.floor(duration / targetValue);
-                
-                const counter = setInterval(() => {
-                    count += 1;
-                    if (count > targetValue) {
-                        clearInterval(counter);
-                        return;
-                    }
-                    
-                    // Format with K+ for thousands
-                    if (targetValue >= 1000) {
-                        target.textContent = count >= 1000 ? 
-                            `${Math.floor(count/1000)}K+` : 
-                            `${count}+`;
-                    } else {
-                        target.textContent = `${count}+`;
-                    }
-                }, interval);
-                
-                observer.unobserve(target);
-            }
-        });
-    }, observerOptions);
-    
-    stats.forEach(stat => {
-        observer.observe(stat);
-    });
-
-    // Form submission handling
-    const contactForm = document.querySelector('footer form');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form values
-            const email = this.querySelector('input[type="email"]').value;
-            const message = this.querySelector('textarea').value;
-            
-            // Basic validation
-            if (!email || !message) {
-                alert('Please fill in all fields');
-                return;
-            }
-            
-            // Simulate form submission
-            const submitBtn = this.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-            
-            // Simulate API call with timeout
-            setTimeout(() => {
-                // Reset form
-                this.reset();
-                
-                // Create success message
-                const successMessage = document.createElement('div');
-                successMessage.className = 'text-secondary mt-2 font-medium';
-                successMessage.textContent = 'Message sent successfully!';
-                
-                // Add success message to form
-                this.appendChild(successMessage);
-                
-                // Reset button
-                submitBtn.disabled = false;
-                submitBtn.textContent = originalText;
-                
-                // Remove success message after 3 seconds
-                setTimeout(() => {
-                    successMessage.remove();
-                }, 3000);
-                
-            }, 1500);
-        });
-    }
-
-    // Initialize typewriter effect for hero headline
-    const heroHeading = document.querySelector('.hero h1');
-    
-    if (heroHeading) {
-        const originalText = heroHeading.textContent;
-        heroHeading.textContent = '';
-        
-        let charIndex = 0;
-        
-        const typeEffect = setInterval(() => {
-            if (charIndex < originalText.length) {
-                heroHeading.textContent += originalText.charAt(charIndex);
-                charIndex++;
-            } else {
-                clearInterval(typeEffect);
-            }
-        }, 50);
-    }
-
-    // Add scroll progress indicator
-    const progressBar = document.createElement('div');
-    progressBar.className = 'fixed top-0 left-0 h-1 bg-accent z-50 transition-all duration-100';
-    progressBar.style.width = '0%';
-    document.body.appendChild(progressBar);
-    
-    window.addEventListener('scroll', () => {
-        const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-        const scrolled = window.scrollY;
-        const scrollPercentage = (scrolled / totalScroll) * 100;
-        
-        progressBar.style.width = `${scrollPercentage}%`;
-    });
-});
-    </script>
-    
-    <style type="text/css">
-        /* Custom styles that can't be easily done with Tailwind */
-        body {
-            font-family: 'Outfit', sans-serif;
-        }
-        
-        /* Shape quarter circle */
-        .shape-quarter-circle-1 {
-            border-radius: 0 0 0 100%;
-        }
-        
-        .shape-quarter-circle-2 {
-            border-radius: 0 0 100% 0;
-        }
-        
-        /* Arc shape */
-        .shape-arc {
-            clip-path: path('M120,60 A60,60 0 0,1 0,60');
-            transform: rotate(120deg);
-        }
-    </style>
+    <link href="{% static 'Guest/index.css' %}" type="text/css" rel="stylesheet">
 </head>
-<body class="bg-white text-text-dark overflow-x-hidden transition-all duration-300 dark:bg-gray-900 dark:text-white">
-    <!-- Animated shapes in background -->
-    <div class="fixed w-24 h-24 bg-secondary rounded-full top-32 left-[15%] opacity-70 z-0 animate-float-slow"></div>
-    <div class="fixed w-44 h-44 bg-primary top-[30%] left-[45%] opacity-70 z-0 animate-spiky-animation"></div>
-    <div class="fixed w-32 h-32 bg-secondary right-[15%] bottom-[30%] opacity-70 z-0 animate-float-medium shape-arc"></div>
-    <div class="fixed w-32 h-32 bg-accent-blue bottom-[20%] left-[25%] opacity-70 z-0 animate-float-fast shape-quarter-circle-1"></div>
-    <div class="fixed w-24 h-24 bg-accent top-[35%] right-[25%] opacity-70 z-0 animate-float-medium shape-quarter-circle-2"></div>
-
+<body class="light-theme">
     <!-- Header -->
-    <header class="fixed top-0 left-0 w-full z-50 py-5 bg-white bg-opacity-90 backdrop-blur-md transition-all duration-300 shadow-sm dark:bg-gray-900 dark:bg-opacity-90">
-        <div class="container mx-auto px-5 flex justify-between items-center">
-            <div class="text-2xl font-bold">
-                Vol<span class="text-primary">Hub</span>
+    <header id="main-header">
+        <div class="container">
+            <div class="logo" id="logo">
+                <span>Vol<span class="highlight">Hub</span></span>
             </div>
             <nav>
-                <ul class="hidden md:flex">
-                    <li class="ml-8"><a href="#about" class="font-medium relative after:absolute after:w-0 after:h-0.5 after:bg-primary after:bottom-[-5px] after:left-1/2 after:transform after:-translate-x-1/2 after:transition-all hover:after:w-full">About</a></li>
-                    <li class="ml-8"><a href="#features" class="font-medium relative after:absolute after:w-0 after:h-0.5 after:bg-primary after:bottom-[-5px] after:left-1/2 after:transform after:-translate-x-1/2 after:transition-all hover:after:w-full">Features</a></li>
-                    <li class="ml-8"><a href="#community" class="font-medium relative after:absolute after:w-0 after:h-0.5 after:bg-primary after:bottom-[-5px] after:left-1/2 after:transform after:-translate-x-1/2 after:transition-all hover:after:w-full">Community</a></li>
-                    <li class="ml-8"><a href="#" class="bg-primary text-white px-6 py-3 rounded-xl font-medium transition hover:-translate-y-1 hover:shadow-md">Sign Up</a></li>
+                <ul>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#community">Community</a></li>
                 </ul>
             </nav>
-            <div class="flex items-center">
-                <!-- Theme Toggle Switch -->
-                <div class="ml-5 relative">
-                    <input type="checkbox" id="theme-switch" class="sr-only">
-                    <label for="theme-switch" class="cursor-pointer relative block w-[50px] h-[26px] bg-bg-light rounded-xl transition-all border border-border-color dark:border-gray-600">
-                        <span class="sr-only">Toggle theme</span>
-                        <span class="absolute w-5 h-5 bg-primary rounded-lg top-[2px] left-[2px] transition-all transform dark:translate-x-6 dark:bg-secondary"></span>
-                        <i class="fas fa-sun absolute top-[6px] left-[6px] text-accent opacity-100 transition-all dark:opacity-0"></i>
-                        <i class="fas fa-moon absolute top-[6px] right-[6px] text-primary opacity-0 transition-all dark:opacity-100"></i>
+            <div class="header-right">
+                <button class="btn btn-secondary signup-btn">Sign Up</button>
+                <div class="theme-toggle" aria-label="Toggle dark mode">
+                    <label class="switch">
+                        <input type="checkbox" id="theme-switch" aria-label="Switch between light and dark mode">
+                        <span class="slider round"></span>
                     </label>
                 </div>
-                <!-- Mobile Menu Button -->
-                <div class="md:hidden ml-4 cursor-pointer">
-                    <div class="w-6 h-0.5 bg-text-dark mb-1.5 transition-all dark:bg-white"></div>
-                    <div class="w-6 h-0.5 bg-text-dark mb-1.5 transition-all dark:bg-white"></div>
-                    <div class="w-6 h-0.5 bg-text-dark transition-all dark:bg-white"></div>
-                </div>
+            </div>
+            <div class="mobile-menu-btn" aria-label="Toggle mobile menu" role="button" tabindex="0">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
             </div>
         </div>
     </header>
 
     <!-- Hero Section -->
-    <section class="pt-40 pb-24 relative overflow-hidden">
-        <div class="container mx-auto px-5">
-            <div class="flex flex-col md:flex-row items-center">
-                <div class="md:w-1/2 mb-12 md:mb-0 text-center md:text-left" data-aos="fade-up" data-aos-delay="200">
-                    <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-5">Connect Volunteers with Meaningful Opportunities</h1>
-                    <p class="text-lg text-text-light mb-8 max-w-xl mx-auto md:mx-0 dark:text-gray-300">Volhub bridges the gap between event organizers and passionate volunteers, creating communities that make a difference.</p>
-                    <div class="flex flex-wrap justify-center md:justify-start gap-4">
-                        <a href="#" class="bg-primary text-white px-6 py-3 rounded-xl font-medium transition hover:-translate-y-1 hover:shadow-lg">Get Started</a>
-                        <a href="#" class="border-2 border-primary text-primary px-6 py-3 rounded-xl font-medium transition hover:bg-primary hover:text-white hover:-translate-y-1">Learn More</a>
-                    </div>
-                </div>
-                <div class="md:w-1/2" data-aos="fade-left" data-aos-delay="400">
-                    <div class="relative">
-                        <img src="https://via.placeholder.com/600x400" alt="Volhub illustration" class="rounded-3xl shadow-lg relative z-10">
-                        <div class="absolute w-full h-full bg-primary rounded-3xl top-5 left-5 -z-0 opacity-20 animate-blob-animation"></div>
-                    </div>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Discover the Joy of Purposeful Volunteering</h1>
+                <p>Connect with events that match your skills and passions. Make a difference while doing what you love.</p>
+                <div class="hero-btns">
+                    <a href="#" class="btn btn-primary get-started-btn">Get Started</a>
+                    <a href="#about" class="btn btn-outline">Learn More</a>
                 </div>
             </div>
-        </div>
-        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center z-10">
-            <span class="block text-sm text-text-light mb-2 dark:text-gray-300">Scroll Down</span>
-            <div class="w-6 h-10 border-2 border-text-light rounded-3xl mx-auto relative dark:border-gray-300">
-                <div class="w-1 h-2 bg-primary rounded-full absolute top-2 left-1/2 transform -translate-x-1/2 animate-scroll-animation"></div>
+            <div class="hero-image">
+                <div class="image-container">
+                    <img src="https://via.placeholder.com/600x400" alt="Volunteers collaborating at an event">
+                </div>
             </div>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="py-24 relative overflow-hidden">
-        <div class="container mx-auto px-5">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-4xl font-bold text-primary mb-4">About Volhub</h2>
-                <div class="w-20 h-1 bg-accent mx-auto relative">
-                    <div class="absolute w-10 h-1 bg-primary left-[-20px] animate-slide-right"></div>
-                </div>
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>About Volhub</h2>
+                <div class="underline"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                <div class="relative" data-aos="fade-right" data-aos-delay="200">
-                    <div class="overflow-hidden rounded-3xl">
-                        <img src="https://via.placeholder.com/500x350" alt="About Volhub" class="w-full rounded-3xl shadow-lg">
+            <div class="about-content">
+                <div class="about-image">
+                    <div class="image-wrapper">
+                        <img src="https://via.placeholder.com/500x350" alt="Diverse group of volunteers">
                     </div>
-                    <div class="absolute w-24 h-24 bg-accent rounded-tl-none rounded-tr-[30%] rounded-br-[70%] rounded-bl-[70%] -top-6 -left-6 z-0 opacity-70 animate-float-shape"></div>
-                    <div class="absolute w-20 h-20 bg-secondary rounded-tl-[60%] rounded-tr-[40%] rounded-br-[30%] rounded-bl-[70%] -bottom-5 -right-5 z-0 opacity-70 animate-float-shape-2"></div>
                 </div>
-                <div data-aos="fade-left" data-aos-delay="300">
-                    <h3 class="text-2xl font-bold text-primary mb-5">Bridging Volunteer Passion with Organizational Needs</h3>
-                    <p class="text-text-light mb-8 dark:text-gray-300">Volhub is a platform designed to connect passionate volunteers with event organizers who need their skills and energy. From tech fests and hackathons to blood drives and community service, we make meaningful connections happen.</p>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-10">
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-border-color dark:border-gray-700 p-5 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary" data-aos="zoom-in" data-aos-delay="400">
-                            <span class="block text-4xl font-bold text-primary mb-1 count">500+</span>
-                            <span class="text-text-light text-sm dark:text-gray-300">Events</span>
+                <div class="about-text">
+                    <h3>Where Passion Meets Purpose</h3>
+                    <p>Volhub is more than just a platform—it's a community that celebrates the spirit of volunteering. We connect skilled individuals with meaningful opportunities that align with their expertise and interests, making volunteering both impactful and enjoyable.</p>
+                    <p>Our mission is to transform how people view volunteering—from an obligation to a fulfilling experience that builds skills, creates connections, and drives positive change.</p>
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span class="count">500+</span>
+                            <span>Events</span>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-border-color dark:border-gray-700 p-5 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary" data-aos="zoom-in" data-aos-delay="500">
-                            <span class="block text-4xl font-bold text-primary mb-1 count">10K+</span>
-                            <span class="text-text-light text-sm dark:text-gray-300">Volunteers</span>
+                        <div class="stat-item">
+                            <span class="count">10K+</span>
+                            <span>Volunteers</span>
                         </div>
-                        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-border-color dark:border-gray-700 p-5 text-center shadow-sm transition-all hover:-translate-y-1 hover:border-primary" data-aos="zoom-in" data-aos-delay="600">
-                            <span class="block text-4xl font-bold text-primary mb-1 count">250+</span>
-                            <span class="text-text-light text-sm dark:text-gray-300">Organizers</span>
+                        <div class="stat-item">
+                            <span class="count">250+</span>
+                            <span>Organizers</span>
                         </div>
                     </div>
                 </div>
@@ -566,101 +97,97 @@ document.addEventListener('DOMContentLoaded', function() {
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-24 relative">
-        <div class="container mx-auto px-5">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-4xl font-bold text-primary mb-4">Key Features</h2>
-                <div class="w-20 h-1 bg-accent mx-auto relative">
-                    <div class="absolute w-10 h-1 bg-primary left-[-20px] animate-slide-right"></div>
-                </div>
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Key Features</h2>
+                <div class="underline"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm md:col-span-2 transition-all hover:-translate-y-1 hover:border-primary flex items-center" data-aos="fade-up" data-aos-delay="100">
-                    <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-2xl flex items-center justify-center mr-6 transition-all">
-                        <i class="fas fa-users-cog text-2xl text-primary"></i>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users-cog"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-primary mb-3">Dual Dashboards</h3>
-                        <p class="text-text-light dark:text-gray-300">Seamlessly switch between volunteer and organizer roles with our intuitive dual dashboard system. Access all your events and applications in one place.</p>
+                        <h3>Dual Dashboards</h3>
+                        <p>Seamlessly switch between volunteer and organizer roles with our intuitive dual dashboard system. Access all your events and applications in one place.</p>
                     </div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary text-center" data-aos="fade-up" data-aos-delay="200">
-                    <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-all">
-                        <i class="fas fa-calendar-check text-2xl text-primary"></i>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Event Management</h3>
-                    <p class="text-text-light dark:text-gray-300">Create, manage and organize events with powerful tools designed for seamless coordination.</p>
+                    <h3>Event Management</h3>
+                    <p>Create, manage and organize events with powerful tools designed for seamless coordination and volunteer engagement.</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary text-center" data-aos="fade-up" data-aos-delay="300">
-                    <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-all">
-                        <i class="fas fa-search text-2xl text-primary"></i>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Smart Matching</h3>
-                    <p class="text-text-light dark:text-gray-300">Our algorithm helps volunteers find the perfect events that match their skills and interests.</p>
+                    <h3>Smart Matching</h3>
+                    <p>Our algorithm helps volunteers find the perfect events that match their skills and interests, ensuring meaningful contributions.</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm md:col-span-2 transition-all hover:-translate-y-1 hover:border-primary flex items-center" data-aos="fade-up" data-aos-delay="400">
-                    <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-2xl flex items-center justify-center mr-6 transition-all">
-                        <i class="fas fa-user-shield text-2xl text-primary"></i>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-bold text-primary mb-3">Profile Showcase</h3>
-                        <p class="text-text-light dark:text-gray-300">Build comprehensive profiles to highlight your skills, experience, and passion. Let organizers see what makes you the perfect volunteer for their events.</p>
+                        <h3>Profile Showcase</h3>
+                        <p>Build comprehensive profiles to highlight your skills, experience, and passion. Let organizers see what makes you the perfect volunteer for their events.</p>
                     </div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary text-center" data-aos="fade-up" data-aos-delay="500">
-                    <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-all">
-                        <i class="fas fa-comments text-2xl text-primary"></i>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comments"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Review System</h3>
-                    <p class="text-text-light dark:text-gray-300">Leave and receive feedback to build trust within the Volhub community.</p>
+                    <h3>Review System</h3>
+                    <p>Leave and receive feedback to build trust within the Volhub community and improve future volunteering experiences.</p>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary text-center" data-aos="fade-up" data-aos-delay="600">
-                    <div class="w-16 h-16 bg-primary bg-opacity-10 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-all">
-                        <i class="fas fa-mobile-alt text-2xl text-primary"></i>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-primary mb-3">Mobile Friendly</h3>
-                    <p class="text-text-light dark:text-gray-300">Access Volhub on the go with our responsive design optimized for all devices.</p>
+                    <h3>Mobile Friendly</h3>
+                    <p>Access Volhub on the go with our responsive design optimized for all devices, making volunteering more accessible than ever.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- How It Works Section -->
-    <section class="py-24 relative">
-        <div class="container mx-auto px-5">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-4xl font-bold text-primary mb-4">How It Works</h2>
-                <div class="w-20 h-1 bg-accent mx-auto relative">
-                    <div class="absolute w-10 h-1 bg-primary left-[-20px] animate-slide-right"></div>
-                </div>
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <div class="underline"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm md:col-span-2 transition-all hover:-translate-y-1 hover:border-primary flex items-center" data-aos="fade-up" data-aos-delay="100">
-                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl mr-6">1</div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-number">1</div>
                     <div class="timeline-content">
-                        <h3 class="text-xl font-bold text-primary mb-2">Create Your Account</h3>
-                        <p class="text-text-light dark:text-gray-300">Sign up and choose whether you're a volunteer, organizer, or both. We'll guide you through the setup process to get you started quickly.</p>
+                        <h3>Create Your Account</h3>
+                        <p>Sign up and choose whether you're a volunteer, organizer, or both. We'll guide you through the setup process to get you started quickly.</p>
                     </div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary" data-aos="fade-up" data-aos-delay="200">
-                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl mb-4">2</div>
+                <div class="timeline-item">
+                    <div class="timeline-number">2</div>
                     <div class="timeline-content">
-                        <h3 class="text-xl font-bold text-primary mb-2">Complete Your Profile</h3>
-                        <p class="text-text-light dark:text-gray-300">Add your skills, interests, and availability to help with better matching.</p>
+                        <h3>Complete Your Profile</h3>
+                        <p>Add your skills, interests, and availability to help with better matching and showcase what makes you unique.</p>
                     </div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary" data-aos="fade-up" data-aos-delay="300">
-                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl mb-4">3</div>
+                <div class="timeline-item">
+                    <div class="timeline-number">3</div>
                     <div class="timeline-content">
-                        <h3 class="text-xl font-bold text-primary mb-2">Find or Create Events</h3>
-                        <p class="text-text-light dark:text-gray-300">Browse events as a volunteer or create new opportunities as an organizer.</p>
+                        <h3>Find or Create Events</h3>
+                        <p>Browse events as a volunteer or create new opportunities as an organizer, all tailored to your interests and expertise.</p>
                     </div>
                 </div>
-                <div class="bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary" data-aos="fade-up" data-aos-delay="400">
-                    <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white font-bold text-xl mb-4">4</div>
+                <div class="timeline-item">
+                    <div class="timeline-number">4</div>
                     <div class="timeline-content">
-                        <h3 class="text-xl font-bold text-primary mb-2">Connect and Collaborate</h3>
-                        <p class="text-text-light dark:text-gray-300">Apply to events or review volunteer applications to build your community.</p>
+                        <h3>Connect and Collaborate</h3>
+                        <p>Apply to events or review volunteer applications to build your community and create meaningful connections.</p>
                     </div>
                 </div>
             </div>
@@ -668,138 +195,207 @@ document.addEventListener('DOMContentLoaded', function() {
     </section>
 
     <!-- Testimonials Section -->
-    <section id="community" class="py-24 relative">
-        <div class="container mx-auto px-5">
-            <div class="text-center mb-16" data-aos="fade-up">
-                <h2 class="text-4xl font-bold text-primary mb-4">What Our Community Says</h2>
-                <div class="w-20 h-1 bg-accent mx-auto relative">
-                    <div class="absolute w-10 h-1 bg-primary left-[-20px] animate-slide-right"></div>
-                </div>
+    <section id="community" class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2>What Our Community Says</h2>
+                <div class="underline"></div>
             </div>
-            <div class="testimonial-slider" data-aos="fade-up" data-aos-delay="200">
-                <div class="testimonial-slides grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-                    <div class="testimonial-slide bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary">
-                        <div class="text-primary text-3xl opacity-20 mb-4"><i class="fas fa-quote-left"></i></div>
-                        <p class="text-text-dark mb-6 italic dark:text-white">"I wear both hats as a volunteer and organizer. Volhub's dual system lets me switch roles effortlessly, and the profile showcase feature helps build credibility in the community."</p>
-                        <div class="flex items-center">
-                            <img src="https://via.placeholder.com/60x60" alt="Aisha Patel" class="w-12 h-12 rounded-full border-3 border-accent mr-4">
-                            <div>
-                                <h4 class="font-bold text-primary">Aisha Patel</h4>
-                                <span class="text-text-light text-sm dark:text-gray-300">Community Leader</span>
+            <div class="testimonial-slider">
+                <div class="testimonial-slides">
+                    <div class="testimonial-slide active">
+                        <div class="testimonial-content">
+                            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                            <p>"Volhub transformed how I manage tech hackathons. Finding qualified volunteers is now seamless, and the dual dashboard system is a game-changer!"</p>
+                            <div class="testimonial-author">
+                                <img src="https://via.placeholder.com/60x60" alt="Sarah Johnson">
+                                <div class="author-info">
+                                    <h4>Sarah Johnson</h4>
+                                    <span>Tech Conference Organizer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-slide">
+                        <div class="testimonial-content">
+                            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                            <p>"As a student who loves volunteering, Volhub has opened doors to opportunities I never knew existed. The platform is intuitive and connecting with organizers is incredibly easy."</p>
+                            <div class="testimonial-author">
+                                <img src="https://via.placeholder.com/60x60" alt="Michael Chen">
+                                <div class="author-info">
+                                    <h4>Michael Chen</h4>
+                                    <span>Student Volunteer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-slide">
+                        <div class="testimonial-content">
+                            <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
+                            <p>"I wear both hats as a volunteer and organizer. Volhub's dual system lets me switch roles effortlessly, and the profile showcase feature helps build credibility in the community."</p>
+                            <div class="testimonial-author">
+                                <img src="https://via.placeholder.com/60x60" alt="Aisha Patel">
+                                <div class="author-info">
+                                    <h4>Aisha Patel</h4>
+                                    <span>Community Leader</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="slider-controls hidden md:hidden flex justify-center items-center">
-                    <button class="prev-btn text-primary text-xl px-3 py-2 hover:text-secondary focus:outline-none"><i class="fas fa-chevron-left"></i></button>
-                    <div class="slider-dots flex gap-2 mx-4">
-                        <span class="dot w-2.5 h-2.5 rounded-full bg-border-color cursor-pointer transition-all active:bg-primary active:scale-125"></span>
-                        <span class="dot w-2.5 h-2.5 rounded-full bg-border-color cursor-pointer transition-all"></span>
-                        <span class="dot w-2.5 h-2.5 rounded-full bg-border-color cursor-pointer transition-all"></span>
+                <div class="slider-controls">
+                    <button class="prev-btn" aria-label="Previous testimonial"><i class="fas fa-chevron-left"></i></button>
+                    <div class="slider-dots">
+                        <span class="dot active" aria-label="Testimonial 1" role="button" tabindex="0"></span>
+                        <span class="dot" aria-label="Testimonial 2" role="button" tabindex="0"></span>
+                        <span class="dot" aria-label="Testimonial 3" role="button" tabindex="0"></span>
                     </div>
-                    <button class="next-btn text-primary text-xl px-3 py-2 hover:text-secondary focus:outline-none"><i class="fas fa-chevron-right"></i></button>
+                    <button class="next-btn" aria-label="Next testimonial"><i class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="py-20 relative overflow-hidden">
-        <div class="container mx-auto px-5">
-            <div class="bg-primary text-white rounded-3xl py-16 px-8 md:px-16 text-center relative overflow-hidden" data-aos="zoom-in">
-                <!-- Background shapes -->
-                <div class="absolute w-48 h-48 bg-white bg-opacity-5 rounded-tl-[42%] rounded-tr-[58%] rounded-br-[72%] rounded-bl-[28%] top-[-80px] left-[-50px] animate-spiky-animation"></div>
-                <div class="absolute w-36 h-36 bg-white bg-opacity-5 rounded-3xl bottom-[-50px] right-[-30px] transform rotate-12"></div>
-                
-                <div class="relative z-10 max-w-2xl mx-auto">
-                    <h2 class="text-4xl font-bold mb-4">Ready to Make a Difference?</h2>
-                    <p class="text-white text-opacity-80 text-lg mb-8">Join our community of passionate volunteers and organizers today.</p>
-                    <a href="#" class="bg-white text-primary px-8 py-3 rounded-xl font-medium inline-block transition hover:-translate-y-1 hover:shadow-lg hover:bg-accent">Get Started Now</a>
-                </div>
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Make a Difference?</h2>
+                <p>Join our community of passionate volunteers and organizers today.</p>
+                <a href="#" class="btn btn-primary cta-btn">Get Started Now</a>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-bg-light dark:bg-gray-800 pt-20">
-        <div class="container mx-auto px-5">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-                <div data-aos="fade-up" data-aos-delay="100">
-                    <div class="text-2xl font-bold mb-5">
-                        Vol<span class="text-primary">Hub</span>
+    <footer>
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <span>Vol<span class="highlight">Hub</span></span>
                     </div>
-                    <p class="text-text-light mb-5 dark:text-gray-300">Connecting passionate volunteers with meaningful opportunities since 2023.</p>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl transition hover:-translate-y-1 hover:bg-secondary"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl transition hover:-translate-y-1 hover:bg-secondary"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl transition hover:-translate-y-1 hover:bg-secondary"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="w-10 h-10 bg-primary text-white flex items-center justify-center rounded-xl transition hover:-translate-y-1 hover:bg-secondary"><i class="fab fa-linkedin-in"></i></a>
+                    <p>Connecting passionate volunteers with meaningful opportunities since 2023.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
-                <div data-aos="fade-up" data-aos-delay="200">
-                    <h4 class="text-lg font-bold text-primary mb-6 relative after:content-[''] after:absolute after:w-10 after:h-0.5 after:bg-primary after:bottom-[-10px] after:left-0">Quick Links</h4>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
                     <ul>
-                        <li class="mb-3"><a href="#about" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">About Us</a></li>
-                        <li class="mb-3"><a href="#features" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">Features</a></li>
-                        <li class="mb-3"><a href="#community" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">Community</a></li>
-                        <li class="mb-3"><a href="#" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">Blog</a></li>
-                        <li class="mb-3"><a href="#" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">FAQ</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#community">Community</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQ</a></li>
                     </ul>
                 </div>
-                <div data-aos="fade-up" data-aos-delay="300">
-                    <h4 class="text-lg font-bold text-primary mb-6 relative after:content-[''] after:absolute after:w-10 after:h-0.5 after:bg-primary after:bottom-[-10px] after:left-0">Resources</h4>
+                <div class="footer-col">
+                    <h4>Resources</h4>
                     <ul>
-                        <li class="mb-3"><a href="#" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">Volunteer Guide</a></li>
-                        <li class="mb-3"><a href="#" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">Organizer Tips</a></li>
-                        <li class="mb-3"><a href="#" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">Event Planning</a></li>
-                        <li class="mb-3"><a href="#" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">Success Stories</a></li>
-                        <li class="mb-3"><a href="#" class="text-text-light hover:text-primary hover:pl-1 transition-all dark:text-gray-300">Support</a></li>
+                        <li><a href="#">Volunteer Guide</a></li>
+                        <li><a href="#">Organizer Tips</a></li>
+                        <li><a href="#">Event Planning</a></li>
+                        <li><a href="#">Success Stories</a></li>
+                        <li><a href="#">Support</a></li>
                     </ul>
                 </div>
-                <div data-aos="fade-up" data-aos-delay="400">
-                    <h4 class="text-lg font-bold text-primary mb-6 relative after:content-[''] after:absolute after:w-10 after:h-0.5 after:bg-primary after:bottom-[-10px] after:left-0">Contact Us</h4>
-                    <form>
-                        <input type="email" placeholder="Your Email" class="w-full p-3 mb-4 border border-border-color rounded-xl bg-white focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                        <textarea placeholder="Your Message" class="w-full p-3 mb-4 border border-border-color rounded-xl bg-white h-24 resize-none focus:outline-none focus:border-primary dark:bg-gray-700 dark:border-gray-600 dark:text-white"></textarea>
-                        <button type="submit" class="bg-secondary text-white px-5 py-3 rounded-xl font-medium transition hover:-translate-y-1 hover:shadow-md">Send Message</button>
+                <div class="footer-col contact-form">
+                    <h4>Contact Us</h4>
+                    <form id="contact-form">
+                        <input type="email" placeholder="Your Email" aria-label="Your Email" required>
+                        <textarea placeholder="Your Message" aria-label="Your Message" required></textarea>
+                        <button type="submit" class="btn btn-secondary">Send Message</button>
                     </form>
                 </div>
             </div>
-            <div class="border-t border-border-color dark:border-gray-600 py-6 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-text-light mb-4 md:mb-0 dark:text-gray-300">&copy; 2023 Volhub. All rights reserved.</p>
-                <div class="flex gap-5">
-                    <a href="#" class="text-text-light text-sm hover:text-primary dark:text-gray-300">Privacy Policy</a>
-                    <a href="#" class="text-text-light text-sm hover:text-primary dark:text-gray-300">Terms of Service</a>
-                    <a href="#" class="text-text-light text-sm hover:text-primary dark:text-gray-300">Cookies Policy</a>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Volhub. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Cookies Policy</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <!-- AOS Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <!-- Signup Modal -->
+    <div class="modal" id="signup-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-steps">
+                <div class="step active" data-step="1">
+                    <h2>Join Volhub</h2>
+                    <p>Create your account to get started</p>
+                    <form id="signup-form-step1">
+                        <div class="form-group">
+                            <label for="fullname">Full Name</label>
+                            <input type="text" id="fullname" name="fullname" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Continue</button>
+                    </form>
+                    <p class="modal-footer-text">Already have an account? <a href="#" class="login-link">Log in</a></p>
+                </div>
+                <div class="step" data-step="2">
+                    <h2>Tell us about yourself</h2>
+                    <p>This helps us match you with the right opportunities</p>
+                    <form id="signup-form-step2">
+                        <div class="form-group">
+                            <label>I am a:</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="role" value="volunteer"> Volunteer
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" name="role" value="organizer"> Organizer
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="interests">Areas of Interest</label>
+                            <select id="interests" name="interests" multiple>
+                                <option value="technology">Technology</option>
+                                <option value="education">Education</option>
+                                <option value="environment">Environment</option>
+                                <option value="health">Health</option>
+                                <option value="arts">Arts & Culture</option>
+                                <option value="community">Community Service</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="skills">Skills</label>
+                            <input type="text" id="skills" name="skills" placeholder="e.g., Programming, Teaching, Design">
+                        </div>
+                        <div class="button-group">
+                            <button type="button" class="btn btn-outline prev-step">Back</button>
+                            <button type="submit" class="btn btn-primary">Continue</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="step" data-step="3">
+                    <div class="success-message">
+                        <i class="fas fa-check-circle"></i>
+                        <h2>Welcome to Volhub!</h2>
+                        <p>Your account has been created successfully.</p>
+                        <button class="btn btn-primary btn-block">Go to Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
-</html>>
-                        <p class="text-text-dark mb-6 italic dark:text-white">"Volhub transformed how I manage tech hackathons. Finding qualified volunteers is now seamless, and the dual dashboard system is a game-changer!"</p>
-                        <div class="flex items-center">
-                            <img src="https://via.placeholder.com/60x60" alt="Sarah Johnson" class="w-12 h-12 rounded-full border-3 border-accent mr-4">
-                            <div>
-                                <h4 class="font-bold text-primary">Sarah Johnson</h4>
-                                <span class="text-text-light text-sm dark:text-gray-300">Tech Conference Organizer</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-slide bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary">
-                        <div class="text-primary text-3xl opacity-20 mb-4"><i class="fas fa-quote-left"></i></div>
-                        <p class="text-text-dark mb-6 italic dark:text-white">"As a student who loves volunteering, Volhub has opened doors to opportunities I never knew existed. The platform is intuitive and connecting with organizers is incredibly easy."</p>
-                        <div class="flex items-center">
-                            <img src="https://via.placeholder.com/60x60" alt="Michael Chen" class="w-12 h-12 rounded-full border-3 border-accent mr-4">
-                            <div>
-                                <h4 class="font-bold text-primary">Michael Chen</h4>
-                                <span class="text-text-light text-sm dark:text-gray-300">Student Volunteer</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-slide bg-white dark:bg-gray-800 p-8 rounded-3xl border border-border-color dark:border-gray-700 shadow-sm transition-all hover:-translate-y-1 hover:border-primary">
-                        <div class="text-primary text-3xl opacity-20 mb-4"><i class="fas fa-quote-left"></i></div
+</html>
