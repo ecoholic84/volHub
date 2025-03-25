@@ -1038,6 +1038,7 @@ footer {
 
 .form-group {
     margin-bottom: 20px;
+    position: relative;
 }
 
 .form-group label {
@@ -1061,6 +1062,78 @@ footer {
     border-color: var(--primary-color);
     outline: none;
     box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+/* Password field styles */
+.password-input-container {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-light);
+    transition: all 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: var(--primary-color);
+}
+
+/* OAuth container styles */
+.oauth-container {
+    margin: 25px 0;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.9rem;
+    margin: 20px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.divider span {
+    padding: 0 10px;
+}
+
+.oauth-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.oauth-btn {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+.oauth-btn:hover {
+    background-color: var(--bg-light);
+    transform: translateY(-3px);
+    border-color: var(--primary-color);
+}
+
+.oauth-btn i {
+    font-size: 1.2rem;
 }
 
 .checkbox-group {

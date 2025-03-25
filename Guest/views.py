@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from Admin.models import *
 from Guest.models import *
 from User.models import *
+from django.http import JsonResponse
 # Create your views here.
 
 def index(request):
@@ -11,13 +12,19 @@ def get_email(request):
     if request.method=='POST':
         email=request.POST.get('txt_email')
         if tbl_user.objects.filter(user_email=email).exists():
-            message = "Email already exists!"
-            return render(request, 'Guest/sign_up.html',{'failed': message})
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'message': 'Email already exists!'})
+            else:
+                message = "Email already exists!"
+                return render(request, 'Guest/sign_up.html',{'failed': message})
         else:
             user = tbl_user.objects.create(user_email=email)
             request.session['regId']=user.id
-            message = "Email created successfully!"
-            return render(request, 'Guest/sign_up.html',{'success': message})
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'success', 'message': 'Email registered successfully!'})
+            else:
+                message = "Email created successfully!"
+                return render(request, 'Guest/sign_up.html',{'success': message})
     else:
         return render(request, 'Guest/sign_up.html',)
 
@@ -32,7 +39,11 @@ def user_registration(request):
         user.user_password=request.POST.get('txt_password')
         request.session['u_id']=user.id
         user.save()
-        return redirect('Guest:user_who')
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'status': 'success', 'redirect_url': '/guest/user_who/'})
+        else:
+            return redirect('Guest:user_who')
     else:
         return render(request,'Guest/user_registration.html')
     

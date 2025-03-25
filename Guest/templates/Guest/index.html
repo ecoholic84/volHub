@@ -330,57 +330,50 @@
             <div class="modal-steps">
                 <div class="step active" data-step="1">
                     <h2>Join Volhub</h2>
-                    <p>Create your account to get started</p>
-                    <form id="signup-form-step1">
-                        <div class="form-group">
-                            <label for="fullname">Full Name</label>
-                            <input type="text" id="fullname" name="fullname" required>
-                        </div>
+                    <p>Enter your email to get started</p>
+                    <form id="email-form">
                         <div class="form-group">
                             <label for="email">Email Address</label>
                             <input type="email" id="email" name="email" required>
                         </div>
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required>
-                        </div>
                         <button type="submit" class="btn btn-primary btn-block">Continue</button>
                     </form>
-                    <p class="modal-footer-text">Already have an account? <a href="#" class="login-link">Log in</a></p>
+                    <div class="oauth-container">
+                        <p class="divider"><span>or continue with</span></p>
+                        <div class="oauth-buttons">
+                            <button type="button" id="github-oauth" class="btn btn-outline oauth-btn">
+                                <i class="fab fa-github"></i> GitHub
+                            </button>
+                            <button type="button" id="google-oauth" class="btn btn-outline oauth-btn">
+                                <i class="fab fa-google"></i> Google
+                            </button>
+                        </div>
+                    </div>
+                    <p class="modal-footer-text">Already have an account? <a href="{% url 'Guest:login' %}" class="login-link">Log in</a></p>
                 </div>
                 <div class="step" data-step="2">
-                    <h2>Tell us about yourself</h2>
-                    <p>This helps us match you with the right opportunities</p>
-                    <form id="signup-form-step2">
+                    <h2>Complete Your Profile</h2>
+                    <p>Just a few more details</p>
+                    <form id="signup-details-form">
+                        <input type="hidden" id="signup-email" name="txt_email">
                         <div class="form-group">
-                            <label>I am a:</label>
-                            <div class="checkbox-group">
-                                <label class="checkbox">
-                                    <input type="checkbox" name="role" value="volunteer"> Volunteer
-                                </label>
-                                <label class="checkbox">
-                                    <input type="checkbox" name="role" value="organizer"> Organizer
-                                </label>
+                            <label for="fullname">Full Name</label>
+                            <input type="text" id="fullname" name="txt_name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="txt_username" required>
+                        </div>
+                        <div class="form-group password-field">
+                            <label for="password">Password</label>
+                            <div class="password-input-container">
+                                <input type="password" id="password" name="txt_password" required>
+                                <i id="togglePassword" class="far fa-eye toggle-password"></i>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="interests">Areas of Interest</label>
-                            <select id="interests" name="interests" multiple>
-                                <option value="technology">Technology</option>
-                                <option value="education">Education</option>
-                                <option value="environment">Environment</option>
-                                <option value="health">Health</option>
-                                <option value="arts">Arts & Culture</option>
-                                <option value="community">Community Service</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="skills">Skills</label>
-                            <input type="text" id="skills" name="skills" placeholder="e.g., Programming, Teaching, Design">
-                        </div>
                         <div class="button-group">
-                            <button type="button" class="btn btn-outline prev-step">Back</button>
-                            <button type="submit" class="btn btn-primary">Continue</button>
+                            <button type="button" class="btn btn-outline back-btn">Back</button>
+                            <button type="submit" class="btn btn-primary">Create Account</button>
                         </div>
                     </form>
                 </div>
@@ -389,13 +382,13 @@
                         <i class="fas fa-check-circle"></i>
                         <h2>Welcome to Volhub!</h2>
                         <p>Your account has been created successfully.</p>
-                        <button class="btn btn-primary btn-block">Go to Dashboard</button>
+                        <button class="btn btn-primary btn-block" onclick="window.location.href='{% url 'Guest:user_who' %}'">Choose Account Type</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="{% static 'Guest/script.js' %}"></script>
 </body>
 </html>
