@@ -1,34 +1,34 @@
 /* Base Styles and CSS Reset */
 :root {
     /* Light Theme Colors */
-    --primary-color: #ff6b6b;
-    --secondary-color: #4ecdc4;
+    --primary-color: hsl(231, 77%, 54%);
+    --secondary-color: hsl(232, 74%, 33%);
     --accent-color: #ffe66d;
     --accent-blue: #6c5ce7;
-    --text-color: #273339;
-    --text-light: #5a6a73;
-    --bg-color: #f5f7f7;
-    --bg-light: #e8eaec;
-    --bg-card: #ffffff;
-    --border-color: #dbe0e9;
-    --shadow-color: rgba(39, 51, 57, 0.08);
-    --shadow-hover: rgba(255, 107, 107, 0.15);
+    --text-color: hsl(200, 19%, 19%);
+    --text-light: hsl(200, 19%, 19%, 0.7);
+    --bg-color: hsl(0, 0%, 100%);
+    --bg-light: hsl(231, 100%, 96%);
+    --bg-card: hsl(0, 0%, 100%);
+    --border-color: hsl(231, 100%, 96%);
+    --shadow-color: hsla(231, 77%, 54%, 0.08);
+    --shadow-hover: hsla(231, 77%, 54%, 0.15);
 }
 
 .dark-theme {
     /* Dark Theme Colors */
-    --primary-color: #ff6b6b;
-    --secondary-color: #4ecdc4;
+    --primary-color: hsl(231, 77%, 54%);
+    --secondary-color: hsl(232, 74%, 33%);
     --accent-color: #ffe66d;
     --accent-blue: #6c5ce7;
-    --text-color: #f1f3f0;
-    --text-light: #a7a8b1;
-    --bg-color: #1a1e23;
-    --bg-light: #252a30;
-    --bg-card: #2d3339;
-    --border-color: #3d4852;
-    --shadow-color: rgba(0, 0, 0, 0.2);
-    --shadow-hover: rgba(255, 107, 107, 0.25);
+    --text-color: hsl(0, 0%, 100%);
+    --text-light: hsla(0, 0%, 100%, 0.7);
+    --bg-color: hsl(200, 19%, 19%);
+    --bg-light: hsl(200, 19%, 15%);
+    --bg-card: hsl(200, 19%, 19%);
+    --border-color: hsl(200, 19%, 25%);
+    --shadow-color: hsla(0, 0%, 0%, 0.2);
+    --shadow-hover: hsla(231, 77%, 54%, 0.25);
 }
 
 * {
@@ -100,13 +100,13 @@ img {
 }
 
 .btn-secondary {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     color: white;
     border: none;
 }
 
 .btn-secondary:hover {
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
     transform: translateY(-3px);
     box-shadow: 0 10px 20px var(--shadow-hover);
     color: white;
@@ -119,7 +119,8 @@ img {
 }
 
 .btn-outline:hover {
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
     color: white;
     transform: translateY(-3px);
     box-shadow: 0 10px 20px var(--shadow-hover);
@@ -138,7 +139,7 @@ header {
     width: 100%;
     z-index: 1000;
     padding: 20px 0;
-    background-color: rgba(245, 247, 247, 0.9);
+    background-color: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(10px);
     transition: all 0.3s ease;
     box-shadow: 0 2px 10px var(--shadow-color);
@@ -174,6 +175,7 @@ nav ul li a {
     font-weight: 500;
     position: relative;
     padding: 5px 0;
+    transition: color 0.3s ease;
 }
 
 nav ul li a:after {
@@ -186,7 +188,7 @@ nav ul li a:after {
     left: 0;
     transform: scaleX(0);
     transform-origin: bottom right;
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 nav ul li a:hover {
@@ -196,6 +198,7 @@ nav ul li a:hover {
 nav ul li a:hover:after {
     transform: scaleX(1);
     transform-origin: bottom left;
+    background-color: var(--secondary-color);
 }
 
 .header-right {
@@ -231,7 +234,7 @@ nav ul li a:hover:after {
     bottom: 0;
     background-color: var(--bg-light);
     border-radius: 34px;
-    transition: 0.4s;
+    transition: all 0.4s ease;
 }
 
 .theme-toggle .slider:before {
@@ -241,7 +244,7 @@ nav ul li a:hover:after {
     width: 20px;
     left: 3px;
     bottom: 3px;
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
     border-radius: 50%;
     transition: 0.4s;
 }
@@ -252,7 +255,7 @@ nav ul li a:hover:after {
 
 .theme-toggle input:checked + .slider:before {
     transform: translateX(24px);
-    background-color: var(--accent-color);
+    background-color: var(--secondary-color);
 }
 
 /* Mobile Menu */
@@ -349,7 +352,7 @@ nav ul li a:hover:after {
 .underline {
     width: 80px;
     height: 4px;
-    background-color: var(--accent-color);
+    background-color: var(--bg-light);
     margin: 0 auto;
     position: relative;
 }
@@ -523,7 +526,7 @@ nav ul li a:hover:after {
 .feature-icon {
     width: 70px;
     height: 70px;
-    background-color: rgba(255, 107, 107, 0.1);
+    background-color: hsla(231, 77%, 54%, 0.1);
     border-radius: 20px;
     display: flex;
     align-items: center;
@@ -539,7 +542,7 @@ nav ul li a:hover:after {
 }
 
 .feature-card:hover .feature-icon {
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
     transform: rotate(10deg);
 }
 
@@ -728,12 +731,12 @@ nav ul li a:hover:after {
     border-radius: 50%;
     object-fit: cover;
     margin-right: 15px;
-    border: 3px solid var(--accent-color);
+    border: 3px solid var(--primary-color);
     transition: all 0.3s ease;
 }
 
 .testimonial-content:hover .testimonial-author img {
-    border-color: var(--primary-color);
+    border-color: var(--secondary-color);
     transform: scale(1.1);
 }
 
@@ -790,6 +793,10 @@ nav ul li a:hover:after {
     transform: scale(1.3);
 }
 
+.dot:hover {
+    background-color: var(--secondary-color);
+}
+
 /* CTA Section */
 .cta {
     padding: 80px 0;
@@ -827,8 +834,8 @@ nav ul li a:hover:after {
 }
 
 .cta .btn-primary:hover {
-    background-color: var(--accent-color);
-    color: var(--text-color);
+    background-color: var(--secondary-color);
+    color: white;
 }
 
 /* Footer Styles */
@@ -868,14 +875,15 @@ footer {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--bg-light);
+    color: var(--primary-color);
     border-radius: 50%;
     transition: all 0.3s ease;
 }
 
 .social-links a:hover {
-    background-color: var(--secondary-color);
+    background-color: var(--primary-color);
+    color: white;
     transform: translateY(-5px);
 }
 
@@ -924,7 +932,7 @@ footer {
 .contact-form input:focus, .contact-form textarea:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    box-shadow: 0 0 0 3px hsla(231, 77%, 54%, 0.1);
 }
 
 .contact-form textarea {
@@ -1061,7 +1069,7 @@ footer {
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+    box-shadow: 0 0 0 3px hsla(231, 77%, 54%, 0.1);
 }
 
 /* Password field styles */
