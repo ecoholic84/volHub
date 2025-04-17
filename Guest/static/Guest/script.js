@@ -1,242 +1,171 @@
-// DOM Elements
-document.addEventListener('DOMContentLoaded', function() {
-    // Theme Toggle
-    const themeSwitch = document.getElementById('theme-switch');
-    const body = document.body;
+// Ensure strict mode for better error catching
+'use strict';
 
-    themeSwitch.addEventListener('change', function() {
-        if (this.checked) {
-            body.classList.add('dark-theme');
-            localStorage.setItem('theme', 'dark');
+// Wrap all code in an IIFE for better scoping
+(function() {
+    // Utility Functions
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('message');
+        if (messageDiv) {
+            messageDiv.textContent = message;
+            messageDiv.className = 'message ' + (type === 'error' ? 'error-message' : 'success-message');
+            messageDiv.style.display = 'block';
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 5000);
         } else {
-            body.classList.remove('dark-theme');
-            localStorage.setItem('theme', 'light');
-        }
-    });
-
-    // Check for saved theme preference
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        body.classList.add('dark-theme');
-        themeSwitch.checked = true;
-    }
-
-    // Mobile Menu Toggle
-    const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-    const navMenu = document.querySelector('nav ul');
-
-    mobileMenuBtn.addEventListener('click', function() {
-        this.classList.toggle('active');
-        navMenu.classList.toggle('active');
-    });
-
-    // Modal Functionality
-    const signupBtn = document.querySelector('.signup-btn');
-    const getStartedBtn = document.querySelector('.get-started-btn');
-    const ctaBtn = document.querySelector('.cta-btn');
-    const signupModal = document.getElementById('signup-modal');
-    const closeModal = document.querySelector('.close-modal');
-    
-    // Functions to open and close modal
-    function openModal() {
-        signupModal.classList.add('show');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling when modal is open
-        
-        // Reset modal to first step
-        const steps = document.querySelectorAll('.step');
-        steps.forEach(step => step.classList.remove('active'));
-        document.querySelector('.step[data-step="1"]').classList.add('active');
-        
-        // Reset form fields
-        document.getElementById('email-form').reset();
-        if (document.getElementById('signup-details-form')) {
-            document.getElementById('signup-details-form').reset();
+            console.error('Message div not found');
         }
     }
-    
-    function closeModalFunc() {
-        signupModal.classList.remove('show');
-        document.body.style.overflow = ''; // Re-enable scrolling
-    }
-    
-    // Event listeners for opening modal
-    signupBtn.addEventListener('click', openModal);
-    getStartedBtn.addEventListener('click', openModal);
-    ctaBtn.addEventListener('click', openModal);
-    
-    // Event listener for closing modal
-    closeModal.addEventListener('click', closeModalFunc);
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
-        if (event.target === signupModal) {
-            closeModalFunc();
-        }
-    });
 
-    // Password visibility toggle
-    const togglePassword = document.getElementById('togglePassword');
-    if (togglePassword) {
-        togglePassword.addEventListener('click', function() {
-            const passwordField = document.getElementById('password');
-            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordField.setAttribute('type', type);
-            
-            // Toggle icon
-            this.classList.toggle('fa-eye');
-            this.classList.toggle('fa-eye-slash');
+    function initializeApp() {
+        console.log('Initializing app...');
+        try {
+            initializeTheme();
+            initializeMobileMenu();
+            initializeSmoothScroll();
+            initializeTestimonialSlider();
+        } catch (error) {
+            console.error('Initialization error:', error);
+        }
+    }
+
+    function initializeTheme() {
+        console.log('Initializing theme...');
+        const themeSwitch = document.getElementById('theme-switch');
+        const body = document.body;
+
+        if (!themeSwitch || !body) {
+            console.error('Theme switch or body not found');
+            return;
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'light-theme';
+        body.classList.add(savedTheme);
+        themeSwitch.checked = savedTheme === 'dark-theme';
+
+        themeSwitch.addEventListener('click', function() {
+            if (this.checked) {
+                body.classList.remove('light-theme');
+                body.classList.add('dark-theme');
+                localStorage.setItem('theme', 'dark-theme');
+            } else {
+                body.classList.remove('dark-theme');
+                body.classList.add('light-theme');
+                localStorage.setItem('theme', 'light-theme');
+            }
         });
     }
 
-    // Get CSRF token for AJAX requests
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-    
-    const csrfToken = getCookie('csrftoken');
+    function initializeMobileMenu() {
+        console.log('Initializing mobile menu...');
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const nav = document.querySelector('nav');
 
-    // Email form submission
-    const emailForm = document.getElementById('email-form');
-    if (emailForm) {
-        emailForm.addEventListener('submit', function(e) {
+        if (!mobileMenuBtn || !nav) {
+            console.error('Mobile menu button or nav not found');
+            return;
+        }
+
+        mobileMenuBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            
-            // Send AJAX request to check if email exists
-            fetch('/Guest/sign-up/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': csrfToken
-                },
-                body: `txt_email=${encodeURIComponent(email)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Move to next step
-                    document.querySelector('.step[data-step="1"]').classList.remove('active');
-                    document.querySelector('.step[data-step="2"]').classList.add('active');
-                    
-                    // Pre-fill the email in the next step
-                    document.getElementById('signup-email').value = email;
-                } else {
-                    // Show error message
-                    alert(data.message || 'This email already exists. Please use a different email or log in.');
+            nav.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+    }
+
+    function initializeSmoothScroll() {
+        console.log('Initializing smooth scroll...');
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred. Please try again.');
             });
         });
     }
 
-    // Back button functionality
-    const backBtn = document.querySelector('.back-btn');
-    if (backBtn) {
-        backBtn.addEventListener('click', function() {
-            document.querySelector('.step[data-step="2"]').classList.remove('active');
-            document.querySelector('.step[data-step="1"]').classList.add('active');
-        });
-    }
+    function initializeTestimonialSlider() {
+        console.log('Initializing testimonial slider...');
+        const testimonialGroups = document.querySelectorAll('.testimonial-group');
+        const dots = document.querySelectorAll('.dot');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        let currentGroup = 0;
+        let slideInterval;
 
-    // OAuth buttons
-    const githubBtn = document.getElementById('github-oauth');
-    const googleBtn = document.getElementById('google-oauth');
-    
-    if (githubBtn) {
-        githubBtn.addEventListener('click', function() {
-            // Implement GitHub OAuth logic
-            console.log('GitHub OAuth clicked');
-            alert('GitHub OAuth integration will be implemented soon!');
-        });
-    }
-    
-    if (googleBtn) {
-        googleBtn.addEventListener('click', function() {
-            // Implement Google OAuth logic
-            console.log('Google OAuth clicked');
-            alert('Google OAuth integration will be implemented soon!');
-        });
-    }
-
-    // Final signup form submission
-    const signupDetailsForm = document.getElementById('signup-details-form');
-    if (signupDetailsForm) {
-        signupDetailsForm.addEventListener('submit', function(e) {
-            e.preventDefault();
+        function showGroup(index) {
+            testimonialGroups.forEach(group => group.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
             
-            // Get form data
-            const formData = new FormData(this);
-            const data = new URLSearchParams();
-            for (const pair of formData) {
-                data.append(pair[0], pair[1]);
+            currentGroup = (index + testimonialGroups.length) % testimonialGroups.length;
+            testimonialGroups[currentGroup].classList.add('active');
+            dots[currentGroup].classList.add('active');
+        }
+
+        function nextGroup() {
+            showGroup(currentGroup + 1);
+        }
+
+        function prevGroup() {
+            showGroup(currentGroup - 1);
+        }
+
+        function startSlideshow() {
+            if (slideInterval) {
+                clearInterval(slideInterval);
             }
-            
-            // Send AJAX request to register user
-            fetch('/Guest/user-registration/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'X-CSRFToken': csrfToken
-                },
-                body: data
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Move to success step
-                    document.querySelector('.step[data-step="2"]').classList.remove('active');
-                    document.querySelector('.step[data-step="3"]').classList.add('active');
-                } else {
-                    alert('Registration failed. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred during registration. Please try again.');
-            });
-        });
-    }
+            slideInterval = setInterval(nextGroup, 6000);
+        }
 
-    // Testimonial slider
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const dots = document.querySelectorAll('.dot');
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
-    
-    let currentSlide = 0;
-    
-    function showSlide(n) {
-        slides.forEach(slide => slide.classList.remove('active'));
-        dots.forEach(dot => dot.classList.remove('active'));
-        
-        currentSlide = (n + slides.length) % slides.length;
-        
-        slides[currentSlide].classList.add('active');
-        dots[currentSlide].classList.add('active');
-    }
-    
-    if (prevBtn && nextBtn) {
-        prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
-        nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
-        
+        function pauseSlideshow() {
+            clearInterval(slideInterval);
+        }
+
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                prevGroup();
+                pauseSlideshow();
+                startSlideshow();
+            });
+        }
+
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                nextGroup();
+                pauseSlideshow();
+                startSlideshow();
+            });
+        }
+
         dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => showSlide(index));
+            dot.addEventListener('click', () => {
+                showGroup(index);
+                pauseSlideshow();
+                startSlideshow();
+            });
         });
+
+        const testimonialSlider = document.querySelector('.testimonial-slider');
+        if (testimonialSlider) {
+            testimonialSlider.addEventListener('mouseenter', pauseSlideshow);
+            testimonialSlider.addEventListener('mouseleave', startSlideshow);
+        }
+
+        startSlideshow();
     }
-}); 
+
+    // Add DOMContentLoaded event listener to initialize the app
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded and parsed');
+        initializeApp();
+    });
+})();

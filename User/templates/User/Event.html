@@ -4,51 +4,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event</title>
+    <!-- Basic CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+        }
+        table {
+            background: #fff;
+            padding: 20px;
+            border-collapse: collapse;
+            width: 100%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        td {
+            padding: 10px;
+        }
+        input[type="text"],
+        input[type="file"],
+        input[type="datetime-local"],
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <table border="1">
-            <tr>
-                <td>Title</td>
-                <td><input type="text" name="txt_title" id=""></td>
-            </tr>
-            <tr>
-                <td>Description</td>
-                <td><input type="text" name="txt_description" id=""></td>
-            </tr>
-            <tr>
-                <td>File</td>
-                <td><input type="file" name="txt_file" id=""></td>
-            </tr>
-            <tr>
-                <td>Date and Time</td>
-                <td><input type="datetime-local" name="txt_datetime" id=""></td>
-            </tr>            
+            <tr><td>Title</td><td><input type="text" name="txt_title"></td></tr>
+            <tr><td>Description</td><td><input type="text" name="txt_description"></td></tr>
+            <tr><td>File</td><td><input type="file" name="txt_file"></td></tr>
+            <tr><td>Date and Time</td><td><input type="datetime-local" name="txt_datetime"></td></tr>
             <tr>
                 <td>Industry</td>
                 <td>
                     <select name="sel_industry">
                         <option value="">----Select----</option>
                         {% for i in industry %}
-                        <option 
-                        value="{{i.id}}">{{i.industry_name}}</option>
+                        <option value="{{i.id}}">{{i.industry_name}}</option>
                         {% endfor %}
                     </select>
                 </td>
             </tr>
-            <tr>
-                <td>Venue</td>
-                <td><input type="text" name="txt_venue" id=""></td>
-            </tr>
+            <tr><td>Venue</td><td><input type="text" name="txt_venue"></td></tr>
             <tr>
                 <td>Country</td>
                 <td>
                     <select name="sel_country" id="sel_country">
                         <option value="">----Select----</option>
                         {% for i in country %}
-                        <option 
-                        value="{{i.id}}">{{i.country_name}}</option>
+                        <option value="{{i.id}}">{{i.country_name}}</option>
                         {% endfor %}
                     </select>
                 </td>
@@ -69,43 +92,64 @@
                     </select>
                 </td>
             </tr>
+            <tr><td>Stipend</td><td><input type="text" name="txt_stipend"></td></tr>
+            <tr><td>Volunteer Slots</td><td><input type="text" name="txt_slots"></td></tr>
+            <tr><td>Application Deadline</td><td><input type="datetime-local" name="txt_deadline"></td></tr>
+
+            <!-- Skill selection with multi-select and search -->
             <tr>
-                <td>Stipend</td>
-                <td><input type="text" name="txt_stipend" id=""></td>
+                <td>Required Skills</td>
+                <td>
+                    <select name="sel_skills" id="sel_skills" multiple="multiple" style="width: 100%;">
+                        {% for skill in skills %}
+                        <option value="{{ skill.id }}">{{ skill.skill_name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
             </tr>
-            <tr>
-                <td><input type="submit" name="submit" value="Submit"></td>
-            </tr>
+
+            <tr><td colspan="2" style="text-align:center;"><input type="submit" name="submit" value="Submit"></td></tr>
         </table>
     </form>
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#sel_skills').select2({
+                placeholder: "Select skills",
+                allowClear: true
+            });
+
+            // Country-State AJAX
+            $("#sel_country").change(function () {
+                var did = $(this).val();
+                var ur = "{% url 'User:profile_country_ajax' %}";
+                $.ajax({
+                    url: ur,
+                    data: { did: did },
+                    success: function (data) {
+                        $("#sel_state").html(data);
+                    },
+                });
+            });
+
+            // State-City AJAX
+            $("#sel_state").change(function () {
+                var did = $(this).val();
+                var ur = "{% url 'User:profile_state_ajax' %}";
+                $.ajax({
+                    url: ur,
+                    data: { did: did },
+                    success: function (data) {
+                        $("#sel_city").html(data);
+                    },
+                });
+            });
+        });
+    </script>
 </body>
 </html>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script>
-    $("#sel_country").change(function () {
-        var did = $(this).val();
-        var ur = "{% url 'User:profile_country_ajax' %}"
-        $.ajax({
-            url: ur,
-            data: { did: did, },
-            success: function (data) {
-                $("#sel_state").html(data);
-            },
-        });
-    });
-</script>
-
-<!-- This script is used to get the city of the selected state -->
-<script>
-    $("#sel_state").change(function () {
-        var did = $(this).val();
-        var ur = "{% url 'User:profile_state_ajax' %}"
-        $.ajax({
-            url: ur,
-            data: { did: did, },
-            success: function (data) {
-                $("#sel_city").html(data);
-            },
-        });
-    });
-</script>

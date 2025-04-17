@@ -1,112 +1,300 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <title align="center">Profile Creation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Your Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        :root {
+            --primary: #3a86ff;
+            --surface: #ffffff;
+            --background: #f8f9fa;
+            --text: #212529;
+            --border: #e9ecef;
+        }
+        
+        body {
+            background-color: var(--background);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: var(--text);
+            padding: 20px 0;
+        }
+        
+        .profile-card {
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 480px;
+            padding: 30px;
+            margin: auto;
+        }
+        
+        .profile-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+        
+        .profile-photo-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        
+        .profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+            border: 3px solid var(--surface);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-photo-icon {
+            font-size: 24px;
+            color: #adb5bd;
+        }
+        
+        .profile-photo-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .profile-photo:hover .profile-photo-overlay {
+            opacity: 1;
+        }
+        
+        .photo-icon {
+            color: white;
+            font-size: 24px;
+        }
+        
+        .form-floating {
+            margin-bottom: 12px;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            height: 45px;
+            font-size: 0.925rem;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.15);
+        }
+        
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+        
+        textarea.form-control {
+            height: auto;
+            min-height: 80px;
+        }
+        
+        .location-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+            border-radius: 8px;
+            height: 45px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2a75f3;
+        }
+        
+        /* Make the file input invisible but keep it functional */
+        .hidden-file-input {
+            position: absolute;
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        @media (max-width: 576px) {
+            .profile-card {
+                padding: 20px;
+                border-radius: 12px;
+            }
+            
+            .location-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1 align="center">Profile Creation</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <table align="center" border="1">
-            <tr>
-                <td>Full Name</td>
-                <td><input type="text" name="txt_name" id="txt_name"></td>
-            </tr>
-            <tr>
-                <td>Volhub Username</td>
-                <td><input type="text" name="txt_username" id="txt_username"></td>
-            </tr>
-            <tr>
-                <td>Email</td>
-                <td><input type="email" name="txt_email" id="txt_email"></td>
-            </tr>
-            <tr>
-                <td>I Identify As</td>
-                <td>
-                    <select name="txt_gender" id="gender">
-                        <option value="Gender" disabled selected>Gender</option>
+    <div class="profile-card">
+        <h2 class="profile-title">Complete Your Profile</h2>
+        
+        <div class="profile-photo-wrapper">
+            <label for="txt_photo" class="profile-photo" id="photo-preview">
+                <div class="profile-photo-icon">+</div>
+                <div class="profile-photo-overlay">
+                    <span class="photo-icon">📷</span>
+                </div>
+                <input type="file" id="txt_photo" name="txt_photo" class="hidden-file-input" accept="image/*">
+            </label>
+        </div>
+        
+        <form method="POST" enctype="multipart/form-data" id="profile-form">
+            {% csrf_token %}
+            
+            <div class="mb-2">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="txt_name" class="form-control" value="{{ thisUser.user_name }}" required>
+            </div>
+            
+            <div class="mb-2">
+                <label class="form-label">Username</label>
+                <input type="text" name="txt_username" class="form-control" value="{{ thisUser.user_username }}" required>
+            </div>
+            
+            <div class="mb-2">
+                <label class="form-label">Email</label>
+                <input type="email" name="txt_email" class="form-control" value="{{ thisUser.user_email }}" required>
+            </div>
+            
+            <div class="row g-2 mb-2">
+                <div class="col-md-6">
+                    <label class="form-label">Contact Number</label>
+                    <input type="text" name="txt_contact" class="form-control" maxlength="10" placeholder="1234567890" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Gender</label>
+                    <select name="txt_gender" class="form-select" required>
+                        <option value="" disabled selected>Select</option>
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
                         <option value="Prefer not to say">Prefer not to say</option>
                     </select>
-                </td>
-            </tr>
+                </div>
+            </div>
             
-            <tr>
-                <td>Country</td>
-                <td>
-                    <select name="sel_country" id="sel_country">
+            <div class="location-group mb-2">
+                <div>
+                    <label class="form-label">Country</label>
+                    <select name="sel_country" id="sel_country" class="form-select" required>
                         <option value="">Select</option>
                         {% for i in country %}
-                        <option 
-                        {% if i.id == editPlace.country_id %}
-                        selected
-                        {% endif %}
-                        value="{{i.id}}">{{i.country_name}}</option>
+                        <option value="{{i.id}}" {% if i.id == editPlace.country_id %}selected{% endif %}>{{ i.country_name }}</option>
                         {% endfor %}
                     </select>
-                </td>
-            </tr>
-            <tr>
-                <td>State</td>
-                <td>
-                    <select name="sel_state" id="sel_state">
-                        <option value="">Select</option>
-                        
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>City</td>
-                <td>
-                    <select name="sel_city" id="sel_city">
-                        <option value="">Select</option>
-
-                    </select>
-                </td>
-            <tr>
-                <td>Bio</td>
-                <td>
-                    <textarea id="txt_bio" name="txt_bio" rows="4" placeholder="Write a few sentences about yourself." required></textarea>
-                </td>
                 </div>
-            </tr>
-            <tr >
-                <td colspan="2" align="center"><input type="submit" value="Continue"></td>
-            </tr>
-        </table>
-    </form>
+                <div>
+                    <label class="form-label">State</label>
+                    <select name="sel_state" id="sel_state" class="form-select" required>
+                        <option value="">Select</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">City</label>
+                    <select name="sel_city" id="sel_city" class="form-select" required>
+                        <option value="">Select</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="mb-2">
+                <label class="form-label">Bio</label>
+                <textarea name="txt_bio" class="form-control" rows="3" placeholder="Tell us about yourself" required></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100">Complete Profile</button>
+        </form>
+    </div>
+
+    <script>
+        // Keep the original AJAX for location selection
+        $("#sel_country").change(function () {
+            var did = $(this).val();
+            var ur = "{% url 'User:profile_country_ajax' %}";
+            $.ajax({
+                url: ur,
+                data: { did: did },
+                success: function (data) {
+                    $("#sel_state").html(data);
+                },
+            });
+        });
+
+        $("#sel_state").change(function () {
+            var did = $(this).val();
+            var ur = "{% url 'User:profile_state_ajax' %}";
+            $.ajax({
+                url: ur,
+                data: { did: did },
+                success: function (data) {
+                    $("#sel_city").html(data);
+                },
+            });
+        });
+        
+        // Profile photo preview
+        document.getElementById('txt_photo').addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                var photoPreview = document.getElementById('photo-preview');
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    photoPreview.innerHTML = '<img src="' + e.target.result + '" alt="Profile Photo">' +
+                                          '<div class="profile-photo-overlay"><span class="photo-icon">📷</span></div>' +
+                                          '<input type="file" id="txt_photo" name="txt_photo" class="hidden-file-input" accept="image/*">';
+                    
+                    // Reattach the event listener to the new input
+                    document.getElementById('txt_photo').addEventListener('change', arguments.callee);
+                }
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
 </body>
 </html>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-<!-- This script is used to get the state of the selected country -->
-<script>
-    $("#sel_country").change(function () {
-        var did = $(this).val();
-        var ur = "{% url 'User:profile_country_ajax' %}"
-        $.ajax({
-            url: ur,
-            data: { did: did, },
-            success: function (data) {
-                $("#sel_state").html(data);
-            },
-        });
-    });
-</script>
-
-<!-- This script is used to get the city of the selected state -->
-<script>
-    $("#sel_state").change(function () {
-        var did = $(this).val();
-        var ur = "{% url 'User:profile_state_ajax' %}"
-        $.ajax({
-            url: ur,
-            data: { did: did, },
-            success: function (data) {
-                $("#sel_city").html(data);
-            },
-        });
-    });
-</script>

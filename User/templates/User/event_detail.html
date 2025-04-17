@@ -1,164 +1,200 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Event Details</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
+
+
+
+{% extends 'Guest/base.html' %}
+
+{% block content %}
+<style>
+    .event-container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 25px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .event-header {
+        display: flex;
+        gap: 30px;
+        flex-wrap: wrap;
+    }
+
+    .event-image {
+        flex: 1 1 300px;
+        max-width: 300px;
+        height: 200px;
+        background-color: #f2f2f2;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .event-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .event-details {
+        flex: 2;
+    }
+
+    .event-details h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .industry-badge {
+        display: inline-block;
+        background-color: #4F46E5;
+        color: #fff;
+        font-size: 14px;
+        padding: 4px 10px;
+        border-radius: 8px;
+        margin-top: 6px;
+    }
+
+    .meta-info {
+        margin: 15px 0;
+        color: #555;
+    }
+
+    .event-content {
+        margin-top: 25px;
+        line-height: 1.6;
+    }
+
+    .action-buttons {
+        margin-top: 30px;
+    }
+
+    .action-buttons form button {
+        padding: 10px 20px;
+        background-color: #4F46E5;
+        border: none;
+        color: #fff;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-weight: bold;
+    }
+
+    .action-buttons form button:hover {
+        background-color: #3730A3;
+    }
+
+    .event-meta-icon {
+        margin-right: 5px;
+        color: #6B7280;
+    }
+
+    .event-footer {
+        margin-top: 50px;
+        text-align: center;
+        font-size: 14px;
+        color: #999;
+    }
+
+    @media (max-width: 768px) {
+        .event-header {
+            flex-direction: column;
         }
-        h2 {
-            text-align: center;
-            color: #007BFF;
-        }
-        .event-details {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        }
-        .event-details p {
-            margin: 10px 0;
-        }
-        .requests-table {
+
+        .event-image, .event-details {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
         }
-        .requests-table th, .requests-table td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        .requests-table th {
-            background-color: #007BFF;
-            color: white;
-        }
-        .status-pending {
-            color: orange;
-        }
-        .status-approved {
-            color: green;
-        }
-        .status-rejected {
-            color: red;
-        }
-        .accept-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            margin-right: 5px;
-        }
-        .accept-btn:hover {
-            background-color: #218838;
-        }
-        .reject-btn {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .reject-btn:hover {
-            background-color: #c82333;
-        }
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            color: #007BFF;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <h2>Event Details</h2>
+    }
 
-    <!-- Success/Error Messages -->
-    {% if success %}
-        <p style="color: green; text-align: center;">{{ success }}</p>
-    {% endif %}
-    {% if error %}
-        <p style="color: red; text-align: center;">{{ error }}</p>
-    {% endif %}
+    .message {
+        text-align: center;
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 8px;
+    }
 
-    <!-- Event Details -->
-    {% if event %}
-        <div class="event-details">
-            <p><strong>Title:</strong> {{ event.event_title }}</p>
-            <p><strong>Content:</strong> {{ event.event_content }}</p>
-            <p><strong>Venue:</strong> {{ event.event_venue }}</p>
-            <p><strong>City:</strong> {{ event.event_city.name }}</p>
-            <p><strong>Industry:</strong> {{ event.industry.industry_name }}</p>
-            <p><strong>Date & Time:</strong> {{ event.event_datetime }}</p>
-            <p><strong>Stipend:</strong> {{ event.event_stipend }}</p>
-            <p><strong>Status:</strong> 
-                <span class="{% if event.event_status == 0 %}status-pending{% elif event.event_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
-                    {% if event.event_status == 0 %}Pending{% elif event.event_status == 1 %}Approved{% else %}Rejected{% endif %}
-                </span>
-            </p>
-            <p><strong>Created At:</strong> {{ event.event_created_at }}</p>
-            <p><strong>File:</strong> 
-                {% if event.event_file %}
-                    <a href="{{ event.event_file.url }}" target="_blank">Download</a>
-                {% else %}
-                    None
-                {% endif %}
-            </p>
+    .message.success {
+        background-color: #d4edda;
+        color: #155724;
+    }
 
-            <!-- Volunteer Requests -->
-            <h3>Volunteer Requests</h3>
-            <table class="requests-table">
-                <thead>
-                    <tr>
-                        <th>Volunteer Email</th>
-                        <th>Request Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for req in requests %}
-                        <tr>
-                            <td>{{ req.user.user_email }}</td>
-                            <td>{{ req.request_datetime }}</td>
-                            <td class="{% if req.request_status == 0 %}status-pending{% elif req.request_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
-                                {% if req.request_status == 0 %}Pending{% elif req.request_status == 1 %}Accepted{% else %}Rejected{% endif %}
-                            </td>
-                            <td>
-                                <form method="post" style="display: inline;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="request_id" value="{{ req.id }}">
-                                    <input type="hidden" name="action" value="accept">
-                                    <input type="submit" value="Accept" class="accept-btn">
-                                </form>
-                                <form method="post" style="display: inline;">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="request_id" value="{{ req.id }}">
-                                    <input type="hidden" name="action" value="reject">
-                                    <input type="submit" value="Reject" class="reject-btn">
-                                </form>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="4">No volunteer requests yet.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    .message.warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
 
-            <a href="{% url 'User:organizer_dashboard' %}">Back to Dashboard</a>
+    .request-status {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+    .status-pending {
+        color: orange;
+    }
+    .status-accepted {
+        color: green;
+    }
+    .status-rejected {
+        color: red;
+    }
+</style>
+
+<!-- Success/Error Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <div class="message {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="event-container">
+    <div class="event-header">
+        <div class="event-image">
+            {% if event.event_file %}
+                <img src="{{ event.event_file.url }}" alt="{{ event.event_title }}">
+            {% else %}
+                <div class="event-placeholder" style="height:100%;display:flex;align-items:center;justify-content:center;">No Image</div>
+            {% endif %}
         </div>
-    {% endif %}
-</body>
-</html>
+        <div class="event-details">
+            <h1>{{ event.event_title|escape }}</h1>
+            <span class="industry-badge">{{ event.industry.industry_name }}</span>
+            <div class="meta-info">
+                <p><i class="event-meta-icon">📅</i> {{ event.event_datetime|date:"F j, Y, g:i A" }}</p>
+                <p><i class="event-meta-icon">📍</i> {{ event.event_venue|default:"Location TBA" }}</p>
+            </div>
+            {% if has_requested %}
+                <div class="request-status">
+                    Your Request Status: 
+                    <span class="{% if request_status == 0 %}status-pending{% elif request_status == 1 %}status-accepted{% else %}status-rejected{% endif %}">
+                        {% if request_status == 0 %}Pending{% elif request_status == 1 %}Accepted{% else %}Rejected{% endif %}
+                    </span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="event-content">
+        <h3>Description</h3>
+        <p>{{ event.event_content|linebreaksbr }}</p>
+    </div>
+
+    <div class="action-buttons">
+        <form method="POST">
+            {% csrf_token %}
+            {% if has_requested %}
+                {% if event.request_status == 1 %}
+                    <p>Your request has been accepted by the organizer.</p>
+                {% elif event.request_status == 2 %}
+                    <p>Your request was rejected by the organizer.</p>
+                {% elif event.request_status == 0 %}
+                    <button type="submit" name="undo" onclick="return confirm('Are you sure you want to undo your request?')">Undo Request</button>
+                {% endif %}
+            {% else %}
+                <button type="submit" name="request" onclick="return confirm('Do you want to apply for this event?')">Request to Volunteer</button>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="event-footer">
+    <p>You're viewing this as a volunteer. Want to organize an event? <a href="{% url 'Guest:user_who' %}">Switch role</a></p>
+</div>
+{% endblock %}

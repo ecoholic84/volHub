@@ -17,11 +17,11 @@ class tbl_user(models.Model):
     user_address = models.CharField(max_length=100, null=True, blank=True)
     user_password = models.CharField(max_length=128, null=True, blank=True)  # Store hashed password
     user_city = models.ForeignKey(tbl_city, on_delete=models.CASCADE, null=True)
-    user_photo = models.FileField(upload_to='assets/File/user/', null=True, blank=True)
+    user_photo = models.FileField(upload_to='assets/files/user/', null=True, blank=True)
     user_gender = models.CharField(max_length=100, null=True, blank=True)  
     user_bio = models.TextField(null=True, blank=True)
     user_links = models.TextField(null=True, blank=True)  # Store as JSON (GitHub, LinkedIn, etc.)
- 
+
     # Educational Information
     user_degree_type = models.CharField(max_length=50, null=True, blank=True)  
     user_institution = models.CharField(max_length=100, null=True, blank=True)  
@@ -43,8 +43,13 @@ class tbl_user(models.Model):
 
     # Profile Completion Flags
     is_basic_profile_complete = models.BooleanField(default=False)  
-    is_volunteer_profile_complete = models.BooleanField(default=False)  
+    is_volunteer_profile_complete = models.BooleanField(default=False)
     is_organizer_profile_complete = models.BooleanField(default=False)
+
+    # Past Volunteering Experience
+    user_past_volunteering = models.TextField(null=True, blank=True) 
 
     # User Type & Roles
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='volunteer')
+
+

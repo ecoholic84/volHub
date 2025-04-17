@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('user_contact', models.CharField(blank=True, max_length=10, null=True)),
                 ('user_address', models.CharField(blank=True, max_length=100, null=True)),
                 ('user_password', models.CharField(blank=True, max_length=128, null=True)),
-                ('user_photo', models.FileField(blank=True, null=True, upload_to='assets/File/user/')),
+                ('user_photo', models.FileField(blank=True, null=True, upload_to='assets/files/user/')),
                 ('user_gender', models.CharField(blank=True, max_length=100, null=True)),
                 ('user_bio', models.TextField(blank=True, null=True)),
                 ('user_links', models.TextField(blank=True, null=True)),

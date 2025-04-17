@@ -18,7 +18,6 @@ class tbl_complaint(models.Model):
     user_id=models.ForeignKey(tbl_user, on_delete=models.CASCADE)
 
 class tbl_industry(models.Model):
-    user_id = models.ForeignKey(tbl_user, on_delete=models.CASCADE)
     industry_name = models.CharField(max_length=100, unique=True)
 
 class tbl_skill(models.Model):
@@ -37,6 +36,10 @@ class tbl_event(models.Model):
     event_status=models.IntegerField(default=0)
     industry=models.ForeignKey(tbl_industry,on_delete=models.CASCADE)
     user=models.ForeignKey(tbl_user,on_delete=models.CASCADE)
+    volunteer_slots=models.PositiveIntegerField(default=1)
+    required_skills=models.ManyToManyField(tbl_skill)
+    application_deadline=models.DateTimeField()
+    visibility=models.IntegerField(default=1)
 
 class tbl_request(models.Model):
     request_datetime = models.DateTimeField(auto_now_add=True)

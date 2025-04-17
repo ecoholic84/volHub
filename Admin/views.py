@@ -108,9 +108,8 @@ def addIndustry(request):
         return redirect('Guest:login')
     if request.method == "POST":
         industry_name = request.POST.get('txt_industry_name')
-        admin_user = tbl_user.objects.get(id=request.session['a_id'])
         try:
-            tbl_industry.objects.create(user_id=admin_user, industry_name=industry_name)
+            tbl_industry.objects.create(industry_name=industry_name)
             return redirect('Admin:industrySkills')
         except IntegrityError:
             industries = tbl_industry.objects.all().prefetch_related('skills')

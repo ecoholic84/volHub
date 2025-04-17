@@ -1,30 +1,27 @@
-<html>
-    <body>
-        <h1 align="center">Sign Up</h1>
-        <form method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            <table align="center" border="1">
-                <tr>
-                    <td>Email</td>
-                    <td><input type="email" name="txt_email" id="txt_email" required></td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center"><input type="submit" value="Continue"></td>
-                </tr>
-            </table>
-        </form>
+{% extends 'Guest/base.html' %}
+{% load static %}
 
-        {% if failed %}
-            <script>
-                alert("{{ failed }}");
-            </script>
-        {% endif %}
+{% block title %}Sign Up - Volhub{% endblock %}
 
-        {% if success %}
-            <script>
-                alert("{{ success }}");
-                window.location.href = "{% url 'Guest:user_registration' %}";
-            </script>
-        {% endif %}
-    </body>
-</html>
+{% block content %}
+    <section class="signup">
+        <div class="container">
+            <div class="form-container">
+                <h2>Join Volhub</h2>
+                <p class="form-description">Enter your email to get started</p>
+                {% if failed %}
+                    <div class="message error">{{ failed }}</div>
+                {% endif %}
+                <form id="signupForm" method="POST" action="{% url 'Guest:sign_up' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="txt_email" required>
+                    </div>
+                    <button type="submit" class="form-btn">Continue</button>
+                </form>
+                <p class="form-footer">Already have an account? <a href="{% url 'Guest:login' %}">Log in</a></p>
+            </div>
+        </div>
+    </section>
+{% endblock %}

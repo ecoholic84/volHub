@@ -1,31 +1,30 @@
-<!-- Create a login page with email and password with a login button at the bottom center -->
+{% extends 'Guest/base.html' %}
+{% load static %}
 
-<html>
-    <head>
-        <title>User Login</title>
-    </head>
-    <body>
-        <h1 align="center">User Login</h1>
-        <form method="POST">
+{% block title %}Log In - Volhub{% endblock %}
 
-            {% csrf_token %}
-            <table align="center" border="1"
-            <tr>
-                <td>Email</td><td><input type="email" name="txt_email" id="txt_email"></td>
-            </tr>
-            <tr>
-                <td>Password</td><td><input type="password" name="txt_password" id="txt_password"></td>
-            </tr>
-            <tr>
-                <td colspan="2" align="center"><input type="submit" value="Login"></td>
-            </tr>
-            </table>
-
-        </form>
-    </body>
-</html>
-{% if msg %}
-<script>
-    alert("{{msg}}")
-</script>
-{% endif %}
+{% block content %}
+    <section class="login">
+        <div class="container">
+            <div class="form-container">
+                <h2>Log In</h2>
+                {% if msg %}
+                    <div class="message error">{{ msg }}</div>
+                {% endif %}
+                <form method="POST" action="{% url 'Guest:login' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="form-btn">Log In</button>
+                </form>
+                <p class="form-footer">Don't have an account? <a href="{% url 'Guest:sign_up' %}">Sign up</a></p>
+            </div>
+        </div>
+    </section>
+{% endblock %}

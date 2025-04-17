@@ -1,7 +1,16 @@
 from django.shortcuts import render, redirect
+from django.utils import timezone
 from Guest.models import *
 from User.models import *
 from Admin.models import *
+import json
+from django.http import JsonResponse
+from .models import tbl_skill, tbl_user, tbl_request, tbl_event
+from django.db.models import Q
+from django.utils import timezone
+from django.contrib import messages
+from django.http import HttpResponseBadRequest
+
 
 # Create your views here.
 def logout(request):
@@ -80,23 +89,44 @@ def editComplaint(request,eid):
         return render(request,'User/complaint.html', {"editComplaint":thisComplaint})
     
 
+from django.shortcuts import render, redirect
+from django.core.exceptions import ObjectDoesNotExist
+from User.models import tbl_user, tbl_country, tbl_state, tbl_city  # Adjust imports as needed
+
 # Profile Creation
 def create_profile(request):
     country = tbl_country.objects.all()
     state = tbl_state.objects.all()
     thisUser = tbl_user.objects.get(id=request.session['u_id'])
-    if request.method=="POST":
+    if request.method == "POST":
         print("POST data:", request.POST)  # Debug line
-        thisUser.user_name=request.POST.get('txt_name')
-        thisUser.user_username=request.POST.get('txt_username')
-        thisUser.user_email=request.POST.get('txt_email')
-        thisUser.user_gender=request.POST.get('txt_gender')
-        thisUser.user_city=tbl_city.objects.get(id=request.POST.get('sel_city'))
-        thisUser.user_bio=request.POST.get('txt_bio')
+        print("FILES data:", request.FILES)  # Debug line for file uploads
+        thisUser.user_name = request.POST.get('txt_name')
+        thisUser.user_username = request.POST.get('txt_username')
+        thisUser.user_email = request.POST.get('txt_email')
+        thisUser.user_contact = request.POST.get('txt_contact')  # Add contact
+        thisUser.user_gender = request.POST.get('txt_gender')
+        city_id = request.POST.get('sel_city')
+        try:
+            thisUser.user_city = tbl_city.objects.get(id=city_id) if city_id else None
+        except ObjectDoesNotExist:
+            return render(request, 'User/create_profile.html', {
+                'country': country,
+                'state': state,
+                'error': f"City with ID {city_id} does not exist."
+            })
+        if 'txt_photo' in request.FILES:  # Check if a file was uploaded
+            thisUser.user_photo = request.FILES['txt_photo']  # Add profile photo
+        thisUser.user_bio = request.POST.get('txt_bio')
         thisUser.save()
-        return redirect('User:create_profile')
+        if thisUser.user_type == 'volunteer':
+            return redirect('User:volunteer_dashboard')
+        elif thisUser.user_type == 'organizer':
+            return redirect('User:organizer_dashboard')
+        else:
+            return redirect('User:user_who')
     else:
-        return render(request, 'User/create_profile.html', {'country':country, 'state':state})
+        return render(request, 'User/create_profile.html', {'country': country, 'state': state,'thisUser':thisUser})
     
 def profile_country_ajax(request):
     state=tbl_state.objects.filter(country=request.GET.get("did"))
@@ -107,70 +137,177 @@ def profile_state_ajax(request):
     return render(request,'User/profile_state_ajax.html', {"city":city})
 
 def Event(request):
-    country=tbl_country.objects.all()
-    industry=tbl_industry.objects.all()
-    user=tbl_user.objects.get(id=request.session['u_id'])
-    if request.method=="POST":
-        title=request.POST.get("txt_title")
-        description=request.POST.get("txt_description")
-        file=request.FILES.get("txt_file")
-        industry=tbl_industry.objects.get(id=request.POST.get('sel_industry'))
-        venue=request.POST.get("txt_venue")
-        date_time=request.POST.get('txt_datetime')
-        country=tbl_country.objects.get(id=request.POST.get('sel_country'))
-        city=tbl_city.objects.get(id=request.POST.get('sel_city'))
-        stipend=request.POST.get('txt_stipend')
-        tbl_event.objects.create(event_title=title,event_content=description,event_file=file,industry=industry,event_venue=venue,event_datetime=date_time,event_city=city,event_stipend=stipend,user=user)
+    country = tbl_country.objects.all()
+    industry = tbl_industry.objects.all()
+    skills = tbl_skill.objects.all()  # For multi-select of required skills
+    user = tbl_user.objects.get(id=request.session['u_id'])
+
+    if request.method == "POST":
+        title = request.POST.get("txt_title")
+        description = request.POST.get("txt_description")
+        file = request.FILES.get("txt_file")
+        selected_industry = tbl_industry.objects.get(id=request.POST.get('sel_industry'))
+        venue = request.POST.get("txt_venue")
+        date_time = request.POST.get("txt_datetime")
+        country_obj = tbl_country.objects.get(id=request.POST.get('sel_country'))  # still used in template, so kept
+        city = tbl_city.objects.get(id=request.POST.get('sel_city'))
+        stipend = request.POST.get('txt_stipend')
+        volunteer_slots = request.POST.get('txt_slots')
+        application_deadline = request.POST.get('txt_deadline')
+        selected_skills = request.POST.getlist('sel_skills')  # multi-select skill IDs
+
+        # Create event instance
+        event = tbl_event.objects.create(
+            event_title=title,
+            event_content=description,
+            event_file=file,
+            event_venue=venue,
+            event_datetime=date_time,
+            event_city=city,
+            event_stipend=stipend,
+            industry=selected_industry,
+            user=user,
+            volunteer_slots=volunteer_slots,
+            application_deadline=application_deadline
+        )
+
+        # Assign ManyToMany skill relationships
+        event.required_skills.set(selected_skills)
+
         return redirect("User:Event")
+
     else:
-        return render(request,'User/event.html',{'country':country,'industry':industry})
+        return render(request, 'User/event.html', {
+            'country': country,
+            'industry': industry,
+            'skills': skills
+        })
+
+
+
+#============ FROM HERE STARTS THE PAGES OF VOLUNTEER DASHBOARD ============
 
 def volunteer_dashboard(request):
-    if 'u_id' not in request.session:
+    user_id = request.session.get('u_id')
+    if not user_id:
         return redirect('Guest:login')
     
+    # Fetch user data
+    user = tbl_user.objects.get(id=user_id)
+    
+    # Fetch upcoming events (excluding those the user has applied for with pending status)
+    today = timezone.now().date()
+    upcoming_events = tbl_event.objects.filter(
+        event_datetime__gte=today,
+        event_status=1,
+        visibility=1
+    ).exclude(
+        id__in=tbl_request.objects.filter(
+            user_id=user_id,
+            request_status=0
+        ).values('event_id')
+    )
+    
+    # Fetch applied events for the logged-in user with request status
+    applied_events = tbl_event.objects.filter(
+        event_datetime__gte=today
+    ).filter(
+        id__in=tbl_request.objects.filter(
+            user_id=user_id
+        ).values('event_id')
+    ).prefetch_related('requests')  # Changed to prefetch_related
+
+    context = {
+        'user': user,
+        'upcoming_events': upcoming_events,
+        'applied_events': applied_events,
+        'username': request.session.get('username', 'User')
+    }
+    return render(request, 'User/volunteer_dashboard.html', context)
+
+
+
+# def event_detail(request, event_id):
+#     # Check if user is logged in and is a volunteer
+#     if 'u_id' not in request.session or not tbl_user.objects.filter(
+#         id=request.session['u_id'], user_type='volunteer'
+#     ).exists():
+#         return redirect('Guest:login')
+
+#     # Fetch event with visibility and status checks
+#     event = tbl_event.objects.filter(id=event_id, visibility=1, event_status=1).first()
+#     if not event:
+#         messages.error(request, "Event not found or not available.")
+#         return redirect('User:volunteer_dashboard')
+
+#     # Check if user has already requested this event
+#     has_requested = tbl_request.objects.filter(
+#         user_id=request.session['u_id'], event_id=event_id
+#     ).exists()
+
+#     # Handle form submission (request or undo)
+#     if request.method == 'POST':
+#         user = tbl_user.objects.get(id=request.session['u_id'])
+#         if 'undo' in request.POST and has_requested:
+#             tbl_request.objects.filter(user=user, event=event).delete()
+#             messages.success(request, "Request undone successfully.")
+#         elif 'request' in request.POST and not has_requested:
+#             tbl_request.objects.create(user=user, event=event, request_status=0)
+#             messages.success(request, "Request submitted successfully.")
+#         else:
+#             messages.warning(request, 
+#                 "You have already requested this event." if has_requested 
+#                 else "Nothing to undo.")
+#         return redirect('User:event_detail', event_id=event_id)
+
+#     return render(request, 'User/event_detail.html', {
+#         'event': event,
+#         'has_requested': has_requested
+#     })
+
+
+def event_detail(request, event_id):
+    if 'u_id' not in request.session or not tbl_user.objects.filter(
+        id=request.session['u_id'], user_type='volunteer'
+    ).exists():
+        return redirect('Guest:login')
+
+    event = tbl_event.objects.filter(id=event_id, visibility=1, event_status=1).first()
+    if not event:
+        messages.error(request, "Event not found or not available.")
+        return redirect('User:volunteer_dashboard')
+
     user = tbl_user.objects.get(id=request.session['u_id'])
-    if user.user_type != "volunteer":
-        return redirect('Guest:user_who')  # Consistent redirect
-    
-    # Fetch all requests made by this volunteer
-    user_requests = tbl_request.objects.filter(user=user).select_related('event', 'event__industry', 'event__event_city')
-    
-    return render(request, 'User/volunteer-dashboard.html', {
-        'requests': user_requests
+    has_requested = tbl_request.objects.filter(user=user, event=event).exists()
+    request_status = (tbl_request.objects.filter(user=user, event=event)
+                     .values_list('request_status', flat=True).first() or 0)
+
+    if request.method == 'POST':
+        if 'undo' in request.POST and has_requested:
+            tbl_request.objects.filter(user=user, event=event).delete()
+            messages.success(request, "Request undone successfully.")
+            has_requested = False
+            request_status = 0
+        elif 'request' in request.POST and not has_requested:
+            tbl_request.objects.create(user=user, event=event, request_status=0)
+            messages.success(request, "Request submitted to organizer successfully.")
+            has_requested = True
+            request_status = 0
+        else:
+            messages.warning(request, 
+                "Your request is already being processed." if has_requested 
+                else "Nothing to undo.")
+        return redirect('User:event_detail', event_id=event_id)  # Refresh to get updated status
+
+    return render(request, 'User/event_detail.html', {
+        'event': event,
+        'has_requested': has_requested,
+        'request_status': request_status
     })
 
-def request_to_volunteer(request, event_id):
-    if 'u_id' not in request.session:
-        return redirect('Guest:login')
-    
-    user = tbl_user.objects.get(id=request.session['u_id'])
-    if user.user_type != "volunteer":
-        return redirect('Guest:user_who')
-    
-    if request.method == "POST":
-        event = tbl_event.objects.get(id=event_id)
-        if not tbl_request.objects.filter(user=user, event=event).exists():
-            tbl_request.objects.create(user=user, event=event, request_status=0)
-            message = "Request submitted successfully!"
-        else:
-            message = "You have already requested this event."
-        
-        events = tbl_event.objects.filter(event_status=1).select_related('industry', 'event_city', 'user')
-        user_requests = tbl_request.objects.filter(user=user).select_related('event')
-        request_dict = {req.event.id: req.request_status for req in user_requests}
-        
-        return render(request, 'User/volunteer-dashboard.html', {
-            'events': events,
-            'user_requests': request_dict,
-            'volunteer': user,
-            'success': message
-        })
-    
-    return redirect('User:volunteer_dashboard')
+#============ FROM HERE STARTS THE PAGES OF ORGANIZER DASHBOARD ============
 
-
-# Organizer dashboard and event detail page
+# Organizer dashboard
 def organizer_dashboard(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
@@ -187,46 +324,43 @@ def organizer_dashboard(request):
         'organizer': user
     })
 
-# Ensure organizer event_detail view is correct for request updates
-def event_detail(request, event_id):
+# View for the page which the organizer approves and rejects volunteers
+def event_action(request, event_id):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
-    
+
     user = tbl_user.objects.get(id=request.session['u_id'])
-    if user.user_type != "organizer":
-        return redirect('Guest:user_who')
-    
-    try:
-        event = tbl_event.objects.get(id=event_id, user=user)
-    except tbl_event.DoesNotExist:
-        return render(request, 'User/event_detail.html', {'error': "Event not found or you don’t have access."})
-    
+    event = tbl_event.objects.filter(id=event_id).first()
+    if not event:
+        messages.error(request, "Event not found or you don't have access.")
+        return redirect('User:organizer_dashboard')
+
     requests = tbl_request.objects.filter(event=event).select_related('user')
-    
-    if request.method == "POST":
+
+    if request.method == 'POST':
         request_id = request.POST.get('request_id')
         action = request.POST.get('action')
-        req = tbl_request.objects.get(id=request_id, event=event)
-        
-        if action == "accept":
-            req.request_status = 1  # Accepted
+        req = tbl_request.objects.filter(id=request_id, event=event).first()
+        if req:
+            if action == 'accept':
+                req.request_status = 1
+                message = f"Request from {req.user.user_email} accepted successfully!"
+            elif action == 'reject':
+                req.request_status = 2
+                message = f"Request from {req.user.user_email} rejected successfully!"
             req.save()
-            message = f"Request from {req.user.user_email} accepted successfully!"
-        elif action == "reject":
-            req.request_status = 2  # Rejected
-            req.save()
-            message = f"Request from {req.user.user_email} rejected successfully!"
-            requests = tbl_request.objects.filter(event=event).select_related('user')
-        return render(request, 'User/event_detail.html', {
-            'event': event,
-            'requests': requests,
-            'success': message
-        })
-    
-    return render(request, 'User/event_detail.html', {
+            messages.success(request, message)
+        return redirect('User:event_action', event_id=event_id)
+
+    return render(request, 'User/org_event_detail.html', {
         'event': event,
-        'requests': requests
+        'requests': requests,
     })
+
+
+
+
+
 
 def edit_profile(request, page=1):
     if 'u_id' not in request.session:
@@ -319,3 +453,127 @@ def edit_profile(request, page=1):
         'months': months,
         'years': years,
     })
+
+def create_vol_profile(request):
+    thisUser = tbl_user.objects.get(id=request.session['u_id'])
+    industries = tbl_industry.objects.all()  # Get all industries
+    
+    if request.method == "POST":
+        # Update user fields from form data
+        thisUser.user_address = request.POST.get('user_address')
+        
+        # Handle JSON links
+        links = request.POST.get('user_links')
+        if links:  # Only save if not empty
+            try:
+                json.loads(links)  # Validate JSON format
+                thisUser.user_links = links
+            except json.JSONDecodeError:
+                return render(request, 'User/create_vol_profile.html', {
+                    'thisUser': thisUser,
+                    'industries': industries,  # Pass industries to template
+                    'error': 'Invalid JSON format for professional links'
+                })
+        
+        # Educational Information
+        thisUser.user_degree_type = request.POST.get('user_degree_type')
+        thisUser.user_institution = request.POST.get('user_institution')
+        thisUser.user_field_of_study = request.POST.get('user_field_of_study')
+        thisUser.user_graduation_month = request.POST.get('user_graduation_month')
+        thisUser.user_graduation_year = request.POST.get('user_graduation_year')
+        
+        # Work Details
+        thisUser.user_organization_name = request.POST.get('user_organization_name')
+        thisUser.user_job_title = request.POST.get('user_job_title')
+        
+        # Get industry from tbl_industry
+        industry_id = request.POST.get('user_industry')
+        if industry_id:
+            try:
+                thisUser.user_industry = tbl_industry.objects.get(id=industry_id)
+            except tbl_industry.DoesNotExist:
+                return render(request, 'User/create_vol_profile.html', {
+                    'thisUser': thisUser,
+                    'industries': industries,  # Pass industries to template
+                    'error': 'Selected industry does not exist.'
+                })
+        
+        thisUser.user_location = request.POST.get('user_location')
+        thisUser.user_official_address = request.POST.get('user_official_address')
+        thisUser.user_official_contact_number = request.POST.get('user_official_contact_number')
+        
+        thisUser.save()
+        return redirect('User:organizer_dashboard')
+    else:
+        return render(request, 'User/create_vol_profile.html', {
+            'thisUser': thisUser,
+            'industries': industries  # Pass industries to template
+        })
+
+def create_organizer_profile(request):
+    thisUser = tbl_user.objects.get(id=request.session['u_id'])
+    industries = tbl_industry.objects.all()  # Get all industries
+    
+    if request.method == "POST":
+        # Update user fields from form data
+        thisUser.user_address = request.POST.get('user_address')
+        
+        # Educational Information
+        thisUser.user_degree_type = request.POST.get('user_degree_type')
+        thisUser.user_institution = request.POST.get('user_institution')
+        thisUser.user_field_of_study = request.POST.get('user_field_of_study')
+        thisUser.user_graduation_month = request.POST.get('user_graduation_month')
+        thisUser.user_graduation_year = request.POST.get('user_graduation_year')
+        
+        # Emergency Contact
+        thisUser.user_emergency_name = request.POST.get('user_emergency_name')
+        thisUser.user_emergency_phone = request.POST.get('user_emergency_phone')
+        
+        # Work Details
+        thisUser.user_organization_name = request.POST.get('user_organization_name')
+        thisUser.user_job_title = request.POST.get('user_job_title')
+        
+        # Get industry from tbl_industry
+        industry_id = request.POST.get('user_industry')
+        if industry_id:
+            try:
+                thisUser.user_industry = tbl_industry.objects.get(id=industry_id)
+            except tbl_industry.DoesNotExist:
+                return render(request, 'User/create_organizer_profile.html', {
+                    'thisUser': thisUser,
+                    'industries': industries,
+                    'error': 'Selected industry does not exist.'
+                })
+        
+        thisUser.user_location = request.POST.get('user_location')
+        thisUser.user_official_address = request.POST.get('user_official_address')
+        thisUser.user_official_contact_number = request.POST.get('user_official_contact_number')
+        
+        # Past Volunteering Experience
+        has_volunteering = request.POST.get('has_volunteering') == 'yes'
+        if has_volunteering:
+            thisUser.user_past_volunteering = request.POST.get('user_past_volunteering')
+        else:
+            thisUser.user_past_volunteering = None
+        
+        thisUser.save()
+        return redirect('User:organizer_dashboard')
+    else:
+        return render(request, 'User/create_organizer_profile.html', {
+            'thisUser': thisUser,
+            'industries': industries
+        })
+    
+def skill_search_ajax(request):
+    term = request.GET.get('term', '')
+    skills = tbl_skill.objects.filter(skill_name__icontains=term).values('id', 'skill_name')[:10]
+    return JsonResponse(list(skills), safe=False)
+
+# Public Profile View
+def profile(request):
+    user_id = request.session.get('u_id')
+    if not user_id:
+        return redirect('Guest:login')
+    # Fetch user data (replace with actual model query)
+    context = {'user': {'username': request.session.get('username', 'User')}}
+    return render(request, 'User/profile.html', context)

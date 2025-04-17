@@ -1,101 +1,80 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from Admin.models import *
 from Guest.models import *
 from User.models import *
-from django.http import JsonResponse
-# Create your views here.
 
 def index(request):
     return render(request, 'Guest/index.html')
 
 def get_email(request):
-    if request.method=='POST':
-        email=request.POST.get('txt_email')
+    if request.method == 'POST':
+        email = request.POST.get('txt_email')
+        if not email:
+            return render(request, 'Guest/sign_up.html', {'failed': 'Email is required!'})
         if tbl_user.objects.filter(user_email=email).exists():
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'status': 'error', 'message': 'Email already exists!'})
-            else:
-                message = "Email already exists!"
-                return render(request, 'Guest/sign_up.html',{'failed': message})
-        else:
-            user = tbl_user.objects.create(user_email=email)
-            request.session['regId']=user.id
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({'status': 'success', 'message': 'Email registered successfully!'})
-            else:
-                message = "Email created successfully!"
-                return render(request, 'Guest/sign_up.html',{'success': message})
-    else:
-        return render(request, 'Guest/sign_up.html',)
-
-        
+            return render(request, 'Guest/sign_up.html', {'failed': 'Email already exists!'})
+        request.session['temp_email'] = email
+        return redirect('Guest:user_registration')
+    return render(request, 'Guest/sign_up.html')
 
 def user_registration(request):
-    city=tbl_city.objects.all()
-    if request.method=="POST":
-        user = tbl_user.objects.get(id=request.session.get('regId'))
-        user.user_name=request.POST.get('txt_name')
-        user.user_username=request.POST.get('txt_username')
-        user.user_password=request.POST.get('txt_password')
-        request.session['u_id']=user.id
-        user.save()
-        
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'status': 'success', 'redirect_url': '/guest/user_who/'})
-        else:
-            return redirect('Guest:user_who')
-    else:
-        return render(request,'Guest/user_registration.html')
-    
+    if request.method == "POST":
+        email = request.session.get('temp_email')
+        if not email:
+            return redirect('Guest:sign_up')
+        if tbl_user.objects.filter(user_email=email).exists():
+            return render(request, 'Guest/sign_up.html', {'failed': 'Email already registered!'})
+        user = tbl_user.objects.create(
+            user_email=email,
+            user_name=request.POST.get('txt_name'),
+            user_username=request.POST.get('txt_username'),
+            user_password=request.POST.get('txt_password')
+        )
+        request.session['u_id'] = user.id
+        del request.session['temp_email']
+        return redirect('Guest:user_who')
+    return render(request, 'Guest/user_registration.html')
 
-# User Type Selection
 def user_who(request):
     if request.method == "POST":
-        user = tbl_user.objects.get(id=request.session.get('regId'))
+        user_id = request.session.get('u_id')
+        if not user_id:
+            return redirect('Guest:sign_up')
+        user = tbl_user.objects.get(id=user_id)
         selectedType = request.POST.get('user_type')
         user.user_type = selectedType
-        request.session['u_id'] = user.id
         user.save()
         if selectedType == "volunteer":
             return redirect('User:volunteer_dashboard')
         elif selectedType == "organizer":
             return redirect('User:organizer_dashboard')
-        else:
-            return redirect('User:user_dashboard')  # Fallback to generic dashboard
-    else:
-        return render(request, 'Guest/user_type.html', {"message": "Please select a type"})
-
+        return render(request, 'Guest/user_type.html', {"message": "Invalid user type selected. Please try again."})
+    return render(request, 'Guest/user_type.html', {"message": "Please select a type"})
 
 def ajax_place(request):
-    place=tbl_place.objects.filter(district=request.GET.get("did"))
-    return render(request,'Guest/ajax_place.html', {"place":place})
-
-# Guest/views.py (assuming this is where login resides)
-from django.shortcuts import render, redirect
-from Admin.models import tbl_admin
-from Guest.models import tbl_user
+    place = tbl_place.objects.filter(district=request.GET.get("did"))
+    return render(request, 'Guest/ajax_place.html', {"place": place})
 
 def login(request):
     if request.method == "POST":
-        email = request.POST.get('txt_email')
-        password = request.POST.get('txt_password')
-        adminCount = tbl_admin.objects.filter(admin_email=email, admin_password=password).count()
-        userCount = tbl_user.objects.filter(user_email=email, user_password=password).count()
-        
-        if userCount > 0:
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        admin_count = tbl_admin.objects.filter(admin_email=email, admin_password=password).count()
+        user_count = tbl_user.objects.filter(user_email=email, user_password=password).count()
+        if user_count > 0:
             user = tbl_user.objects.get(user_email=email, user_password=password)
             request.session['u_id'] = user.id
-            if user.user_type == "volunteer":
-                return redirect('User:volunteer_dashboard')
-            elif user.user_type == "organizer":
-                return redirect('User:organizer_dashboard')
-            else:
-                return redirect('Guest:user_who')  # Redirect to user-type selection if no valid user_type
-        elif adminCount > 0:
+            request.session["username"] = user.user_username
+            redirect_url = (
+                'User:volunteer_dashboard' if user.user_type == "volunteer"
+                else 'User:organizer_dashboard' if user.user_type == "organizer"
+                else 'Guest:user_who'
+            )
+            return redirect(redirect_url)
+        elif admin_count > 0:
             admin = tbl_admin.objects.get(admin_email=email, admin_password=password)
             request.session['a_id'] = admin.id
+            request.session["username"] = admin.admin_name
             return redirect('Admin:adminDashboard')
-        else:
-            return render(request, 'Guest/login.html', {'msg': "Invalid login"})
-    else:
-        return render(request, 'Guest/login.html')
+        return render(request, 'Guest/login.html', {'msg': "Invalid login"})
+    return render(request, 'Guest/login.html')

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="600" height="400" viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Elements -->
+    <circle cx="300" cy="200" r="180" fill="hsla(231, 100%, 96%, 0.3)"/>
+    <circle cx="300" cy="200" r="150" fill="hsla(231, 100%, 96%, 0.5)"/>
+    
+    <!-- Decorative Elements -->
+    <path d="M100,100 Q150,50 200,100 T300,100" stroke="hsla(231, 77%, 54%, 0.2)" stroke-width="2" fill="none"/>
+    <path d="M400,300 Q450,250 500,300 T600,300" stroke="hsla(231, 77%, 54%, 0.2)" stroke-width="2" fill="none"/>
+    
+    <!-- People Group -->
+    <!-- Person 1 (Left) -->
+    <g transform="translate(200,150)">
+        <!-- Body -->
+        <path d="M0,50 Q-10,90 0,130" stroke="hsl(231, 77%, 54%)" stroke-width="8" fill="none"/>
+        <!-- Head -->
+        <circle cx="0" cy="30" r="20" fill="hsl(231, 77%, 54%)"/>
+        <!-- Arms -->
+        <path d="M0,70 L-20,90 M0,70 L20,90" stroke="hsl(231, 77%, 54%)" stroke-width="8" fill="none"/>
+        <!-- Legs -->
+        <path d="M0,130 L-15,170 M0,130 L15,170" stroke="hsl(231, 77%, 54%)" stroke-width="8" fill="none"/>
+    </g>
+    
+    <!-- Person 2 (Center) -->
+    <g transform="translate(300,130)">
+        <!-- Body -->
+        <path d="M0,50 Q-10,90 0,130" stroke="hsl(232, 74%, 33%)" stroke-width="8" fill="none"/>
+        <!-- Head -->
+        <circle cx="0" cy="30" r="20" fill="hsl(232, 74%, 33%)"/>
+        <!-- Arms -->
+        <path d="M0,70 L-25,85 M0,70 L25,85" stroke="hsl(232, 74%, 33%)" stroke-width="8" fill="none"/>
+        <!-- Legs -->
+        <path d="M0,130 L-15,170 M0,130 L15,170" stroke="hsl(232, 74%, 33%)" stroke-width="8" fill="none"/>
+    </g>
+    
+    <!-- Person 3 (Right) -->
+    <g transform="translate(400,160)">
+        <!-- Body -->
+        <path d="M0,50 Q-10,90 0,130" stroke="hsl(231, 77%, 54%)" stroke-width="8" fill="none"/>
+        <!-- Head -->
+        <circle cx="0" cy="30" r="20" fill="hsl(231, 77%, 54%)"/>
+        <!-- Arms -->
+        <path d="M0,70 L-20,90 M0,70 L20,90" stroke="hsl(231, 77%, 54%)" stroke-width="8" fill="none"/>
+        <!-- Legs -->
+        <path d="M0,130 L-15,170 M0,130 L15,170" stroke="hsl(231, 77%, 54%)" stroke-width="8" fill="none"/>
+    </g>
+    
+    <!-- Connection Lines -->
+    <path d="M220,200 C250,170 350,170 380,200" stroke="hsl(231, 77%, 54%)" stroke-width="2" stroke-dasharray="5,5"/>
+    <path d="M320,190 C350,160 370,160 400,190" stroke="hsl(231, 77%, 54%)" stroke-width="2" stroke-dasharray="5,5"/>
+    
+    <!-- Icons -->
+    <!-- Heart Icon -->
+    <path d="M280,250 C260,230 230,230 230,250 C230,270 280,290 280,290 C280,290 330,270 330,250 C330,230 300,230 280,250" 
+          fill="hsla(231, 77%, 54%, 0.2)"/>
+    
+    <!-- Star Icon -->
+    <path d="M350,100 L358,116 L376,119 L363,131 L366,149 L350,140 L334,149 L337,131 L324,119 L342,116 Z" 
+          fill="hsla(231, 77%, 54%, 0.2)"/>
+          
+    <!-- Plus Icon -->
+    <path d="M150,280 L170,280 L170,260 L180,260 L180,280 L200,280 L200,290 L180,290 L180,310 L170,310 L170,290 L150,290 Z" 
+          fill="hsla(231, 77%, 54%, 0.2)"/>
+</svg> 

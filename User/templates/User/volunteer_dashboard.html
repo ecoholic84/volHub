@@ -1,0 +1,88 @@
+{% extends 'Guest/base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'User/css/volunteer_dashboard.css' %}">
+<div class="dashboard-container">
+    <!-- Header with greeting -->
+    <div class="dashboard-header">
+        <div class="container">
+            <h1 class="welcome-title">Welcome, {{ username|default:"Volunteer" }}!</h1>
+            <p class="welcome-subtitle">Explore opportunities and track your volunteer journey</p>
+        </div>
+    </div>
+
+    <div class="container main-container">
+        <!-- Search and Sort Section -->
+        <div class="search-sort-container">
+            <div class="search-container">
+                <input type="text" id="event-search" placeholder="Search events..." class="search-input">
+                <svg class="search-icon" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <div class="sort-container">
+                <label for="sort-select" class="sort-label">Sort by:</label>
+                <select id="sort-select" class="sort-select">
+                    <option value="date">Date</option>
+                    <option value="name">Name</option>
+                    <option value="location">Location</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Tabs and Event Cards Section -->
+        <div class="tabs-container">
+            <div class="tab-buttons-wrapper">
+                <div class="tab-buttons">
+                    <button id="tab-1" class="tab-button active">Upcoming Events</button>
+                    <button id="tab-2" class="tab-button">Applied Events</button>
+                    <div class="tab-slider">
+                        <div class="tab-slider-inner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content-container">
+                <!-- Tab Content 1 - Upcoming Events -->
+                <div id="tab-content-1" class="tab-content active">
+                    <div class="events-grid">
+                        {% if upcoming_events %}
+                            {% for event in upcoming_events %}
+                                {% include 'User/partials/event_card.html' with event=event %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2h6v2a2 2 0 01-2 2h-2a2 2 0 01-2-2zM9 7h.01M15 7h.01M12 14a4 4 0 100-8 4 4 0 000 8z" />
+                                </svg>
+                                <p>No upcoming events at the moment.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Tab Content 2 - Applied Events -->
+                <div id="tab-content-2" class="tab-content">
+                    <div class="events-grid">
+                        {% if applied_events %}
+                            {% for event in applied_events %}
+                                {% include 'User/partials/event_card.html' with event=event %}
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553 2.276a1 1 0 010 1.79L15 16m-6-6l-4.553 2.276a1 1 0 000 1.79L9 16m3-2v6m0-6V4" />
+                                </svg>
+                                <p>You haven't applied for any events yet.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'User/js/static-tabs.js' %}"></script>
+
+{% endblock %}

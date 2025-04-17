@@ -1,28 +1,36 @@
-<html lang="en">
-<head>
-    <title align="center">User Registration</title>
-</head>
-<body>
-    <h1 align="center">User Registration</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <table align="center" border="1">
-            <tr>
-                <td>Full Name</td>
-                <td><input type="text" name="txt_name" id="txt_name"></td>
-            </tr>
-            <tr>
-                <td>Volhub Username</td>
-                <td><input type="text" name="txt_username" id="txt_username"></td>
-            </tr>
-            <tr>
-                <td>Set a password</td>
-                <td><input type="password" name="txt_password" id="txt_password"></td>
-            </tr>
-            <tr >
-                <td colspan="2" align="center"><input type="submit" value="Continue"></td>
-            </tr>
-        </table>
-    </form>
-</body>
-</html>
+{% extends 'Guest/base.html' %}
+{% load static %}
+
+{% block title %}Complete Registration - Volhub{% endblock %}
+
+{% block content %}
+    <section class="registration">
+        <div class="container">
+            <div class="form-container">
+                <h2>Complete Your Profile</h2>
+                <p class="form-description">Just a few more details</p>
+                {% if failed %}
+                    <div class="message error">{{ failed }}</div>
+                {% endif %}
+                <form id="registrationForm" method="POST" action="{% url 'Guest:user_registration' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="txt_email" value="{{ request.session.temp_email }}">
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" id="fullname" name="txt_name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="txt_username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="txt_password" required>
+                    </div>
+                    <button type="submit" class="form-btn">Create Account</button>
+                </form>
+                <p class="form-footer">Already have an account? <a href="{% url 'Guest:login' %}">Log in</a></p>
+            </div>
+        </div>
+    </section>
+{% endblock %}
