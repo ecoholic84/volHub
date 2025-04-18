@@ -93,7 +93,7 @@ from django.shortcuts import render, redirect
 from django.core.exceptions import ObjectDoesNotExist
 from User.models import tbl_user, tbl_country, tbl_state, tbl_city  # Adjust imports as needed
 
-# Profile Creation
+# Basic Profile Creation
 def create_profile(request):
     country = tbl_country.objects.all()
     state = tbl_state.objects.all()
@@ -571,9 +571,13 @@ def skill_search_ajax(request):
 
 # Public Profile View
 def profile(request):
-    user_id = request.session.get('u_id')
-    if not user_id:
+    if 'u_id' not in request.session:
         return redirect('Guest:login')
-    # Fetch user data (replace with actual model query)
-    context = {'user': {'username': request.session.get('username', 'User')}}
-    return render(request, 'User/profile.html', context)
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    is_volunteer = 'volunteer' in user.user_type.lower() or 'both' in user.user_type.lower()
+    is_organizer = 'organizer' in user.user_type.lower() or 'both' in user.user_type.lower()
+    return render(request, 'User/profile.html', {
+        'user': user,
+        'is_volunteer': is_volunteer,
+        'is_organizer': is_organizer
+    })

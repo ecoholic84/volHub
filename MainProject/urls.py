@@ -21,9 +21,8 @@ from django.conf import settings
 from Guest.views import index
 
 urlpatterns = [
-    path('', index, name='index'),
     path('Admin/', include('Admin.urls')),
-    path('Guest/', include('Guest.urls')),
+    path('', include('Guest.urls')),
     path('User/', include('User.urls')),
 ]
 

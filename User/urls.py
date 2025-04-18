@@ -19,7 +19,7 @@ urlpatterns = [
     path('profile/', views.profile, name='profile'),
     path('create-profile/', views.create_profile, name='create_profile'),
     path('create-vol-profile/', views.create_vol_profile, name='create_vol_profile'),
-    path('create-organizer-profile/', views.create_organizer_profile, name='create_organizer_profile'),
+    path('create-org-profile/', views.create_organizer_profile, name='create_organizer_profile'),
     path('profile-country-ajax/', views.profile_country_ajax, name='profile_country_ajax'),
     path('profile-state-ajax/', views.profile_state_ajax, name='profile_state_ajax'),
 

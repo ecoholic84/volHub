@@ -1,9 +1,502 @@
 {% extends 'Guest/base.html' %}
-{% block title %}Profile - Volhub{% endblock %}
+
 {% block content %}
+<style>
+    /* Base Styles */
+    :root {
+        --primary-color: #0366d6;
+        --secondary-color: #f6f8fa;
+        --text-color: #24292e;
+        --border-color: #e1e4e8;
+        --light-blue: #e1f5fe;
+        --white: #ffffff;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+        background-color: var(--white);
+        color: var(--text-color);
+        line-height: 1.6;
+    }
+
+    a {
+        color: var(--primary-color);
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Profile Container */
+    .profile-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    /* Left Side - Profile Information */
+    .profile-left {
+        flex: 1;
+        min-width: 300px;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: var(--white);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid var(--primary-color);
+    }
+
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-name {
+        font-size: 24px;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .profile-username {
+        font-size: 16px;
+        color: #666;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+
+    .profile-bio {
+        font-size: 14px;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #444;
+        line-height: 1.5;
+    }
+
+    .profile-details {
+        margin-bottom: 20px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+
+    .detail-item i {
+        width: 20px;
+        color: var(--primary-color);
+        margin-right: 10px;
+    }
+
+    .profile-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+        padding: 15px 0;
+        border-top: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-number {
+        display: block;
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        font-size: 12px;
+        color: #666;
+    }
+
+    .role-badges {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .badge {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .volunteer-badge {
+        background-color: var(--light-blue);
+        color: var(--primary-color);
+    }
+
+    .organizer-badge {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    /* Right Side - Detailed Information */
+    .profile-right {
+        flex: 2;
+        min-width: 500px;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: var(--white);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .tabs {
+        display: flex;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 20px;
+    }
+
+    .tab-btn {
+        padding: 10px 20px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: #666;
+        position: relative;
+    }
+
+    .tab-btn:hover {
+        color: var(--primary-color);
+    }
+
+    .tab-btn.active {
+        color: var(--primary-color);
+    }
+
+    .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--primary-color);
+    }
+
+    .tab-pane {
+        display: none;
+    }
+
+    .tab-pane.active {
+        display: block;
+    }
+
+    .section-title {
+        font-size: 18px;
+        margin-bottom: 15px;
+        color: var(--text-color);
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 10px;
+    }
+
+    .timeline {
+        position: relative;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 20px;
+        height: 100%;
+        width: 2px;
+        background-color: var(--border-color);
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 50px;
+        margin-bottom: 25px;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 16px;
+        top: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+    }
+
+    .timeline-date {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--primary-color);
+        margin-bottom: 5px;
+    }
+
+    .timeline-content {
+        background-color: var(--secondary-color);
+        padding: 15px;
+        border-radius: 5px;
+    }
+
+    .timeline-content h4 {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+
+    .timeline-content p {
+        font-size: 14px;
+        color: #555;
+    }
+
+    .timeline-description {
+        margin-top: 8px;
+        font-size: 13px !important;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 900px) {
+        .profile-container {
+            flex-direction: column;
+        }
+        
+        .profile-left, .profile-right {
+            min-width: 100%;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .tabs {
+            flex-wrap: wrap;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            text-align: center;
+            padding: 10px 5px;
+        }
+    }
+</style>
+
 <div class="container">
-    <h1>Profile</h1>
-    <p>Welcome, {{ user.username }}!</p>
-    <!-- Add profile details here -->
+    <div class="profile-container">
+        <!-- Left Side - Profile Information -->
+        <div class="profile-left">
+            <div class="profile-image">
+                <img src="{% if user.user_photo %}{{ user.user_photo.url }}{% else %}https://randomuser.me/api/portraits/men/32.jpg{% endif %}" alt="Profile Picture">
+            </div>
+            <h1 class="profile-name">{{ user.user_name|default:"John Doe" }}</h1>
+            <p class="profile-username">@{{ user.user_username|default:"johndoe" }}</p>
+            <p class="profile-bio">{{ user.user_bio|default:"Passionate volunteer with experience in community service. Dedicated to positive impact." }}</p>
+            
+            <div class="profile-details">
+                <div class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>{{ user.user_city.city_name|default:"San Francisco, CA" }}</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-globe"></i>
+                    {% if user.user_links and user.user_links.strip %}
+                        <a href="{% if user.user_links|slice:':8' == 'https://' %}{{ user.user_links }}{% else %}https://{{ user.user_links }}{% endif %}" target="_blank">{{ user.user_links|default:'johndoe.com' }}</a>
+                    {% else %}
+                        <a href="https://johndoe.com" target="_blank">johndoe.com</a>
+                    {% endif %}
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:{{ user.user_email }}">{{ user.user_email }}</a>
+                </div>
+            </div>
+            
+            <!-- Placeholder for social links -->
+            <div class="social-links-placeholder">
+                <p>Social media links will be added here in the future.</p>
+            </div>
+            
+            <div class="profile-stats">
+                <div class="stat">
+                    <span class="stat-number">{{ user.volunteer_requests.count|default:0 }}</span>
+                    <span class="stat-label">Events</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">Hours</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">Organizations</span>
+                </div>
+            </div>
+            
+            <div class="role-badges">
+                {% if user.user_type == 'volunteer' or user.user_type == 'both' %}
+                    <span class="badge volunteer-badge">Volunteer</span>
+                {% endif %}
+                {% if user.user_type == 'organizer' or user.user_type == 'both' %}
+                    <span class="badge organizer-badge">Organizer</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Right Side - Detailed Information -->
+        <div class="profile-right">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="education">Education</button>
+                <button class="tab-btn" data-tab="work">Work</button>
+                <button class="tab-btn" data-tab="volunteer">Volunteering</button>
+                {% if user.user_type == 'organizer' or user.user_type == 'both' %}
+                    <button class="tab-btn" data-tab="events">Organized Events</button>
+                {% endif %}
+            </div>
+            
+            <div class="tab-content">
+                <!-- Education Tab -->
+                <div class="tab-pane active" id="education">
+                    <h3 class="section-title">Education</h3>
+                    <div class="timeline">
+                        {% if user.user_degree_type or user.user_institution or user.user_field_of_study or user.user_graduation_year %}
+                            <div class="timeline-item">
+                                <div class="timeline-date">{{ user.user_graduation_year|default:"N/A" }} - {{ user.user_graduation_year|default:"Present" }}</div>
+                                <div class="timeline-content">
+                                    <h4>{{ user.user_degree_type|default:"Degree" }} in {{ user.user_field_of_study|default:"Field of Study" }}</h4>
+                                    <p>{{ user.user_institution|default:"Institution" }}</p>
+                                    <p class="timeline-description">{{ user.user_bio|default:"No description available" }}</p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p>No education records available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Work Tab -->
+                <div class="tab-pane" id="work">
+                    <h3 class="section-title">Work Experience</h3>
+                    <div class="timeline">
+                        {% if user.user_job_title or user.user_organization_name or user.user_industry %}
+                            <div class="timeline-item">
+                                <div class="timeline-date">{{ user.user_graduation_year|default:"N/A" }} - Present</div>
+                                <div class="timeline-content">
+                                    <h4>{{ user.user_job_title|default:"Job Title" }}</h4>
+                                    <p>{{ user.user_organization_name|default:"Company" }}</p>
+                                    <p class="timeline-description">{{ user.user_bio|default:"No description available" }}</p>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p>No work experience records available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Volunteering Tab -->
+                <div class="tab-pane" id="volunteer">
+                    <h3 class="section-title">Volunteering History</h3>
+                    <div class="timeline">
+                        {% for request in user.volunteer_requests.all %}
+                            {% if request.request_status == 1 or request.request_status == 2 %}
+                                <div class="timeline-item">
+                                    <div class="timeline-date">{{ request.request_datetime|date:"Y" }}</div>
+                                    <div class="timeline-content">
+                                        <h4>{{ request.event.event_title }} Volunteer</h4>
+                                        <p>{{ request.event.event_venue }}, {{ request.event.event_city.city_name }}</p>
+                                        <p class="timeline-description">
+                                            {% if request.request_status == 1 %}Accepted{% elif request.request_status == 2 %}Rejected{% endif %} on {{ request.request_datetime|date:"F d, Y" }}
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% empty %}
+                            <p>No volunteering history available.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Organized Events Tab -->
+                <div class="tab-pane" id="events">
+                    <h3 class="section-title">Organized Events</h3>
+                    <div class="timeline">
+                        {% for event in user.event_set.all %}
+                            <div class="timeline-item">
+                                <div class="timeline-date">{{ event.event_datetime|date:"M Y" }}</div>
+                                <div class="timeline-content">
+                                    <h4>{{ event.event_title }}</h4>
+                                    <p>{{ event.event_venue }}, {{ event.event_city.city_name }}</p>
+                                    <p class="timeline-description">{{ event.event_content }}</p>
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p>No organized events available.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanes = document.querySelectorAll('.tab-pane');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons and panes
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabPanes.forEach(pane => pane.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Show corresponding tab pane
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Function to toggle between volunteer and organizer view
+        function updateProfileView(isVolunteer, isOrganizer) {
+            const volunteerBadge = document.querySelector('.volunteer-badge');
+            const organizerBadge = document.querySelector('.organizer-badge');
+            const eventsTab = document.querySelector('[data-tab="events"]');
+            
+            // Update badges
+            volunteerBadge.style.display = isVolunteer ? 'inline-block' : 'none';
+            organizerBadge.style.display = isOrganizer ? 'inline-block' : 'none';
+            
+            // Show/hide organized events tab
+            eventsTab.style.display = isOrganizer ? 'block' : 'none';
+        }
+        
+        // Set initial view based on Django context
+        updateProfileView({{ is_volunteer }}, {{ is_organizer }});
+    });
+</script>
 {% endblock %}

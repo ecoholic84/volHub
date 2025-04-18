@@ -78,3 +78,11 @@ def login(request):
             return redirect('Admin:adminDashboard')
         return render(request, 'Guest/login.html', {'msg': "Invalid login"})
     return render(request, 'Guest/login.html')
+
+def profile(request, name):
+    user_count = tbl_user.objects.filter(user_username=name,user_visibility=1).count()
+    if user_count > 0:
+        user = tbl_user.objects.get(user_username=name)
+        return render(request,"Guest/Profile.html",{"user":user})
+    else:
+        return render(request,"Guest/Profile.html",{"user":''})

@@ -49,7 +49,9 @@ class tbl_user(models.Model):
     # Past Volunteering Experience
     user_past_volunteering = models.TextField(null=True, blank=True) 
 
-    # User Type & Roles
+    # User Type & Roles and Visibility
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='volunteer')
+    user_visibility = models.BooleanField(default=False)
+
 
 
