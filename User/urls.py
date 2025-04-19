@@ -38,5 +38,6 @@ urlpatterns = [
 
     # Organizer actions
     path('event-action/<int:event_id>/', views.event_action, name='event_action'),
+    path('converse/<int:event_id>/', views.converse, name='converse'),
 
 ]

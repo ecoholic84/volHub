@@ -12,6 +12,7 @@ from django.contrib import messages
 from django.http import HttpResponseBadRequest
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib import messages
 
 # Create your views here.
 def logout(request):
@@ -700,3 +701,65 @@ def profile(request):
         'is_volunteer': is_volunteer,
         'is_organizer': is_organizer
     })
+
+def converse(request, event_id):
+    # Only allow logged-in users
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    event = tbl_event.objects.get(id=event_id)
+    # Get all requests for this event
+    requests = tbl_request.objects.filter(event=event).select_related('user')
+    accepted_users = [req.user for req in requests if req.request_status == 1]
+    rejected_users = [req.user for req in requests if req.request_status == 2]
+
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        message = request.POST.get('body')
+        recipient_group = request.POST.get('recipient_group', 'accepted')
+        if recipient_group == 'rejected':
+            recipients = [user.user_email for user in rejected_users]
+        else:
+            recipients = [user.user_email for user in accepted_users]
+        if not subject or not message or not recipients:
+            messages.error(request, 'All fields are required and at least one recipient must be present.')
+            return render(request, 'User/converse.html', {
+                'event': event,
+                'subject': subject,
+                'body': message,
+                'recipient_group': recipient_group,
+                'accepted_users': accepted_users,
+                'rejected_users': rejected_users,
+            })
+        try:
+            send_mail(
+                subject,
+                message,
+                settings.EMAIL_HOST_USER,
+                recipients,
+                fail_silently=False,
+            )
+            messages.success(request, f'Email sent to {len(recipients)} user(s) successfully!')
+            return render(request, 'User/converse.html', {
+                'event': event,
+                'success': True,
+                'accepted_users': accepted_users,
+                'rejected_users': rejected_users,
+                'recipient_group': recipient_group,
+            })
+        except Exception as e:
+            messages.error(request, f'Error sending email: {str(e)}')
+            return render(request, 'User/converse.html', {
+                'event': event,
+                'subject': subject,
+                'body': message,
+                'recipient_group': recipient_group,
+                'accepted_users': accepted_users,
+                'rejected_users': rejected_users,
+            })
+    else:
+        return render(request, 'User/converse.html', {
+            'event': event,
+            'accepted_users': accepted_users,
+            'rejected_users': rejected_users,
+            'recipient_group': 'accepted',
+        })

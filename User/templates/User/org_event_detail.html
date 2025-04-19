@@ -235,9 +235,15 @@
     <p class="org-event-hero-meta">Event Date: {{ event.event_datetime }}</p>
 </div>
 <div class="org-event-details-card" style="position:relative;">
-    <a href="{% url 'User:edit_event' event.id %}" class="btn btn-primary" style="position:absolute;top:24px;right:32px;padding:10px 22px;font-weight:600;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;transition:background 0.18s;z-index:3;">
+    <a href="{% url 'User:edit_event' event.id %}" class="btn btn-primary" style="position:absolute;top:24px;right:180px;padding:10px 22px;font-weight:600;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;transition:background 0.18s;z-index:3;">
         <i class="fa fa-edit" style="margin-right:8px;"></i>Edit Event
     </a>
+    <a href="{% url 'User:converse' event.id %}" class="btn btn-converse" style="position:absolute;top:24px;right:32px;padding:10px 22px;font-weight:600;background:#fbbf24;color:#fff;border-radius:8px;text-decoration:none;transition:background 0.18s;z-index:3;">
+        <i class="fa fa-envelope" style="margin-right:8px;"></i>Converse
+    </a>
+    <style>
+    .btn-converse:hover { background: #f59e42; color: #fff; }
+    </style>
     <!-- Success/Error Messages -->
     {% if messages %}
         {% for message in messages %}

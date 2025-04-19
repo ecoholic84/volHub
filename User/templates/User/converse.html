@@ -1,0 +1,140 @@
+{% extends 'Guest/base.html' %}
+
+{% block title %}Converse | VolHub{% endblock %}
+
+{% block content %}
+<div class="converse-container">
+    <h2>Send Email to Event Applicants</h2>
+    {% if messages %}
+        <div class="org-message">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+    <form method="post" class="converse-form">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="recipient_group">Send to</label>
+            <select id="recipient_group" name="recipient_group" class="form-control" onchange="updateRecipientList()">
+                <option value="accepted" {% if recipient_group == 'accepted' %}selected{% endif %}>Accepted Users ({{ accepted_users|length }})</option>
+                <option value="rejected" {% if recipient_group == 'rejected' %}selected{% endif %}>Rejected Users ({{ rejected_users|length }})</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Recipients</label>
+            <div id="recipient-list-preview" class="recipient-list-preview">
+                {% if recipient_group == 'rejected' %}
+                    {% for user in rejected_users %}
+                        <span class="recipient-email">{{ user.user_email }}</span>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% for user in accepted_users %}
+                        <span class="recipient-email">{{ user.user_email }}</span>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="subject">Subject</label>
+            <input type="text" id="subject" name="subject" class="form-control" value="{{ subject|default:'' }}" required>
+        </div>
+        <div class="form-group">
+            <label for="body">Body</label>
+            <textarea id="body" name="body" rows="8" class="form-control" required>{{ body|default:'' }}</textarea>
+        </div>
+        <div style="display: flex; gap: 14px; margin-top: 10px;">
+            <button type="submit" class="btn btn-primary">Send Email</button>
+            <a href="{% url 'User:event_action' event.id %}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+<style>
+.converse-container {
+    max-width: 650px;
+    margin: 48px auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(79,70,229,0.08);
+    padding: 32px 38px 28px 38px;
+}
+.converse-form .form-group {
+    margin-bottom: 22px;
+}
+.converse-form label {
+    font-weight: 600;
+    color: #444;
+    margin-bottom: 7px;
+    display: block;
+}
+.converse-form .form-control {
+    width: 100%;
+    border: 1px solid #e0e7ff;
+    border-radius: 7px;
+    padding: 10px 12px;
+    font-size: 1.09em;
+    margin-bottom: 6px;
+}
+.recipient-list-preview {
+    background: #f3f4f6;
+    border-radius: 7px;
+    padding: 10px;
+    font-size: 0.98em;
+    color: #333;
+    margin-bottom: 8px;
+    min-height: 38px;
+}
+.recipient-email {
+    background: #6366f1;
+    color: #fff;
+    border-radius: 4px;
+    padding: 3px 7px;
+    margin-right: 4px;
+    font-size: 0.96em;
+}
+.btn-primary {
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 22px;
+    font-weight: 600;
+    transition: background 0.18s;
+}
+.btn-primary:hover { background: #4F46E5; }
+.btn-secondary {
+    background: #e5e7eb;
+    color: #222;
+    border: none;
+    border-radius: 7px;
+    padding: 10px 22px;
+    font-weight: 500;
+    transition: background 0.18s;
+    text-decoration: none;
+}
+.btn-secondary:hover { background: #cbd5e1; }
+</style>
+<div id="accepted-list-html" style="display:none;">
+    {% for user in accepted_users %}<span class="recipient-email">{{ user.user_email }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}
+</div>
+<div id="rejected-list-html" style="display:none;">
+    {% for user in rejected_users %}<span class="recipient-email">{{ user.user_email }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}
+</div>
+<script>
+function updateRecipientList() {
+    var group = document.getElementById('recipient_group').value;
+    var preview = document.getElementById('recipient-list-preview');
+    var acceptedHTML = document.getElementById('accepted-list-html').innerHTML;
+    var rejectedHTML = document.getElementById('rejected-list-html').innerHTML;
+    if (group === 'accepted') {
+        preview.innerHTML = acceptedHTML;
+    } else {
+        preview.innerHTML = rejectedHTML;
+    }
+}
+// Initialize preview on page load
+window.addEventListener('DOMContentLoaded', function() {
+    updateRecipientList();
+});
+</script>
+{% endblock %}
