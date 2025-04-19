@@ -353,7 +353,7 @@
         <!-- Event Cards -->
         <div class="org-dashboard-events-grid">
             {% for event in events %}
-                <div>{% include 'User/partials/event_card.html' with event=event %}</div>
+                <div>{% include 'User/partials/org_event_card.html' with event=event %}</div>
             {% empty %}
                 <p>No events created yet.</p>
             {% endfor %}
