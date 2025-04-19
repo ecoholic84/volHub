@@ -174,7 +174,9 @@ def Event(request):
         # Assign ManyToMany skill relationships
         event.required_skills.set(selected_skills)
 
-        return redirect("User:Event")
+        from django.contrib import messages
+        messages.success(request, 'Event created successfully!')
+        return redirect("User:organizer_dashboard")
 
     else:
         return render(request, 'User/event.html', {

@@ -1,51 +1,212 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event</title>
-    <!-- Basic CSS -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f9f9f9;
-            padding: 20px;
-        }
-        table {
-            background: #fff;
-            padding: 20px;
-            border-collapse: collapse;
-            width: 100%;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        td {
-            padding: 10px;
-        }
-        input[type="text"],
-        input[type="file"],
-        input[type="datetime-local"],
-        select {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        input[type="submit"] {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-</head>
-<body>
+{% extends 'Guest/base.html' %}
+{% block title %}Create Event | VolHub{% endblock %}
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .event-create-container {
+        max-width: 650px;
+        margin: 42px auto 32px auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 16px rgba(79,70,229,0.08);
+        padding: 36px 32px 30px 32px;
+    }
+    .event-create-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #4F46E5;
+        margin-bottom: 20px;
+        text-align: center;
+        letter-spacing: -1px;
+    }
+    .event-form-group {
+        margin-bottom: 22px;
+        position: relative;
+    }
+    .event-form-label {
+        font-weight: 600;
+        color: #6366f1;
+        margin-bottom: 7px;
+        display: block;
+        font-size: 1.04rem;
+    }
+    .event-form-input,
+    .event-form-select {
+        width: 100%;
+        padding: 12px 13px;
+        border: 1.5px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 1rem;
+        background: #f8fafc;
+        transition: border 0.2s;
+        outline: none;
+    }
+    .event-form-input:focus,
+    .event-form-select:focus {
+        border-color: #4F46E5;
+        background: #fff;
+    }
+    .event-form-row {
+        display: flex;
+        gap: 18px;
+    }
+    .event-form-row > .event-form-group {
+        flex: 1;
+        margin-bottom: 0;
+    }
+    .event-form-multiselect {
+        width: 100% !important;
+    }
+    .event-form-submit-btn {
+        width: 100%;
+        background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.16rem;
+        font-weight: 600;
+        padding: 14px 0;
+        cursor: pointer;
+        margin-top: 10px;
+        box-shadow: 0 2px 8px rgba(79,70,229,0.07);
+        transition: background 0.2s;
+    }
+    .event-form-submit-btn:hover {
+        background: linear-gradient(90deg, #818cf8 0%, #6366f1 100%);
+    }
+    .event-form-icon {
+        margin-right: 8px;
+        color: #6366f1;
+        font-size: 1.1rem;
+    }
+    @media (max-width: 700px) {
+        .event-create-container { padding: 22px 8px; }
+        .event-form-row { flex-direction: column; gap: 0; }
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="event-create-container">
+    <div class="event-create-title"><i class="fa fa-calendar-plus event-form-icon"></i>Create New Event</div>
+    <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
+        {% csrf_token %}
+        <div class="event-form-group">
+            <label class="event-form-label" for="txt_title"><i class="fa fa-heading event-form-icon"></i>Title</label>
+            <input class="event-form-input" type="text" id="txt_title" name="txt_title" required>
+        </div>
+        <div class="event-form-group">
+            <label class="event-form-label" for="txt_description"><i class="fa fa-align-left event-form-icon"></i>Description</label>
+            <input class="event-form-input" type="text" id="txt_description" name="txt_description" required>
+        </div>
+        <div class="event-form-row">
+            <div class="event-form-group">
+                <label class="event-form-label" for="txt_file"><i class="fa fa-image event-form-icon"></i>File</label>
+                <input class="event-form-input" type="file" id="txt_file" name="txt_file">
+            </div>
+            <div class="event-form-group">
+                <label class="event-form-label" for="txt_datetime"><i class="fa fa-clock event-form-icon"></i>Date and Time</label>
+                <input class="event-form-input" type="datetime-local" id="txt_datetime" name="txt_datetime" required>
+            </div>
+        </div>
+        <div class="event-form-row">
+            <div class="event-form-group">
+                <label class="event-form-label" for="sel_industry"><i class="fa fa-industry event-form-icon"></i>Industry</label>
+                <select class="event-form-select" id="sel_industry" name="sel_industry" required>
+                    <option value="">----Select----</option>
+                    {% for i in industry %}
+                    <option value="{{i.id}}">{{i.industry_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="event-form-group">
+                <label class="event-form-label" for="txt_venue"><i class="fa fa-map-marker-alt event-form-icon"></i>Venue</label>
+                <input class="event-form-input" type="text" id="txt_venue" name="txt_venue" required>
+            </div>
+        </div>
+        <div class="event-form-row">
+            <div class="event-form-group">
+                <label class="event-form-label" for="sel_country"><i class="fa fa-flag event-form-icon"></i>Country</label>
+                <select class="event-form-select" id="sel_country" name="sel_country" required>
+                    <option value="">----Select----</option>
+                    {% for i in country %}
+                    <option value="{{i.id}}">{{i.country_name}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="event-form-group">
+                <label class="event-form-label" for="sel_state"><i class="fa fa-map event-form-icon"></i>State</label>
+                <select class="event-form-select" id="sel_state" name="sel_state" required>
+                    <option value="">----Select----</option>
+                </select>
+            </div>
+        </div>
+        <div class="event-form-group">
+            <label class="event-form-label" for="sel_city"><i class="fa fa-city event-form-icon"></i>City</label>
+            <select class="event-form-select" id="sel_city" name="sel_city" required>
+                <option value="">----Select----</option>
+            </select>
+        </div>
+        <div class="event-form-row">
+            <div class="event-form-group">
+                <label class="event-form-label" for="txt_stipend"><i class="fa fa-money-bill event-form-icon"></i>Stipend</label>
+                <input class="event-form-input" type="text" id="txt_stipend" name="txt_stipend">
+            </div>
+            <div class="event-form-group">
+                <label class="event-form-label" for="txt_slots"><i class="fa fa-users event-form-icon"></i>Volunteer Slots</label>
+                <input class="event-form-input" type="text" id="txt_slots" name="txt_slots" required>
+            </div>
+        </div>
+        <div class="event-form-group">
+            <label class="event-form-label" for="txt_deadline"><i class="fa fa-hourglass-half event-form-icon"></i>Application Deadline</label>
+            <input class="event-form-input" type="datetime-local" id="txt_deadline" name="txt_deadline" required>
+        </div>
+        <div class="event-form-group">
+            <label class="event-form-label" for="sel_skills"><i class="fa fa-lightbulb event-form-icon"></i>Required Skills</label>
+            <select class="event-form-select event-form-multiselect" id="sel_skills" name="sel_skills" multiple="multiple" style="width: 100%;">
+                {% for skill in skills %}
+                <option value="{{ skill.id }}">{{ skill.skill_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="event-form-submit-btn"><i class="fa fa-plus event-form-icon"></i>Create Event</button>
+    </form>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#sel_skills').select2({
+            placeholder: "Select skills",
+            allowClear: true
+        });
+        $("#sel_country").change(function () {
+            var did = $(this).val();
+            var ur = "{% url 'User:profile_country_ajax' %}";
+            $.ajax({
+                url: ur,
+                data: { did: did },
+                success: function (data) {
+                    $("#sel_state").html(data);
+                },
+            });
+        });
+        $("#sel_state").change(function () {
+            var did = $(this).val();
+            var ur = "{% url 'User:profile_state_ajax' %}";
+            $.ajax({
+                url: ur,
+                data: { did: did },
+                success: function (data) {
+                    $("#sel_city").html(data);
+                },
+            });
+        });
+    });
+</script>
+{% endblock %}
+
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <table border="1">

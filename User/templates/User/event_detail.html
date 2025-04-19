@@ -83,6 +83,24 @@
         background-color: #3730A3;
     }
 
+    .organizer-details-btn {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: #10B981;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .organizer-details-btn:hover {
+        background-color: #059669;
+    }
+
     .event-meta-icon {
         margin-right: 5px;
         color: #6B7280;
@@ -191,6 +209,7 @@
                 <button type="submit" name="request" onclick="return confirm('Do you want to apply for this event?')">Request to Volunteer</button>
             {% endif %}
         </form>
+        <a href="{% url 'Guest:profile' event.user.user_username %}" class="organizer-details-btn" style="margin-top:10px;display:inline-block;text-decoration:none;">Organizer Details</a>
     </div>
 </div>
 

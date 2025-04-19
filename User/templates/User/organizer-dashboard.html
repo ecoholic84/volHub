@@ -1,101 +1,364 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organizer Dashboard</title>
-</head>
-<body>
-    <h1>Organizer Dashboard</h1>
-    <p>Welcome, Organizer! Your dashboard content will be added here.</p>
-    
-    <a href = "{%  url 'User:Event' %}">Create Events</a>
-    <br>
-    <br>
-    <a href = "{% url 'User:create_profile' %}">Profile Completion</a>
-</body>
-</html>
+{% extends 'Guest/base.html' %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Organizer Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        h2 {
-            text-align: center;
-        }
-        .card-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-        .event-card {
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            width: 300px;
-            padding: 15px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            text-decoration: none;
-            color: black;
-            transition: transform 0.2s;
-        }
-        .event-card:hover {
-            transform: scale(1.05);
-        }
-        .event-card h3 {
-            margin: 0 0 10px 0;
-            color: #007BFF;
-        }
-        .event-card p {
-            margin: 5px 0;
-        }
-        .status-pending {
-            color: orange;
-        }
-        .status-approved {
-            color: green;
-        }
-        .status-rejected {
-            color: red;
-        }
-    </style>
-</head>
-<body>
-    <h2>Your Events</h2>
+{% block title %}Organizer Dashboard | VolHub{% endblock %}
 
-    <!-- Success/Error Messages -->
-    {% if success %}
-        <p style="color: green;">{{ success }}</p>
-    {% endif %}
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
+{% block extra_head %}
+<style>
+    .org-message-banner {
+        max-width: 1200px;
+        margin: 0 auto 24px auto;
+        padding-top: 18px;
+    }
+    .org-message {
+        padding: 16px 28px;
+        border-radius: 10px;
+        font-size: 1.08rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px rgba(79,70,229,0.09);
+        border: 1.5px solid #4F46E5;
+        background: #f0f7ff;
+        color: #2e3a59;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: fadeInDown 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .org-message-success {
+        border-color: #22c55e;
+        background: #e7faed;
+        color: #227a3a;
+    }
+    .org-message-error, .org-message-danger {
+        border-color: #ef4444;
+        background: #fbeaea;
+        color: #b91c1c;
+    }
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 
-    <!-- Event Cards -->
-    <div class="card-container">
-        {% for event in events %}
-            <a href="{% url 'User:event_action' event.id %}" class="event-card">
-                <h3>{{ event.event_title }}</h3>
-                <p><strong>Venue:</strong> {{ event.event_venue }}</p>
-                <p><strong>City:</strong> {{ event.event_city.name }}</p>
-                <p><strong>Date & Time:</strong> {{ event.event_datetime }}</p>
-                <p><strong>Status:</strong> 
-                    <span class="{% if event.event_status == 0 %}status-pending{% elif event.event_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
-                        {% if event.event_status == 0 %}Pending{% elif event.event_status == 1 %}Approved{% else %}Rejected{% endif %}
-                    </span>
-                </p>
-            </a>
-        {% empty %}
-            <p>No events created yet.</p>
-        {% endfor %}
+    .org-dashboard-container {
+        display: flex;
+        gap: 32px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 0;
+    }
+    .org-dashboard-sidebar {
+        min-width: 220px;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 12px rgba(79,70,229,0.07);
+        padding: 24px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        height: fit-content;
+    }
+    .org-dashboard-sidebar .sidebar-section {
+        margin-bottom: 18px;
+    }
+    .org-dashboard-sidebar .sidebar-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #4F46E5;
+        font-size: 1.09rem;
+    }
+    .org-dashboard-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .org-dashboard-sidebar li {
+        margin-bottom: 8px;
+    }
+    .org-dashboard-sidebar a {
+        color: #222;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .org-dashboard-sidebar a:hover {
+        color: #4F46E5;
+    }
+    .org-dashboard-main {
+        flex: 1;
+        min-width: 0;
+    }
+    .org-dashboard-welcome {
+        background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+        color: #fff;
+        border-radius: 16px;
+        padding: 32px 32px 24px 32px;
+        margin-bottom: 30px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+    }
+    .org-dashboard-welcome .welcome-avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: #fff;
+        color: #4F46E5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+    .org-dashboard-welcome .welcome-text {
+        font-size: 1.25rem;
+        font-weight: 500;
+    }
+    .org-dashboard-events-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+    .org-dashboard-events-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #4F46E5;
+    }
+    .org-dashboard-events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 28px;
+    margin-top: 18px;
+}
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 22px;
+    }
+    /* Event Card Grid Compatibility */
+    .event-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 12px rgba(79,70,229,0.07);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: box-shadow 0.18s;
+        min-width: 0;
+        height: 100%;
+    }
+    .event-card:hover {
+        box-shadow: 0 8px 26px rgba(79,70,229,0.16);
+    }
+    .event-card .event-image {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .event-card .event-thumbnail {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 0;
+    }
+    .event-card .event-details {
+        flex: 1;
+        padding: 18px 18px 15px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+    .event-card .event-title {
+        font-size: 1.13rem;
+        font-weight: 700;
+        margin: 0 0 2px 0;
+        color: #4F46E5;
+    }
+    .event-card .event-meta {
+        display: flex;
+        gap: 18px;
+        font-size: 0.97rem;
+        color: #555;
+        margin-bottom: 2px;
+    }
+    .event-card .event-date, .event-card .event-location {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .event-card .meta-icon {
+        width: 17px;
+        height: 17px;
+        color: #818cf8;
+    }
+    .event-card .event-description {
+        font-size: 0.99rem;
+        color: #444;
+        margin: 0 0 10px 0;
+        flex: 1;
+    }
+    .event-card .event-button {
+        align-self: flex-end;
+        background: #4F46E5;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 7px 18px;
+        font-size: 0.97rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.18s;
+        margin-top: 10px;
+    }
+    .event-card .event-button:hover {
+        background: #6366f1;
+    }
+    .event-card .event-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e0e7ff;
+    }
+    .event-card .industry-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background-color: #6366f1;
+        color: white;
+        font-size: 12px;
+        font-weight: 600;
+        padding: 6px 12px;
+        border-radius: 999px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        z-index: 5;
+        white-space: nowrap;
+    }
+    .org-fab-create {
+        position: fixed;
+        bottom: 36px;
+        right: 36px;
+        background: #4F46E5;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 62px;
+        height: 62px;
+        font-size: 2.1rem;
+        box-shadow: 0 4px 18px rgba(79,70,229,0.18);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        transition: background 0.2s;
+    }
+    .org-fab-create:hover {
+        background: #6366f1;
+    }
+    /* Remove .org-card-container, not used anymore */
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        padding: 20px;
+        background-color: #f4f4f4;
+    }
+    .org-event-card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 300px;
+        padding: 15px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        text-decoration: none;
+        color: black;
+        transition: transform 0.2s;
+    }
+    .org-event-card:hover {
+        transform: scale(1.05);
+    }
+    .org-event-card h3 {
+        margin: 0 0 10px 0;
+        color: #007BFF;
+    }
+    .org-event-card p {
+        margin: 5px 0;
+    }
+    .org-status-pending {
+        color: orange;
+    }
+    .org-status-approved {
+        color: green;
+    }
+    .org-status-rejected {
+        color: red;
+    }
+    @media (max-width: 900px) {
+        .org-dashboard-container { flex-direction: column; gap: 0; }
+        .org-dashboard-sidebar { margin-bottom: 30px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+  <div class="org-message-banner">
+    {% for message in messages %}
+      <div class="org-message org-message-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
+<div class="org-dashboard-container">
+    <div class="org-dashboard-sidebar">
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">Navigation</h3>
+            <ul>
+    <li><a href="{% url 'User:organizer_dashboard' %}"><i class="fa fa-tachometer-alt"></i> Dashboard</a></li>
+    <li><a href="{% url 'User:Event' %}"><i class="fa fa-calendar-plus"></i> Events</a></li>
+    <li><a href="{% url 'User:profile' %}"><i class="fa fa-user"></i> Profile</a></li>
+    <li><a href="{% url 'User:edit_profile' 1 %}"><i class="fa fa-cog"></i> Settings</a></li>
+</ul>
+        </div>
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">Support</h3>
+            <ul>
+    <li><a href="{% url 'User:feedback' %}"><i class="fa fa-question-circle"></i> Help</a></li>
+    <li><a href="{% url 'User:complaint' %}"><i class="fa fa-envelope"></i> Contact Us</a></li>
+</ul>
+        </div>
     </div>
-</body>
-</html>
+    <div class="org-dashboard-main">
+        <div class="org-dashboard-welcome">
+            <div class="welcome-avatar">O</div>
+            <div class="welcome-text">Welcome back, Organizer!</div>
+        </div>
+        <div class="org-dashboard-events-header">
+            <h2 class="org-dashboard-events-title">Your Events</h2>
+            <a href="{% url 'User:Event' %}" class="org-fab-create" title="Create Event"><i class="fa fa-plus"></i></a>
+        </div>
+        <!-- Success/Error Messages -->
+        {% if success %}
+            <p style="color: green;">{{ success }}</p>
+        {% endif %}
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        <!-- Event Cards -->
+        <div class="org-dashboard-events-grid">
+            {% for event in events %}
+                <div>{% include 'User/partials/event_card.html' with event=event %}</div>
+            {% empty %}
+                <p>No events created yet.</p>
+            {% endfor %}
+        </div>
+        
+    </div>
+</div>
+{% endblock %}

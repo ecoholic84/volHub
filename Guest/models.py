@@ -51,7 +51,14 @@ class tbl_user(models.Model):
 
     # User Type & Roles and Visibility
     user_type = models.CharField(max_length=10, choices=USER_TYPES, default='volunteer')
-    user_visibility = models.BooleanField(default=False)
+    user_visibility = models.BooleanField(default=False)  # If true, profile is public and visible to anyone
+
+    @property
+    def is_public_organizer(self):
+        return self.user_type == 'organizer' and self.user_visibility
+
+    # PUBLIC FIELDS for Organizer Profile:
+    # user_name, user_username, user_photo, user_degree_type, user_institution, user_field_of_study, user_graduation_month, user_graduation_year, user_email, user_contact, user_job_title, user_organization_name, user_location, user_bio, user_links
 
 
 

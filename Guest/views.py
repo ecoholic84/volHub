@@ -2,7 +2,10 @@ from django.shortcuts import render, redirect
 from Admin.models import *
 from Guest.models import *
 from User.models import *
-
+import random
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
 def index(request):
     return render(request, 'Guest/index.html')
 
@@ -79,10 +82,64 @@ def login(request):
         return render(request, 'Guest/login.html', {'msg': "Invalid login"})
     return render(request, 'Guest/login.html')
 
+from User.models import tbl_event, tbl_request
+
 def profile(request, name):
-    user_count = tbl_user.objects.filter(user_username=name,user_visibility=1).count()
-    if user_count > 0:
+    # Show public profile for organizer or volunteer
+    try:
         user = tbl_user.objects.get(user_username=name)
-        return render(request,"Guest/Profile.html",{"user":user})
+        # Volunteer Journey: events where user volunteered (accepted requests)
+        volunteer_events = tbl_event.objects.filter(requests__user=user, requests__request_status=1).distinct()
+        # Organizer Journey: events organized by this user
+        organized_events = tbl_event.objects.filter(user=user)
+        if (user.user_type == 'organizer' or user.user_type == 'volunteer') and user.user_visibility:
+            return render(request, "Guest/Profile.html", {
+                "user": user,
+                "volunteer_events": volunteer_events,
+                "organized_events": organized_events
+            })
+        elif user.user_type != 'organizer':
+            return render(request, "Guest/Profile.html", {"user": user})
+        else:
+            return render(request, "Guest/Profile.html", {"user": ''})
+    except tbl_user.DoesNotExist:
+        return render(request, "Guest/Profile.html", {"user": ''})
+    
+def forgotpassword(request):
+    if request.method == "POST":
+        email = request.POST.get("txt_email")
+        user = tbl_user.objects.get(user_email=email)
+        otp = random.randint(111111,999999)
+        request.session["otp"] = otp
+        request.session["fid"] = user.id
+        send_mail(
+            'Forgot password OTP', #subject
+            "\rHello \r" + str(otp) +"\n This is the OTP to reset ur password.\n If you didn't ask to reset your password, you can ignore this email. \r\n Thanks. \r\n ",#body
+            settings.EMAIL_HOST_USER,
+            [email],
+        )
+        return render(request,"Guest/ForgotPassword.html",{"msg":email})
     else:
-        return render(request,"Guest/Profile.html",{"user":''})
+        return render(request,"Guest/ForgotPassword.html")
+
+def otp(request):
+    if request.method == "POST":
+        inp_otp = int(request.POST.get("txt_otp"))
+        if inp_otp == request.session["otp"]:
+            return redirect("Guest:newpass")
+        else:
+            return render(request,"Guest/OTP.html",{"msg":"OTP Does not Matches..!!"})
+    else:
+        return render(request,"Guest/OTP.html")
+
+def newpass(request):
+    if request.method == "POST":
+        user = tbl_user.objects.get(id=request.session["fid"])
+        if request.POST.get("txt_new_pass") == request.POST.get("txt_con_pass"):
+            user.user_password = request.POST.get("txt_con_pass")
+            user.save()
+            return render(request,"Guest/NewPassword.html",{"msg1":"Password Updated Sucessfully...."})
+        else:
+            return render(request,"Guest/NewPassword.html",{"msg":"Error in confirm password..!!!"})
+    else:
+        return render(request,"Guest/NewPassword.html")
