@@ -4,6 +4,44 @@
 {% extends 'Guest/base.html' %}
 
 {% block content %}
+<a href="{% url 'User:volunteer_dashboard' %}" class="back-to-dashboard-icon" title="Back to Dashboard" aria-label="Back to Dashboard">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+</a>
+<style>
+.back-to-dashboard-icon {
+    display: inline-block;
+    margin: 18px 0 10px 8px;
+    background: none;
+    border: none;
+    padding: 4px;
+    border-radius: 50%;
+    transition: background 0.14s;
+    line-height: 1;
+    vertical-align: middle;
+}
+.back-to-dashboard-icon:hover, .back-to-dashboard-icon:focus {
+    background: #e0e7ff;
+    outline: none;
+}
+</style>
+<style>
+.back-to-dashboard-link {
+    display: inline-block;
+    margin: 18px 0 10px 8px;
+    color: #6366f1;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.06em;
+    border-radius: 6px;
+    padding: 7px 16px 7px 10px;
+    transition: background 0.17s, color 0.17s;
+}
+.back-to-dashboard-link:hover {
+    background: #e0e7ff;
+    color: #3730A3;
+    text-decoration: underline;
+}
+</style>
 <style>
     .event-container {
         max-width: 1000px;
@@ -177,6 +215,38 @@
             <div class="meta-info">
                 <p><i class="event-meta-icon">📅</i> {{ event.event_datetime|date:"F j, Y, g:i A" }}</p>
                 <p><i class="event-meta-icon">📍</i> {{ event.event_venue|default:"Location TBA" }}</p>
+                <a href="{% url 'Guest:profile' event.user.user_username %}" class="organizer-details-link" id="know-organizer-link">✨ Know the Organizer</a>
+<style>
+#know-organizer-link {
+    color: #6366f1;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 1.08em;
+    position: relative;
+    transition: color 0.2s, transform 0.2s;
+}
+#know-organizer-link::after {
+    content: '';
+    display: block;
+    width: 0%;
+    height: 2px;
+    background: linear-gradient(90deg, #6366f1 40%, #a21caf 100%);
+    transition: width 0.3s cubic-bezier(.4,2,.6,1), left 0.3s cubic-bezier(.4,2,.6,1);
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+}
+#know-organizer-link:hover {
+    color: #a21caf;
+    transform: scale(1.07) rotate(-2deg);
+    text-shadow: 0 2px 10px #e0e7ff99;
+}
+#know-organizer-link:hover::after {
+    width: 100%;
+}
+</style>
             </div>
             {% if has_requested %}
                 <div class="request-status">
@@ -198,18 +268,77 @@
         <form method="POST">
             {% csrf_token %}
             {% if has_requested %}
-                {% if event.request_status == 1 %}
+                {% if request_status == 1 %}
                     <p>Your request has been accepted by the organizer.</p>
-                {% elif event.request_status == 2 %}
+                    <div class="cant-make-it-box">
+                        <span>Can't make it to the event?</span>
+                        <a href="mailto:{{ event.user.user_email }}?subject=Unable to Attend Event: {{ event.event_title|urlencode }}&body=Dear {{ event.user.user_name }},%0D%0A%0D%0AI am unable to attend the event '{{ event.event_title }}' due to [your reason here].%0D%0A%0D%0ARegards,%0D%0A[Your Name]" class="contact-organizer-link">Contact the organizer</a>
+                    </div>
+                    <style>
+                    .cant-make-it-box {
+                        background: #f8fafc;
+                        border: 1px solid #e0e7ff;
+                        border-radius: 8px;
+                        padding: 13px 18px;
+                        margin: 16px 0 0 0;
+                        font-size: 1em;
+                        color: #222;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.7em;
+                    }
+                    .contact-organizer-link {
+                        color: #4F46E5;
+                        text-decoration: underline;
+                        font-weight: 500;
+                        transition: color 0.17s;
+                    }
+                    .contact-organizer-link:hover {
+                        color: #a21caf;
+                    }
+                    </style>
+                {% elif request_status == 2 %}
                     <p>Your request was rejected by the organizer.</p>
-                {% elif event.request_status == 0 %}
-                    <button type="submit" name="undo" onclick="return confirm('Are you sure you want to undo your request?')">Undo Request</button>
+                {% elif request_status == 0 %}
+                    <button type="submit" name="undo" onclick="return confirm('Are you sure you want to cancel your volunteer request?')">Cancel Request</button>
                 {% endif %}
             {% else %}
-                <button type="submit" name="request" onclick="return confirm('Do you want to apply for this event?')">Request to Volunteer</button>
+                <button type="submit" name="request" class="volunteer-request-btn-minimal" onclick="return confirm('Do you want to apply for this event?')">🤝 Request to Volunteer</button>
+<style>
+.volunteer-request-btn-minimal {
+    background: #fff;
+    color: #6366f1;
+    border: 1.2px solid #e0e7ff;
+    border-radius: 1.6em;
+    padding: 11px 28px;
+    font-weight: 500;
+    font-size: 1.07em;
+    cursor: pointer;
+    box-shadow: 0 2px 10px 0 rgba(99,102,241,0.04);
+    outline: none;
+    transition: color 0.18s, border 0.18s, background 0.18s, transform 0.18s, box-shadow 0.18s;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+}
+.volunteer-request-btn-minimal:hover, .volunteer-request-btn-minimal:focus {
+    background: #4F46E5;
+    color: #fff;
+    border-color: #4F46E5;
+    transform: scale(1.045);
+    box-shadow: 0 4px 16px 0 #6366f12a;
+}
+.volunteer-request-btn-minimal:active {
+    background: #3730A3;
+    color: #fff;
+    border-color: #3730A3;
+    transform: scale(0.98);
+}
+</style>
             {% endif %}
         </form>
-        <a href="{% url 'Guest:profile' event.user.user_username %}" class="organizer-details-btn" style="margin-top:10px;display:inline-block;text-decoration:none;">Organizer Details</a>
+
     </div>
 </div>
 

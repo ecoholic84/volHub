@@ -1,0 +1,128 @@
+{% extends 'Guest/base.html' %}
+{% block title %}Volunteer Profile | VolHub{% endblock %}
+{% block extra_head %}
+<style>
+    body {
+        background: #f4f6fb;
+    }
+    .vol-profile-container {
+        max-width: 600px;
+        margin: 48px auto 0 auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 16px rgba(79,70,229,0.10);
+        padding: 36px 32px 30px 32px;
+    }
+    .vol-profile-title {
+        color: #6366f1;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .vol-profile-section {
+        margin-bottom: 32px;
+    }
+    .vol-profile-section-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #6366f1;
+        margin-bottom: 12px;
+        border-bottom: 1.5px solid #e9ecef;
+        padding-bottom: 4px;
+    }
+    .vol-profile-list {
+        margin-top: 0;
+        font-size: 1.09rem;
+        color: #2e3a59;
+    }
+    .vol-profile-list p {
+        margin: 0 0 10px 0;
+        padding: 0;
+    }
+    .vol-profile-label {
+        font-weight: 600;
+        color: #6366f1;
+        margin-right: 8px;
+        min-width: 140px;
+        display: inline-block;
+    }
+    .vol-profile-back {
+        display: inline-block;
+        margin-top: 28px;
+        color: #6366f1;
+        text-decoration: none;
+        font-size: 1.07rem;
+        font-weight: 500;
+        transition: color 0.16s;
+    }
+    .vol-profile-back:hover {
+        color: #4F46E5;
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="vol-profile-container">
+    <div class="vol-profile-title">Volunteer Profile</div>
+
+    <div class="vol-profile-section">
+        <div class="vol-profile-section-title">Personal Information</div>
+        <div class="vol-profile-list">
+            <p><span class="vol-profile-label">Name:</span> {{ volunteer.user_name }}</p>
+            <p><span class="vol-profile-label">Email:</span> {{ volunteer.user_email }}</p>
+            <p><span class="vol-profile-label">Contact:</span> {{ volunteer.user_contact }}</p>
+            <p><span class="vol-profile-label">Address:</span> {{ volunteer.user_address }}</p>
+            <p><span class="vol-profile-label">About:</span> {{ volunteer.user_about|default:'-' }}</p>
+        </div>
+    </div>
+
+    <div class="vol-profile-section">
+        <div class="vol-profile-section-title">Educational Information</div>
+        <div class="vol-profile-list">
+            <p><span class="vol-profile-label">Degree Type:</span> {{ volunteer.user_degree_type|default:'-' }}</p>
+            <p><span class="vol-profile-label">Institution:</span> {{ volunteer.user_institution|default:'-' }}</p>
+            <p><span class="vol-profile-label">Field of Study:</span> {{ volunteer.user_field_of_study|default:'-' }}</p>
+            <p><span class="vol-profile-label">Graduation Month:</span> {{ volunteer.user_graduation_month|default:'-' }}</p>
+            <p><span class="vol-profile-label">Graduation Year:</span> {{ volunteer.user_graduation_year|default:'-' }}</p>
+        </div>
+    </div>
+
+    <div class="vol-profile-section">
+        <div class="vol-profile-section-title">Emergency Contact</div>
+        <div class="vol-profile-list">
+            <p><span class="vol-profile-label">Name:</span> {{ volunteer.user_emergency_name|default:'-' }}</p>
+            <p><span class="vol-profile-label">Phone:</span> {{ volunteer.user_emergency_phone|default:'-' }}</p>
+        </div>
+    </div>
+
+    <div class="vol-profile-section">
+        <div class="vol-profile-section-title">Work Details</div>
+        <div class="vol-profile-list">
+            <p><span class="vol-profile-label">Organization Name:</span> {{ volunteer.user_organization_name|default:'-' }}</p>
+            <p><span class="vol-profile-label">Job Title:</span> {{ volunteer.user_job_title|default:'-' }}</p>
+            <p><span class="vol-profile-label">Industry:</span> {{ volunteer.user_industry.industry_name|default:'-' }}</p>
+            <p><span class="vol-profile-label">Work Location:</span> {{ volunteer.user_location|default:'-' }}</p>
+            <p><span class="vol-profile-label">Official Address:</span> {{ volunteer.user_official_address|default:'-' }}</p>
+            <p><span class="vol-profile-label">Official Contact Number:</span> {{ volunteer.user_official_contact_number|default:'-' }}</p>
+        </div>
+    </div>
+
+    <div class="vol-profile-section">
+        <div class="vol-profile-section-title">Skills</div>
+        <div class="vol-profile-list">
+            <p><span class="vol-profile-label">Skills:</span> {% for skill in volunteer.skills.all %}{{ skill.skill_name }}{% if not forloop.last %}, {% endif %}{% empty %}None{% endfor %}</p>
+        </div>
+    </div>
+
+    <div class="vol-profile-section">
+        <div class="vol-profile-section-title">Past Volunteering Experience</div>
+        <div class="vol-profile-list">
+            <p><span class="vol-profile-label">Has Experience:</span> {% if volunteer.user_past_volunteering %}Yes{% else %}No{% endif %}</p>
+            <p><span class="vol-profile-label">Details:</span> {{ volunteer.user_past_volunteering|default:'-' }}</p>
+        </div>
+    </div>
+
+    <a href="javascript:history.back()" class="vol-profile-back">&#8592; Back</a>
+</div>
+{% endblock %}

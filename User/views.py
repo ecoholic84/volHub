@@ -197,27 +197,21 @@ def volunteer_dashboard(request):
     # Fetch user data
     user = tbl_user.objects.get(id=user_id)
     
-    # Fetch upcoming events (excluding those the user has applied for with pending status)
+    # Fetch upcoming events (exclude ALL events the user has ever applied to, regardless of request status)
     today = timezone.now().date()
+    applied_event_ids = tbl_request.objects.filter(user_id=user_id).values_list('event_id', flat=True)
     upcoming_events = tbl_event.objects.filter(
         event_datetime__gte=today,
         event_status=1,
         visibility=1
-    ).exclude(
-        id__in=tbl_request.objects.filter(
-            user_id=user_id,
-            request_status=0
-        ).values('event_id')
-    )
-    
-    # Fetch applied events for the logged-in user with request status
+    ).exclude(id__in=applied_event_ids)
+
+    # Fetch applied events for the logged-in user (all events the user has applied to)
     applied_events = tbl_event.objects.filter(
         event_datetime__gte=today
     ).filter(
-        id__in=tbl_request.objects.filter(
-            user_id=user_id
-        ).values('event_id')
-    ).prefetch_related('requests')  # Changed to prefetch_related
+        id__in=applied_event_ids
+    ).prefetch_related('requests')
 
     context = {
         'user': user,
@@ -310,6 +304,81 @@ def event_detail(request, event_id):
 #============ FROM HERE STARTS THE PAGES OF ORGANIZER DASHBOARD ============
 
 # Organizer dashboard
+
+def applied_volunteer_profile(request, req_id):
+    # Only allow access if user is logged in
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    try:
+        user_request = tbl_request.objects.get(id=req_id)
+    except tbl_request.DoesNotExist:
+        from django.contrib import messages
+        messages.error(request, 'Volunteer request not found.')
+        return redirect('User:organizer_dashboard')
+    volunteer = user_request.user
+    return render(request, 'User/applied_volunteer_profile.html', {
+        'volunteer': volunteer
+    })
+
+
+def edit_event(request, event_id):
+    from django.contrib import messages
+    try:
+        event = tbl_event.objects.get(id=event_id)
+    except tbl_event.DoesNotExist:
+        messages.error(request, 'Event not found.')
+        return redirect('User:organizer_dashboard')
+
+    # Only allow the creator to edit
+    if event.user.id != request.session.get('u_id'):
+        messages.error(request, 'You are not authorized to edit this event.')
+        return redirect('User:organizer_dashboard')
+
+    country = tbl_country.objects.all()
+    industry = tbl_industry.objects.all()
+    skills = tbl_skill.objects.all()
+    states = tbl_state.objects.filter(country=event.event_city.state.country) if event.event_city else tbl_state.objects.none()
+    cities = tbl_city.objects.filter(state=event.event_city.state) if event.event_city else tbl_city.objects.none()
+
+    if request.method == "POST":
+        event.event_title = request.POST.get('txt_title')
+        event.event_content = request.POST.get('txt_description')
+        event.event_venue = request.POST.get('txt_venue')
+        event.event_stipend = request.POST.get('txt_stipend')
+        event.event_slots = request.POST.get('txt_slots')
+        event.event_deadline = request.POST.get('txt_deadline')
+        event.event_datetime = request.POST.get('txt_datetime')
+
+        # Foreign keys
+        industry_id = request.POST.get('sel_industry')
+        city_id = request.POST.get('sel_city')
+        if industry_id:
+            event.industry = tbl_industry.objects.get(id=industry_id)
+        if city_id:
+            event.event_city = tbl_city.objects.get(id=city_id)
+
+        # File upload
+        if request.FILES.get('txt_file'):
+            event.event_file = request.FILES['txt_file']
+
+        event.save()
+
+        # Skills (ManyToMany)
+        selected_skills = request.POST.getlist('sel_skills')
+        event.required_skills.set(selected_skills)
+
+        messages.success(request, 'Event updated successfully!')
+        return redirect('User:org_event_detail', event_id=event.id)
+
+    return render(request, 'User/edit_event.html', {
+        'event': event,
+        'country': country,
+        'industry': industry,
+        'skills': skills,
+        'states': states,
+        'cities': cities
+    })
+
 def organizer_dashboard(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')

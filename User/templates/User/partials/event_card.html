@@ -1,5 +1,5 @@
 {# templates/partials/event_card.html #}
-<a href="{% url 'User:event_action' event.id %}" class="event-card event-card-link" tabindex="0" aria-label="Manage event {{ event.event_title }}">
+<a href="{% url 'User:event_detail' event.id %}" class="event-card event-card-link" tabindex="0" aria-label="Manage event {{ event.event_title }}">
     <div class="event-image">
         {% if event.event_file %}
             <img src="{{ event.event_file.url }}" alt="{{ event.event_title }}" class="event-thumbnail">

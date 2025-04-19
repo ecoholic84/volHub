@@ -234,7 +234,10 @@
     <h1 class="org-event-hero-title">{{ event.event_title }}</h1>
     <p class="org-event-hero-meta">Event Date: {{ event.event_datetime }}</p>
 </div>
-<div class="org-event-details-card">
+<div class="org-event-details-card" style="position:relative;">
+    <a href="{% url 'User:edit_event' event.id %}" class="btn btn-primary" style="position:absolute;top:24px;right:32px;padding:10px 22px;font-weight:600;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;transition:background 0.18s;z-index:3;">
+        <i class="fa fa-edit" style="margin-right:8px;"></i>Edit Event
+    </a>
     <!-- Success/Error Messages -->
     {% if messages %}
         {% for message in messages %}
@@ -245,28 +248,7 @@
     <!-- Event Details -->
     {% if event %}
         <div class="org-event-details">
-            <div class="org-event-details-list">
-                <p><strong>Title:</strong> {{ event.event_title }}</p>
-                <p><strong>Content:</strong> {{ event.event_content }}</p>
-                <p><strong>Venue:</strong> {{ event.event_venue }}</p>
-                <p><strong>City:</strong> {{ event.event_city.name }}</p>
-                <p><strong>Industry:</strong> {{ event.industry.industry_name }}</p>
-                <p><strong>Date & Time:</strong> {{ event.event_datetime }}</p>
-                <p><strong>Stipend:</strong> {{ event.event_stipend }}</p>
-                <p><strong>Status:</strong> 
-                    <span class="org-event-status {% if event.event_status == 0 %}org-status-pending{% elif event.event_status == 1 %}org-status-approved{% else %}org-status-rejected{% endif %}">
-                        {% if event.event_status == 0 %}Pending{% elif event.event_status == 1 %}Approved{% else %}Rejected{% endif %}
-                    </span>
-                </p>
-                <p><strong>Created At:</strong> {{ event.event_created_at }}</p>
-                <p><strong>File:</strong> 
-                    {% if event.event_file %}
-                        <a href="{{ event.event_file.url }}" target="_blank" class="org-event-file-link">Download</a>
-                    {% else %}
-                        None
-                    {% endif %}
-                </p>
-            </div>
+            {% include 'User/org_event_card.html' with event=event %}
 
             <!-- Volunteer Requests -->
             <div class="org-vol-requests-section">
@@ -274,7 +256,7 @@
                 <table class="org-vol-requests-table">
                     <thead>
                         <tr>
-                            <th>Volunteer Email</th>
+                            <th>Volunteer Name</th>
                             <th>Request Date</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -283,7 +265,7 @@
                     <tbody>
                         {% for req in requests %}
                             <tr>
-                                <td>{{ req.user.user_email }}</td>
+                                <td><a href="{% url 'User:applied_volunteer_profile' req.id %}" style="color: #6366f1; text-decoration: underline; font-weight: 500;">{{ req.user.user_name }}</a></td>
                                 <td>{{ req.request_datetime }}</td>
                                 <td class="org-request-status-{% if req.request_status == 0 %}pending{% elif req.request_status == 1 %}approved{% else %}rejected{% endif %}">
                                     {% if req.request_status == 0 %}Pending{% elif req.request_status == 1 %}Accepted{% else %}Rejected{% endif %}

@@ -2,6 +2,8 @@ from django.urls import path,include
 from User import views
 app_name='User'
 urlpatterns = [
+    path('requests/<int:req_id>/', views.applied_volunteer_profile, name='applied_volunteer_profile'),
+    path('edit-event/<int:event_id>/', views.edit_event, name='edit_event'),
     path('logout/', views.logout, name='logout'),
 
     path('myProfile/', views.myProfile, name='myProfile'),

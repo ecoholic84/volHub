@@ -50,31 +50,29 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchInput) {
         searchInput.addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase().trim();
-            
-            eventCards.forEach(card => {
-                const eventTitle = card.querySelector('.event-title').textContent.toLowerCase();
-                const eventDescription = card.querySelector('.event-description').textContent.toLowerCase();
-                const eventLocation = card.querySelector('.event-location span')?.textContent.toLowerCase() || '';
-                
-                if (eventTitle.includes(searchTerm) || 
-                    eventDescription.includes(searchTerm) || 
-                    eventLocation.includes(searchTerm)) {
+            // Only search/filter cards in the currently active tab
+            const activeTabContent = document.querySelector('.tab-content.active');
+            const activeCards = activeTabContent.querySelectorAll('.event-card');
+            let anyVisible = false;
+            activeCards.forEach(card => {
+                const eventTitle = (card.querySelector('.event-title')?.textContent || '').toLowerCase();
+                const eventDescription = (card.querySelector('.event-description')?.textContent || '').toLowerCase();
+                const eventLocation = (card.querySelector('.event-location span')?.textContent || '').toLowerCase();
+                if (
+                    eventTitle.includes(searchTerm) ||
+                    eventDescription.includes(searchTerm) ||
+                    eventLocation.includes(searchTerm)
+                ) {
                     card.style.display = '';
+                    anyVisible = true;
                 } else {
                     card.style.display = 'none';
                 }
             });
-            
-            // Check if there are any visible cards in the active tab
-            const activeTabContent = document.querySelector('.tab-content.active');
-            const visibleCards = Array.from(activeTabContent.querySelectorAll('.event-card')).filter(card => card.style.display !== 'none');
+            // Empty state for no visible cards
             const existingEmptyState = activeTabContent.querySelector('.search-empty-state');
-            
-            if (visibleCards.length === 0 && !existingEmptyState) {
-                // Create and append empty state for no search results
+            if (!anyVisible && !existingEmptyState) {
                 const eventsGrid = activeTabContent.querySelector('.events-grid');
-                
-                // Create empty state element
                 const noResultsEl = document.createElement('div');
                 noResultsEl.className = 'empty-state search-empty-state';
                 noResultsEl.innerHTML = `
@@ -84,10 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     <h3 class="empty-title">No matching events found</h3>
                     <p class="empty-message">Try adjusting your search terms</p>
                 `;
-                
                 eventsGrid.appendChild(noResultsEl);
-            } else if (visibleCards.length > 0 && existingEmptyState) {
-                // Remove empty state if cards are visible
+            } else if (anyVisible && existingEmptyState) {
                 existingEmptyState.remove();
             }
         });
