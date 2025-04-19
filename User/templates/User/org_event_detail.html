@@ -252,46 +252,131 @@
 
             <!-- Volunteer Requests -->
             <div class="org-vol-requests-section">
-                <h3>Volunteer Requests</h3>
-                <table class="org-vol-requests-table">
-                    <thead>
-                        <tr>
-                            <th>Volunteer Name</th>
-                            <th>Request Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for req in requests %}
-                            <tr>
-                                <td><a href="{% url 'User:applied_volunteer_profile' req.id %}" style="color: #6366f1; text-decoration: underline; font-weight: 500;">{{ req.user.user_name }}</a></td>
-                                <td>{{ req.request_datetime }}</td>
-                                <td class="org-request-status-{% if req.request_status == 0 %}pending{% elif req.request_status == 1 %}approved{% else %}rejected{% endif %}">
-                                    {% if req.request_status == 0 %}Pending{% elif req.request_status == 1 %}Accepted{% else %}Rejected{% endif %}
-                                </td>
-                                <td>
-                                    <form method="post" style="display: inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="request_id" value="{{ req.id }}">
-                                        <input type="hidden" name="action" value="accept">
-                                        <input type="submit" value="Accept" class="org-request-action-btn accept">
-                                    </form>
-                                    <form method="post" style="display: inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="request_id" value="{{ req.id }}">
-                                        <input type="hidden" name="action" value="reject">
-                                        <input type="submit" value="Reject" class="org-request-action-btn reject">
-                                    </form>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="4">No volunteer requests yet.</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="org-tabs">
+                    <button class="org-tab-button active" type="button">Requests</button>
+                    <button class="org-tab-button" type="button">Approved Users</button>
+                    <button class="org-tab-button" type="button">Rejected Users</button>
+                </div>
+                <div class="org-tabs-content">
+                    <!-- Requests Tab -->
+                    <div class="org-tab-content active">
+                        <table class="org-vol-requests-table">
+                            <thead>
+                                <tr>
+                                    <th>Volunteer Name</th>
+                                    <th>Request Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in requests %}
+                                    {% if req.request_status == 0 %}
+                                    <tr>
+                                        <td><a href="{% url 'User:applied_volunteer_profile' req.id %}" style="color: #6366f1; text-decoration: underline; font-weight: 500;">{{ req.user.user_name }}</a></td>
+                                        <td>{{ req.request_datetime }}</td>
+                                        <td class="org-request-status-pending">Pending</td>
+                                        <td>
+                                            <form method="post" style="display: inline;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="request_id" value="{{ req.id }}">
+                                                <input type="hidden" name="action" value="accept">
+                                                <input type="submit" value="Accept" class="org-request-action-btn accept">
+                                            </form>
+                                            <form method="post" style="display: inline;">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="request_id" value="{{ req.id }}">
+                                                <input type="hidden" name="action" value="reject">
+                                                <input type="submit" value="Reject" class="org-request-action-btn reject">
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+                                {% empty %}
+                                    <tr><td colspan="4">No volunteer requests yet.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Approved Users Tab -->
+                    <div class="org-tab-content">
+                        <table class="org-vol-requests-table">
+                            <thead>
+                                <tr>
+                                    <th>Volunteer Name</th>
+                                    <th>Request Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in requests %}
+                                    {% if req.request_status == 1 %}
+                                    <tr>
+                                        <td><a href="{% url 'User:applied_volunteer_profile' req.id %}" style="color: #22c55e; text-decoration: underline; font-weight: 500;">{{ req.user.user_name }}</a></td>
+                                        <td>{{ req.request_datetime }}</td>
+                                        <td class="org-request-status-approved">Accepted</td>
+                                    </tr>
+                                    {% endif %}
+                                {% empty %}
+                                    <tr><td colspan="3">No approved users yet.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Rejected Users Tab -->
+                    <div class="org-tab-content">
+                        <table class="org-vol-requests-table">
+                            <thead>
+                                <tr>
+                                    <th>Volunteer Name</th>
+                                    <th>Request Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in requests %}
+                                    {% if req.request_status == 2 %}
+                                    <tr>
+                                        <td><a href="{% url 'User:applied_volunteer_profile' req.id %}" style="color: #ef4444; text-decoration: underline; font-weight: 500;">{{ req.user.user_name }}</a></td>
+                                        <td>{{ req.request_datetime }}</td>
+                                        <td class="org-request-status-rejected">Rejected</td>
+                                    </tr>
+                                    {% endif %}
+                                {% empty %}
+                                    <tr><td colspan="3">No rejected users yet.</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <style>
+                .org-tabs { display: flex; gap: 16px; margin: 18px 0 0 0; }
+                .org-tab-button {
+                    background: none;
+                    border: none;
+                    padding: 10px 22px;
+                    font-size: 1.05em;
+                    color: #6366f1;
+                    border-radius: 16px 16px 0 0;
+                    transition: background 0.18s, color 0.18s;
+                    font-weight: 500;
+                    cursor: pointer;
+                }
+                .org-tab-button.active {
+                    background: #eef2ff;
+                    color: #312e81;
+                }
+                .org-tabs-content {
+                    background: #fff;
+                    border-radius: 0 0 16px 16px;
+                    box-shadow: 0 2px 10px rgba(79,70,229,0.07);
+                    padding: 24px 16px 12px 16px;
+                    margin-bottom: 24px;
+                }
+                .org-tab-content { display: none; }
+                .org-tab-content.active { display: block; }
+                </style>
+                <script src="/static/User/js/org_event_detail_tabs.js"></script>
             </div>
 
             <a href="{% url 'User:organizer_dashboard' %}" class="org-back-link">Back to Dashboard</a>
