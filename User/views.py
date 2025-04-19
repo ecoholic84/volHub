@@ -739,13 +739,9 @@ def converse(request, event_id):
                 fail_silently=False,
             )
             messages.success(request, f'Email sent to {len(recipients)} user(s) successfully!')
-            return render(request, 'User/converse.html', {
-                'event': event,
-                'success': True,
-                'accepted_users': accepted_users,
-                'rejected_users': rejected_users,
-                'recipient_group': recipient_group,
-            })
+            from django.urls import reverse
+            from django.http import HttpResponseRedirect
+            return HttpResponseRedirect(reverse('User:converse', args=[event.id]) + '?success=1')
         except Exception as e:
             messages.error(request, f'Error sending email: {str(e)}')
             return render(request, 'User/converse.html', {
@@ -757,6 +753,8 @@ def converse(request, event_id):
                 'rejected_users': rejected_users,
             })
     else:
+        if request.GET.get('success'):
+            messages.success(request, 'Email sent successfully!')
         return render(request, 'User/converse.html', {
             'event': event,
             'accepted_users': accepted_users,

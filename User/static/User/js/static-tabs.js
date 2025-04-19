@@ -2,6 +2,13 @@
 document.addEventListener("DOMContentLoaded", () => {
     const tabButtons = document.querySelectorAll(".tab-button");
     const tabContents = document.querySelectorAll(".tab-content");
+    const slider = document.querySelector(".tab-slider");
+    // Initialize slider position on load
+    if (slider && tabButtons.length) {
+        const activeBtn = document.querySelector(".tab-button.active") || tabButtons[0];
+        slider.style.left = (activeBtn.offsetLeft) + "px";
+        slider.style.width = activeBtn.offsetWidth + "px";
+    }
 
     tabButtons.forEach((button, index) => {
         button.addEventListener("click", () => {
@@ -15,9 +22,13 @@ document.addEventListener("DOMContentLoaded", () => {
             selectedContent.classList.add("active");
 
             // Move slider
-            const slider = document.querySelector(".tab-slider-inner");
+            const slider = document.querySelector(".tab-slider");
             if (slider) {
-                slider.style.transform = `translateX(${index * 100}%)`;
+                const activeBtn = button;
+                const btnRect = activeBtn.getBoundingClientRect();
+                const parentRect = activeBtn.parentElement.getBoundingClientRect();
+                slider.style.left = (activeBtn.offsetLeft) + "px";
+                slider.style.width = activeBtn.offsetWidth + "px";
             }
         });
     });

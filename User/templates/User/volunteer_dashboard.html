@@ -2,12 +2,117 @@
 {% load static %}
 {% block content %}
 <link rel="stylesheet" href="{% static 'User/css/volunteer_dashboard.css' %}">
-<div class="dashboard-container">
-    <!-- Header with greeting -->
-    <div class="dashboard-header">
-        <div class="container">
-            <h1 class="welcome-title">Welcome, {{ username|default:"Volunteer" }}!</h1>
-            <p class="welcome-subtitle">Explore opportunities and track your volunteer journey</p>
+<style>
+.vol-dashboard-container {
+    max-width: 1100px;
+    margin: 44px auto;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 32px 0 rgba(60,60,90,0.16), 0 1.5px 6px 0 rgba(60,60,90,0.10);
+    transition: box-shadow 0.22s cubic-bezier(.4,2,.6,1);
+    padding: 40px 48px 38px 48px;
+}
+.vol-dashboard-container:hover {
+    box-shadow: 0 8px 48px 0 rgba(60,60,90,0.28), 0 3px 12px 0 rgba(60,60,90,0.16);
+}
+.vol-banner {
+    background: linear-gradient(90deg, #6366f1 0%, #4f46e5 100%);
+    border-radius: 16px;
+    padding: 36px 38px 28px 38px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 3px 18px 0 rgba(99,102,241,0.13);
+}
+.vol-banner-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+.vol-banner-icon {
+    background: #f4f6fa;
+    border-radius: 50%;
+    width: 68px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 28px;
+    box-shadow: 0 2px 8px 0 rgba(99,102,241,0.10);
+}
+.vol-banner-title {
+    color: #fff;
+    font-size: 2.1rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+}
+.vol-banner-subtitle {
+    color: #e0e7ff;
+    font-size: 1.15rem;
+    font-weight: 400;
+    margin: 0;
+}
+@media (max-width: 600px) {
+    .vol-banner {
+        padding: 22px 10px 16px 10px;
+    }
+    .vol-banner-icon {
+        width: 46px;
+        height: 46px;
+        margin-right: 12px;
+    }
+    .vol-banner-title {
+        font-size: 1.2rem;
+    }
+    .vol-banner-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+.tab-buttons-wrapper {
+    position: relative;
+}
+.tab-slider {
+    background: linear-gradient(90deg, #6366f1 0%, #4f46e5 100%);
+    border-radius: 999px;
+    height: 38px;
+    width: 140px;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%) scale(1);
+    box-shadow: 0 4px 24px 0 rgba(99,102,241,0.16), 0 1.5px 6px 0 rgba(60,60,90,0.10);
+    z-index: 1;
+    opacity: 0.97;
+    transition:
+        left 0.54s cubic-bezier(.22,1,.36,1),
+        width 0.54s cubic-bezier(.22,1,.36,1),
+        box-shadow 0.38s cubic-bezier(.22,1,.36,1),
+        transform 0.38s cubic-bezier(.22,1,.36,1),
+        opacity 0.38s cubic-bezier(.22,1,.36,1);
+}
+.tab-slider:active, .tab-slider:focus {
+    transform: translateY(-50%) scale(1.045);
+    box-shadow: 0 8px 36px 0 rgba(99,102,241,0.22), 0 3px 12px 0 rgba(60,60,90,0.16);
+    opacity: 1;
+}
+
+</style>
+<div class="vol-dashboard-container">
+    <!-- Modern Banner -->
+    <div class="vol-banner">
+        <div class="vol-banner-content">
+            <div class="vol-banner-icon">
+                <svg width="48" height="48" fill="none" stroke="#6366f1" stroke-width="2.2" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" fill="#f4f6fa"/>
+                    <path d="M8 13l2.5 2.5 5-5" stroke="#4f46e5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="vol-banner-text">
+                <h1 class="vol-banner-title">Welcome, {{ user_username|default:"Volunteer" }}!</h1>
+                <p class="vol-banner-subtitle">Explore opportunities and track your volunteer journey</p>
+            </div>
         </div>
     </div>
 
@@ -36,9 +141,7 @@
                 <div class="tab-buttons">
                     <button id="tab-1" class="tab-button active">Upcoming Events</button>
                     <button id="tab-2" class="tab-button">Applied Events</button>
-                    <div class="tab-slider">
-                        <div class="tab-slider-inner"></div>
-                    </div>
+                    <div class="tab-slider"></div>
                 </div>
             </div>
 
@@ -48,7 +151,7 @@
                     <div class="events-grid">
                         {% if upcoming_events %}
                             {% for event in upcoming_events %}
-                                {% include 'User/partials/event_card.html' with event=event %}
+                                <div class="event-card">{% include 'User/partials/event_card.html' with event=event %}</div>
                             {% endfor %}
                         {% else %}
                             <div class="empty-state">
@@ -66,7 +169,7 @@
                     <div class="events-grid">
                         {% if applied_events %}
                             {% for event in applied_events %}
-                                {% include 'User/partials/event_card.html' with event=event %}
+                                <div class="event-card">{% include 'User/partials/event_card.html' with event=event %}</div>
                             {% endfor %}
                         {% else %}
                             <div class="empty-state">
@@ -84,5 +187,6 @@
 </div>
 
 <script src="{% static 'User/js/static-tabs.js' %}"></script>
+<script src="{% static 'User/js/volunteer-search.js' %}"></script>
 
 {% endblock %}

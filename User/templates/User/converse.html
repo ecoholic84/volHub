@@ -4,6 +4,9 @@
 
 {% block content %}
 <div class="converse-container">
+    <a href="{% url 'User:event_action' event.id %}" class="btn btn-back" style="margin-bottom: 18px; display: inline-flex; align-items: center; gap: 8px; font-weight: 500; color: #6366f1; text-decoration: none; font-size: 1.06rem;">
+        <span style="font-size: 1.2em;">&#8592;</span> Back to Event
+    </a>
     <h2>Send Email to Event Applicants</h2>
     {% if messages %}
         <div class="org-message">
@@ -54,9 +57,15 @@
     max-width: 650px;
     margin: 48px auto;
     background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 2px 12px rgba(79,70,229,0.08);
+    border-radius: 18px;
+    box-shadow: 0 4px 32px 0 rgba(60,60,90,0.16), 0 1.5px 6px 0 rgba(60,60,90,0.10);
+    transition: box-shadow 0.22s cubic-bezier(.4,2,.6,1);
     padding: 32px 38px 28px 38px;
+}
+.converse-container:hover {
+    box-shadow: 0 8px 48px 0 rgba(60,60,90,0.28), 0 3px 12px 0 rgba(60,60,90,0.16);
+}
+
 }
 .converse-form .form-group {
     margin-bottom: 22px;
