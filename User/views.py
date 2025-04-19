@@ -10,7 +10,8 @@ from django.db.models import Q
 from django.utils import timezone
 from django.contrib import messages
 from django.http import HttpResponseBadRequest
-
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 def logout(request):
@@ -415,10 +416,57 @@ def event_action(request, event_id):
         if req:
             if action == 'accept':
                 req.request_status = 1
+                # email=req.user.user_email
+
+                user_name = req.user.user_name
+                event = req.event  # Or use req.event if you're directly accessing the event via the request
+
+                event_details = (
+                    f"Event Title   : {event.event_title}\n"
+                    f"Date & Time   : {event.event_datetime.strftime('%B %d, %Y at %I:%M %p')}\n"
+                    f"Venue         : {event.event_venue}, {event.event_city.name}\n"
+                    f"Stipend       : {event.event_stipend}\n"
+                )
+
+                message_body = (
+                    f"Hello {user_name},\n\n"
+                    "Congratulations! We're excited to inform you that your application to join us as a volunteer has been accepted.\n\n"
+                    "Here are the details of the event you've been selected for:\n\n"
+                    f"{event_details}\n"
+                    "Thank you for your willingness to contribute and make a difference. We'll be reaching out soon with more details about your role and next steps.\n\n"
+                    "Best regards,\n"
+                    "The Team"
+                )
+
+                send_mail(
+                    subject='Volunteer Application Accepted',
+                    message=message_body,
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[req.user.user_email],
+                )
+
                 message = f"Request from {req.user.user_email} accepted successfully!"
+
             elif action == 'reject':
                 req.request_status = 2
-                message = f"Request from {req.user.user_email} rejected successfully!"
+                email=req.user.user_email
+                send_mail(
+            subject='Regarding Your Volunteering Application',
+            message=(
+                f"Dear {req.user.user_name},\n\n"
+                f"Thank you so much for your interest in volunteering with us for {event.event_title}. "
+                "We truly appreciate the time and effort you took to apply.\n\n"
+                "After careful consideration, we regret to inform you that we are unable to include you "
+                "in this event’s volunteer team.\n\n"
+                "We hope you’ll stay connected with us and consider applying for future opportunities.\n\n"
+                "Warm regards,\n"
+                "The Team"
+            ),
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[email],
+        )
+
+            message = f"Request from {req.user.user_email} rejected successfully!"
             req.save()
             messages.success(request, message)
         return redirect('User:event_action', event_id=event_id)
