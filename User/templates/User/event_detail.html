@@ -269,7 +269,6 @@
             {% csrf_token %}
             {% if has_requested %}
                 {% if request_status == 1 %}
-                    <p>Your request has been accepted by the organizer.</p>
                     <div class="cant-make-it-box">
                         <span>Can't make it to the event?</span>
                         <a href="mailto:{{ event.user.user_email }}?subject=Unable to Attend Event: {{ event.event_title|urlencode }}&body=Dear {{ event.user.user_name }},%0D%0A%0D%0AI am unable to attend the event '{{ event.event_title }}' due to [your reason here].%0D%0A%0D%0ARegards,%0D%0A[Your Name]" class="contact-organizer-link">Contact the organizer</a>
@@ -298,7 +297,7 @@
                     }
                     </style>
                 {% elif request_status == 2 %}
-                    <p>Your request was rejected by the organizer.</p>
+                    <!-- Removed redundant status text -->
                 {% elif request_status == 0 %}
                     <button type="submit" name="undo" onclick="return confirm('Are you sure you want to cancel your volunteer request?')">Cancel Request</button>
                 {% endif %}

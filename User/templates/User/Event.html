@@ -205,6 +205,30 @@
         });
     });
 </script>
+
+<script>
+    // Dynamically set the minimum datetime to now on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const currentDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        document.getElementById('txt_datetime').min = currentDatetime;
+    });
+
+    // Optional: Real-time validation to prevent manual past date entry
+    document.getElementById('txt_datetime').addEventListener('change', function(e) {
+        const selectedDate = new Date(e.target.value);
+        const now = new Date();
+        if (selectedDate < now) {
+            e.target.value = ''; // Clear the input
+            alert('Please select a future date and time.');
+        }
+    });
+</script>
 {% endblock %}
 
     <form action="" method="POST" enctype="multipart/form-data">
@@ -213,7 +237,7 @@
             <tr><td>Title</td><td><input type="text" name="txt_title"></td></tr>
             <tr><td>Description</td><td><input type="text" name="txt_description"></td></tr>
             <tr><td>File</td><td><input type="file" name="txt_file"></td></tr>
-            <tr><td>Date and Time</td><td><input type="datetime-local" name="txt_datetime"></td></tr>
+            <tr><td>Date and Time</td><td><input type="datetime-local" name="txt_datetime" id="txt_datetime"></td></tr>
             <tr>
                 <td>Industry</td>
                 <td>
@@ -255,7 +279,7 @@
             </tr>
             <tr><td>Stipend</td><td><input type="text" name="txt_stipend"></td></tr>
             <tr><td>Volunteer Slots</td><td><input type="text" name="txt_slots"></td></tr>
-            <tr><td>Application Deadline</td><td><input type="datetime-local" name="txt_deadline"></td></tr>
+            <tr><td>Application Deadline</td><td><input type="datetime-local" name="txt_deadline" id="txt_deadline"></td></tr>
 
             <!-- Skill selection with multi-select and search -->
             <tr>
@@ -312,5 +336,29 @@
             });
         });
     </script>
+
+<script>
+    // Dynamically set the minimum datetime to now on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const currentDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+        document.getElementById('txt_datetime').min = currentDatetime;
+    });
+
+    // Optional: Real-time validation to prevent manual past date entry
+    document.getElementById('txt_datetime').addEventListener('change', function(e) {
+        const selectedDate = new Date(e.target.value);
+        const now = new Date();
+        if (selectedDate < now) {
+            e.target.value = ''; // Clear the input
+            alert('Please select a future date and time.');
+        }
+    });
+</script>
 </body>
 </html>

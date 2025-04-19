@@ -25,6 +25,13 @@
         <div class="industry-badge">
             {{ event.industry.industry_name }}
         </div>
+        {% if event.skills.all %}
+            <div class="skills-badges">
+                {% for skill in event.skills.all %}
+                    <span class="skill-badge">{{ skill.skill_name }}</span>
+                {% endfor %}
+            </div>
+        {% endif %}
     </div>
     <div class="event-details">
         <h3 class="event-title">{{ event.event_title|escape }}</h3>

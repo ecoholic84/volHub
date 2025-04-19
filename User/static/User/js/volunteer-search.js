@@ -9,8 +9,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const events = document.querySelectorAll(`#${tabId} ${eventListSelector} .event-card`);
         let anyVisible = false;
         events.forEach(card => {
-            const text = card.textContent.toLowerCase();
-            if (text.includes(query)) {
+            // Get text from title, description, industry, and all skill badges
+            const title = card.querySelector('.event-title')?.textContent.toLowerCase() || '';
+            const description = card.querySelector('.event-description')?.textContent.toLowerCase() || '';
+            const industry = card.querySelector('.industry-badge')?.textContent.toLowerCase() || '';
+            let skills = '';
+            card.querySelectorAll('.skill-badge').forEach(badge => {
+                skills += ' ' + badge.textContent.toLowerCase();
+            });
+            const searchText = `${title} ${description} ${industry} ${skills}`;
+            if (searchText.includes(query)) {
                 card.style.display = "";
                 anyVisible = true;
             } else {

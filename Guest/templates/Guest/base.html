@@ -29,12 +29,7 @@
                 </nav>
                 <div class="header-right">
                     <a href="{% url 'Guest:sign_up' %}" class="btn btn-secondary">Sign Up</a>
-                    <div class="theme-toggle" aria-label="Toggle dark mode">
-                        <label class="switch">
-                            <input type="checkbox" id="theme-switch" aria-label="Switch between light and dark mode">
-                            <span class="slider round"></span>
-                        </label>
-                    </div>
+                    
                 </div>
                 <div class="mobile-menu-btn" aria-label="Toggle mobile menu" role="button" tabindex="0">
                     <div class="bar"></div>
@@ -43,26 +38,29 @@
                 </div>
             </div>
         {% else %}
-            <!-- Authenticated Header -->
+            <!-- Authenticated Header with Dropdown -->
             <div class="container">
                 <div class="logo" id="logo">
                     <span>Vol<span class="highlight">Hub</span></span>
                 </div>
-                <nav>
-                    <ul>
-                        <li><a href="{% url 'User:volunteer_dashboard' %}">Dashboard</a></li>
-                        <li><a href="{% url 'User:profile' %}">Profile</a></li>
-                        <li><a href="{% url 'User:logout' %}">Logout</a></li>
-                    </ul>
-                </nav>
                 <div class="header-right">
-                    <span class="welcome-text">Welcome, {{ request.session.username }}!</span>
-                    <div class="theme-toggle" aria-label="Toggle dark mode">
-                        <label class="switch">
-                            <input type="checkbox" id="theme-switch" aria-label="Switch between light and dark mode">
-                            <span class="slider round"></span>
-                        </label>
+                    <div class="user-dropdown" tabindex="0">
+                        <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                            <img src="{% if request.session.profile_photo_url %}{{ request.session.profile_photo_url }}
+    {% elif request.session.gender|lower == 'male' %}https://avatar.iran.liara.run/public/boy
+    {% elif request.session.gender|lower == 'female' %}https://avatar.iran.liara.run/public/girl
+    {% elif request.session.username %}https://avatar.iran.liara.run/username?username={{ request.session.username|urlencode }}&bold=false&length=1
+    {% else %}/static/Guest/images/default-profile.png{% endif %}" alt="PP" class="profile-photo">
+                            <span class="username">{{ request.session.username }}</span>
+                            <i class="fa fa-caret-down"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="{% url 'User:volunteer_dashboard' %}"><i class="fa fa-tachometer-alt"></i> Dashboard</a>
+                            <a href="{% url 'User:profile' %}"><i class="fa fa-user"></i> Profile</a>
+                            <a href="{% url 'User:logout' %}"><i class="fa fa-sign-out-alt"></i> Logout</a>
+                        </div>
                     </div>
+                    
                 </div>
                 <div class="mobile-menu-btn" aria-label="Toggle mobile menu" role="button" tabindex="0">
                     <div class="bar"></div>
@@ -70,6 +68,48 @@
                     <div class="bar"></div>
                 </div>
             </div>
+            <style>
+            .user-dropdown { position: relative; display: inline-block; }
+            .dropdown-toggle {
+                background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.6em; padding: 6px 14px 6px 8px; border-radius: 2em;
+                transition: background 0.18s;
+            }
+            .dropdown-toggle:hover, .user-dropdown:focus-within .dropdown-toggle { background: #e0e7ff; }
+            .profile-photo {
+                width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #6366f1; background: #fff;
+            }
+            .username { font-weight: 500; color: #3730A3; }
+            .dropdown-menu {
+                display: none; position: absolute; right: 0; top: 110%; min-width: 170px; background: #fff; border-radius: 12px; box-shadow: 0 6px 32px 0 rgba(60,60,90,0.13); z-index: 20; padding: 0.7em 0;
+            }
+            .user-dropdown.open .dropdown-menu, .user-dropdown:focus-within .dropdown-menu {
+                display: block;
+            }
+            .dropdown-menu a {
+                display: flex; align-items: center; gap: 0.7em; padding: 10px 22px; color: #3730A3; text-decoration: none; font-weight: 500; transition: background 0.16s, color 0.16s;
+            }
+            .dropdown-menu a:hover {
+                background: #f5f3ff; color: #4F46E5;
+            }
+            .fa-caret-down { font-size: 1.1em; color: #6366f1; }
+            </style>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const dropdown = document.querySelector('.user-dropdown');
+                if (dropdown) {
+                    const toggle = dropdown.querySelector('.dropdown-toggle');
+                    toggle.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        dropdown.classList.toggle('open');
+                    });
+                    document.addEventListener('click', function(e) {
+                        if (!dropdown.contains(e.target)) {
+                            dropdown.classList.remove('open');
+                        }
+                    });
+                }
+            });
+            </script>
         {% endif %}
     </header>
 
@@ -131,6 +171,7 @@
         </div>
     </footer>
 
+    <script src="{% static 'Guest/script.js' %}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

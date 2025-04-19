@@ -17,7 +17,7 @@ from django.contrib import messages
 # Create your views here.
 def logout(request):
     del request.session["u_id"]
-    return redirect("Guest:login")
+    return redirect("Guest:index")
 
 def myProfile(request):
     thisProfile=tbl_user.objects.get(id=request.session['u_id'])

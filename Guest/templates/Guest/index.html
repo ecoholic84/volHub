@@ -4,27 +4,116 @@
 {% block title %}Volhub - Make Volunteering Fun & Purposeful{% endblock %}
 
 {% block content %}
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>Discover the Joy of Purposeful Volunteering</h1>
-                <p>Connect with events that match your skills and passions. Make a difference while doing what you love.</p>
-                <div class="hero-btns">
-                    <a href="{% url 'Guest:sign_up' %}" class="btn btn-primary get-started-btn">Get Started</a>
-                    <a href="#about" class="btn btn-outline">Learn More</a>
-                </div>
-            </div>
-            <div class="hero-image">
-                <div class="image-container">
-                    <img src="{% static 'Guest/images/hero-volunteers.svg' %}" alt="Diverse group of volunteers working together on community projects">
-                </div>
+    <!-- Moving Grid Background & Typing Hero -->
+    <style>
+        .moving-grid-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: linear-gradient(to right, rgba(75, 85, 99, 0.12) 1px, transparent 4px), linear-gradient(to bottom, rgba(75, 85, 99, 0.12) 1px, transparent 4px);
+            background-size: 50px 50px;
+            animation: moveGrid 15s linear infinite;
+            z-index: 0;
+        }
+        @keyframes moveGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+        .typing-hero-section {
+    min-height: 100vh;
+    padding-top: 0;
+    padding-bottom: 0;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, #18181b 0%, #312e81 100%);
+    color: #fff;
+    overflow: hidden;
+} 
+        .typing-headline {
+    font-size: 3.2em;
+    font-weight: 900;
+    letter-spacing: -1px;
+    text-align: center;
+    margin-bottom: 34px;
+    line-height: 1.12;
+    white-space: nowrap;
+}
+@media (max-width: 900px) {
+    .typing-headline { font-size: 2.1em; white-space: normal; }
+}
+        .typing-highlight {
+            color: #a5b4fc;
+            font-weight: 700;
+        }
+        .typing-cursor {
+    font-size: 1.2em;
+    display: inline-block;
+    width: 0.3em;
+    background: #fff;
+    margin-left: 2px;
+    height: 1.1em;
+    vertical-align: bottom;
+    border-radius: 2px;
+    animation: blink 1s steps(2, start) infinite;
+}
+        @keyframes blink {
+            to { visibility: hidden; }
+        }
+        @media (max-width: 600px) {
+    .typing-hero-section { padding-top: 60px; padding-bottom: 60px; }
+    .typing-headline { font-size: 2.3em; }
+    .typing-cursor { font-size: 1em; }
+    p { font-size: 1.1em !important; }
+}
+    </style>
+    <div class="moving-grid-bg"></div>
+    <section class="typing-hero-section">
+        <div style="max-width: 700px; margin: 0 auto;">
+            <div class="typing-headline-group">
+    <div class="typing-headline" style="margin-bottom: 0.1em;">
+        <span style="display:inline-block;">Discover <span class="typing-highlight">your people</span></span>
+    </div>
+    <div class="typing-headline" style="margin-bottom: 36px;">
+        <span id="volhub-typing" style="display: inline-block; min-width: 220px;">
+            <span class="typing-text"></span><span class="typing-cursor">|</span>
+        </span>
+    </div>
+</div>
+            <p style="text-align: center; font-size: 1.6em; max-width: 900px; margin: 0 auto 0 auto; color: #c7d2fe; font-weight: 500; white-space: nowrap; overflow-x: auto;">
+    Volhub is where you <span class="typing-highlight">connect</span>, <span class="typing-highlight">collaborate</span>, and <span class="typing-highlight">belong</span>.
+</p>
+<p style="text-align: center; font-size: 1.6em; max-width: 900px; margin: 0 auto 50px auto; color: #c7d2fe; font-weight: 500; margin-top: 0;">
+    Find your tribe, join communities you care about, and make every event meaningful.
+</p>
+            <div style="text-align:center; margin-top: 64px;">
+                <a href="{% url 'Guest:sign_up' %}" class="btn btn-primary get-started-btn" style="font-size: 1.13em; padding: 14px 38px;">Get Started</a>
+                <a href="#about" class="btn btn-outline" style="font-size: 1.07em; margin-left: 16px; color: #fff;">Learn More</a>
             </div>
         </div>
     </section>
+    <script src="{% static 'Guest/js/typing-effect.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            typingEffect(
+                document.getElementById('volhub-typing'),
+                [
+                    'find your tribe.',
+                    'discover new communities.',
+                    'grow through shared passions.',
+                    'belong where it matters.',
+                    'create together.',
+                    'make real connections.'
+                ],
+                85, 1800, 30
+            );
+        });
+    </script>
+
 
     <!-- About Section -->
-    <section id="about" class="about">
+    <section id="about" class="about" style="padding: 90px 0 70px 0; font-size: 1.3em;">
         <div class="container">
             <div class="section-header">
                 <h2>About Volhub</h2>
@@ -33,7 +122,7 @@
             <div class="about-content">
                 <div class="about-image">
                     <div class="image-wrapper">
-                        <img src="https://via.placeholder.com/500x350" alt="Diverse group of volunteers">
+                        <img src="{% static 'Guest/images/community.png' %}" alt="Diverse group of volunteers">
                     </div>
                 </div>
                 <div class="about-text">
@@ -60,7 +149,7 @@
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="features">
+    <section id="features" class="features" style="padding: 90px 0 70px 0; font-size: 1.2em;">
         <div class="container">
             <div class="section-header">
                 <h2>Key Features</h2>
@@ -99,26 +188,26 @@
                         <p>Build comprehensive profiles to highlight your skills, experience, and passion. Let organizers see what makes you the perfect volunteer for their events.</p>
                     </div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-comments"></i>
-                    </div>
-                    <h3>Review System</h3>
-                    <p>Leave and receive feedback to build trust within the Volhub community and improve future volunteering experiences.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <h3>Mobile Friendly</h3>
-                    <p>Access Volhub on the go with our responsive design optimized for all devices, making volunteering more accessible than ever.</p>
-                </div>
+                <div class="feature-card feature-card-wide" style="grid-column: span 2;">
+    <div class="feature-icon">
+        <i class="fas fa-comments"></i>
+    </div>
+    <h3>Review System</h3>
+    <p>Leave and receive feedback to build trust within the Volhub community and improve future volunteering experiences.</p>
+</div>
+<div class="feature-card">
+    <div class="feature-icon">
+        <i class="fas fa-mobile-alt"></i>
+    </div>
+    <h3>Mobile Friendly</h3>
+    <p>Access Volhub on the go with our responsive design optimized for all devices, making volunteering more accessible than ever.</p>
+</div>
             </div>
         </div>
     </section>
 
     <!-- How It Works Section -->
-    <section id="how-it-works" class="how-it-works">
+    <section id="how-it-works" class="how-it-works" style="padding: 90px 0 70px 0; font-size: 1.2em;">
         <div class="container">
             <div class="section-header">
                 <h2>How It Works</h2>
@@ -146,19 +235,19 @@
                         <p>Browse events as a volunteer or create new opportunities as an organizer, all tailored to your interests and expertise.</p>
                     </div>
                 </div>
-                <div class="timeline-item">
-                    <div class="timeline-number">4</div>
-                    <div class="timeline-content">
-                        <h3>Connect and Collaborate</h3>
-                        <p>Apply to events or review volunteer applications to build your community and create meaningful connections.</p>
-                    </div>
-                </div>
+                <div class="timeline-item timeline-item-wide" style="grid-column: span 2;">
+    <div class="timeline-number">4</div>
+    <div class="timeline-content">
+        <h3>Connect and Collaborate</h3>
+        <p>Apply to events or review volunteer applications to build your community and create meaningful connections.</p>
+    </div>
+</div>
             </div>
         </div>
     </section>
 
     <!-- Testimonials Section -->
-    <section id="community" class="testimonials">
+    <section id="community" class="testimonials" style="padding: 90px 0 70px 0; font-size: 1.2em;">
         <div class="container">
             <div class="section-header">
                 <h2>What Our Community Says</h2>
@@ -171,7 +260,7 @@
                             <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                             <p>"Volhub transformed how I manage tech hackathons. Finding qualified volunteers is now seamless, and the dual dashboard system is a game-changer!"</p>
                             <div class="testimonial-author">
-                                <img src="https://via.placeholder.com/60x60" alt="Sarah Johnson">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Sarah Johnson">
                                 <div class="author-info">
                                     <h4>Sarah Johnson</h4>
                                     <span>Tech Conference Organizer</span>
@@ -182,7 +271,7 @@
                             <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                             <p>"As a student who loves volunteering, Volhub has opened doors to opportunities I never knew existed. The platform is intuitive and connecting with organizers is incredibly easy."</p>
                             <div class="testimonial-author">
-                                <img src="https://via.placeholder.com/60x60" alt="Michael Chen">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Michael Chen">
                                 <div class="author-info">
                                     <h4>Michael Chen</h4>
                                     <span>Student Volunteer</span>
@@ -193,7 +282,7 @@
                             <div class="quote-icon"><i class="fas fa-quote-left"></i></div>
                             <p>"I wear both hats as a volunteer and organizer. Volhub's dual system lets me switch roles effortlessly, and the profile showcase feature helps build credibility in the community."</p>
                             <div class="testimonial-author">
-                                <img src="https://via.placeholder.com/60x60" alt="Aisha Patel">
+                                <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Aisha Patel">
                                 <div class="author-info">
                                     <h4>Aisha Patel</h4>
                                     <span>Community Leader</span>
@@ -203,22 +292,13 @@
                     </div>
                     <!-- Additional testimonial groups unchanged -->
                 </div>
-                <div class="slider-controls">
-                    <button class="prev-btn" aria-label="Previous testimonials"><i class="fas fa-chevron-left"></i></button>
-                    <div class="slider-dots">
-                        <span class="dot active" aria-label="Testimonials 1-3" role="button" tabindex="0"></span>
-                        <span class="dot" aria-label="Testimonials 4-6" role="button" tabindex="0"></span>
-                        <span class="dot" aria-label="Testimonials 7-9" role="button" tabindex="0"></span>
-                        <span class="dot" aria-label="Testimonials 10-12" role="button" tabindex="0"></span>
-                    </div>
-                    <button class="next-btn" aria-label="Next testimonials"><i class="fas fa-chevron-right"></i></button>
-                </div>
+                
             </div>
         </div>
     </section>
 
     <!-- CTA Section -->
-    <section class="cta">
+    <section class="cta" style="padding: 90px 0 70px 0; font-size: 1.2em;">
         <div class="container">
             <div class="cta-content">
                 <h2>Ready to Make a Difference?</h2>
