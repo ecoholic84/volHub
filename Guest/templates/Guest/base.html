@@ -44,6 +44,14 @@
                     <span>Vol<span class="highlight">Hub</span></span>
                 </div>
                 <div class="header-right">
+                    <div class="notification-bell" tabindex="0">
+                        <i class="fa fa-bell"></i>
+                        <div class="notification-dropdown">
+                            <ul class="notification-list">
+    <li>No notifications</li>
+</ul>
+                        </div>
+                    </div>
                     <div class="user-dropdown" tabindex="0">
                         <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
                             <img src="{% if request.session.profile_photo_url %}{{ request.session.profile_photo_url }}
@@ -51,7 +59,7 @@
     {% elif request.session.gender|lower == 'female' %}https://avatar.iran.liara.run/public/girl
     {% elif request.session.username %}https://avatar.iran.liara.run/username?username={{ request.session.username|urlencode }}&bold=false&length=1
     {% else %}/static/Guest/images/default-profile.png{% endif %}" alt="PP" class="profile-photo">
-                            <span class="username">{{ request.session.username }}</span>
+                            <span class="username">{{ request.session.name|default:request.session.username }}</span>
                             <i class="fa fa-caret-down"></i>
                         </button>
                         <div class="dropdown-menu">
@@ -92,9 +100,75 @@
                 background: #f5f3ff; color: #4F46E5;
             }
             .fa-caret-down { font-size: 1.1em; color: #6366f1; }
-            </style>
+            .notification-bell {
+    position: relative;
+    margin-right: 10px;
+    cursor: pointer;
+    font-size: 1.4em;
+    color: #6366f1;
+    transition: color 0.18s;
+}
+.notification-bell:focus, .notification-bell:hover {
+    color: #3730A3;
+}
+.notification-bell .fa-bell {
+    font-size: 1.35em;
+    vertical-align: middle;
+}
+.notification-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 140%;
+    min-width: 260px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 6px 32px 0 rgba(60,60,90,0.13);
+    z-index: 30;
+    padding: 0.7em 0.5em 0.5em 0.5em;
+}
+.notification-bell.open .notification-dropdown,
+.notification-bell:focus-within .notification-dropdown {
+    display: block;
+}
+.notification-title {
+    font-weight: 600;
+    color: #3730A3;
+    font-size: 1.07em;
+    margin-bottom: 0.5em;
+    padding-left: 0.7em;
+}
+.notification-list {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 0.7em;
+    color: #444;
+    font-size: 0.97em;
+}
+.notification-list li {
+    padding: 0.4em 0;
+    border-bottom: 1px solid #f1f1f6;
+}
+.notification-list li:last-child {
+    border-bottom: none;
+}
+</style>
             <script>
             document.addEventListener('DOMContentLoaded', function() {
+    // Notification bell toggle
+    const notifBell = document.querySelector('.notification-bell');
+    if (notifBell) {
+        notifBell.addEventListener('click', function(e) {
+            e.stopPropagation();
+            notifBell.classList.toggle('open');
+        });
+        document.addEventListener('click', function(e) {
+            if (!notifBell.contains(e.target)) {
+                notifBell.classList.remove('open');
+            }
+        });
+    }
+
                 const dropdown = document.querySelector('.user-dropdown');
                 if (dropdown) {
                     const toggle = dropdown.querySelector('.dropdown-toggle');
