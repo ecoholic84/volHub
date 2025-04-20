@@ -213,33 +213,5 @@
             });
         });
     });
-
-
-    
 </script>
-<script>
-    // Dynamically set the minimum datetime to now on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        const currentDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
-        document.getElementById('txt_datetime').min = currentDatetime;
-    });
-
-    // Optional: Real-time validation to prevent manual past date entry
-    document.getElementById('txt_datetime').addEventListener('change', function(e) {
-        const selectedDate = new Date(e.target.value);
-        const now = new Date();
-        if (selectedDate < now) {
-            e.target.value = ''; // Clear the input
-            alert('Please select a future date and time.');
-        }
-    });
-</script>
-
-
 {% endblock %}

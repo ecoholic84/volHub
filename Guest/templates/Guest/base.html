@@ -76,6 +76,26 @@
                     <div class="bar"></div>
                 </div>
             </div>
+
+            <script>
+                // Dynamically set the minimum datetime to now on page load
+                document.addEventListener('DOMContentLoaded', function() {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const currentDatetime = `${year}-${month}-${day}T${hours}:${minutes}`;
+                    // document.getElementById('txt_datetime').min = currentDatetime;
+                    const inputs = document.querySelectorAll('input[type="datetime-local"]');
+            
+                    inputs.forEach(inputs => {
+                        inputs.setAttribute("min", currentDatetime);
+                    });
+                });
+            </script>
+
             <style>
             .user-dropdown { position: relative; display: inline-block; }
             .dropdown-toggle {
