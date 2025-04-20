@@ -4,9 +4,7 @@
 
 {% block extra_head %}
 <style>
-    body {
-        background: #f4f6fb;
-    }
+
     .org-event-hero {
         background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
         color: #fff;
@@ -398,5 +396,7 @@
             <a href="{% url 'User:organizer_dashboard' %}" class="org-back-link">Back to Dashboard</a>
         </div>
     {% endif %}
+    <!-- Intentional vertical space below content -->
+    <div style="height: 180px;"></div>
 </div>
 {% endblock %}
