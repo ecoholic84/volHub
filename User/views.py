@@ -633,9 +633,13 @@ def create_vol_profile(request):
         messages.success(request, 'Volunteer profile updated successfully!')
         return redirect('User:volunteer_dashboard')
     else:
+        import datetime
+        current_year = datetime.datetime.now().year
+        year_range = list(range(current_year, 1949, -1))
         return render(request, 'User/create_vol_profile.html', {
             'thisUser': thisUser,
-            'industries': industries  # Pass industries to template
+            'industries': industries,  # Pass industries to template
+            'year_range': year_range
         })
 
 def create_organizer_profile(request):
