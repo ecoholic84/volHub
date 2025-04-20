@@ -19,7 +19,8 @@
             100% { background-position: 50px 50px; }
         }
         .typing-hero-section {
-    min-height: 100vh;
+    min-height: 85vh;
+    margin-top: 0;
     padding-top: 0;
     padding-bottom: 0;
     position: relative;
@@ -27,8 +28,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(90deg, #18181b 0%, #312e81 100%);
-    color: #fff;
+    background: #fff;
+    color: #22223b;
     overflow: hidden;
 } 
         .typing-headline {
@@ -39,19 +40,20 @@
     margin-bottom: 34px;
     line-height: 1.12;
     white-space: nowrap;
+    color: #22223b;
 }
 @media (max-width: 900px) {
     .typing-headline { font-size: 2.1em; white-space: normal; }
 }
         .typing-highlight {
-            color: #a5b4fc;
-            font-weight: 700;
-        }
+    color: #3f51b5;
+    font-weight: 700;
+}
         .typing-cursor {
     font-size: 1.2em;
     display: inline-block;
     width: 0.3em;
-    background: #fff;
+    background: #22223b;
     margin-left: 2px;
     height: 1.1em;
     vertical-align: bottom;
@@ -67,13 +69,149 @@
     .typing-cursor { font-size: 1em; }
     p { font-size: 1.1em !important; }
 }
+
+    /* Glassmorphism Cards CSS */
+    .glass-card {
+        position: absolute;
+        pointer-events: auto;
+        min-width: 220px;
+        max-width: 260px;
+        min-height: 120px;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 24px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        backdrop-filter: blur(18px) saturate(180%);
+        -webkit-backdrop-filter: blur(18px) saturate(180%);
+        border: 1.5px solid rgba(255, 255, 255, 0.35);
+        padding: 28px 26px 20px 26px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        transition: transform 0.22s cubic-bezier(.4,1.4,.6,1), box-shadow 0.22s cubic-bezier(.4,1.4,.6,1);
+        color: #22223b;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.13em;
+        z-index: 0;
+    }
+    .glass-card:hover {
+        box-shadow: 0 16px 40px 0 rgba(31, 38, 135, 0.22), 0 1.5px 8px rgba(75,85,99,0.08);
+        transform: translateY(-8px) scale(1.00);
+        /* No width/height change! */
+        border-color: rgba(255,255,255,0.5);
+        cursor: pointer;
+    }
+        min-width: 220px;
+        max-width: 260px;
+        min-height: 120px;
+        background: rgba(255, 255, 255, 0.18);
+        border-radius: 24px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18);
+        backdrop-filter: blur(18px) saturate(180%);
+        -webkit-backdrop-filter: blur(18px) saturate(180%);
+        border: 1.5px solid rgba(255, 255, 255, 0.35);
+        padding: 28px 26px 20px 26px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        pointer-events: auto;
+        transition: transform 0.2s, box-shadow 0.2s;
+        color: #22223b;
+        font-family: 'Outfit', sans-serif;
+        font-size: 1.13em;
+        position: relative;
+    }
+    .glass-card:hover {
+        transform: translateY(-8px) scale(1.04);
+        box-shadow: 0 16px 32px 0 rgba(31, 38, 135, 0.22);
+    }
+    .glass-card-title {
+        font-weight: 700;
+        font-size: 1.15em;
+        margin-bottom: 0.3em;
+        letter-spacing: 0.01em;
+    }
+    .glass-card-desc {
+        font-size: 1em;
+        font-weight: 400;
+        color: #2d314d;
+        margin-bottom: 0.2em;
+    }
+    .glass-card-quote-mark {
+        font-size: 2.3em;
+        font-weight: 900;
+        color: #3f51b5;
+        margin-bottom: -0.1em;
+        line-height: 1;
+    }
+    .glass-card-quote-author {
+        font-size: 0.97em;
+        font-weight: 600;
+        color: #3f51b5;
+        margin-top: 0.6em;
+        align-self: flex-end;
+    }
+    .glass-card-stat {
+        align-self: flex-start;
+        margin-top: -110px;
+        margin-left: -40px;
+        background: rgba(255,255,255,0.27);
+        border: 1.5px solid rgba(63,81,181,0.13);
+    }
+    .glass-card-quote {
+        align-self: flex-end;
+        margin-top: 80px;
+        background: rgba(255,255,255,0.18);
+        border: 1.5px solid rgba(63,81,181,0.17);
+    }
+    .glass-card-fact {
+        align-self: flex-start;
+        margin-top: -90px;
+        background: rgba(255,255,255,0.22);
+        border: 1.5px solid rgba(63,81,181,0.14);
+    }
+    @media (max-width: 900px) {
+        .glass-cards-container {
+            flex-direction: column;
+            gap: 22px;
+            top: 56%;
+        }
+        .glass-card-stat, .glass-card-fact {
+            margin-top: 0;
+            margin-left: 0;
+        }
+        .glass-card-quote {
+            margin-top: 0;
+        }
+    }
     </style>
     <div class="moving-grid-bg"></div>
-    <section class="typing-hero-section">
+    <section class="typing-hero-section" style="position:relative; overflow:visible;">
+        <!-- Glassmorphism Cards -->
+        <!-- Glassmorphism Cards, now positioned at random corners -->
+        <div class="glass-card glass-card-stat" style="top: 22%; left: 7%;"> 
+            <div class="glass-card-quote-mark">“</div>
+            <div class="glass-card-desc">Act as if what you do makes a difference. It does.</div>
+            <div class="glass-card-quote-author">— William James</div>
+        </div>
+        <div class="glass-card glass-card-quote" style="top: 3%; right: 5%;">
+            <div class="glass-card-quote-mark">“</div>
+            <div class="glass-card-desc">The only way to do great work is to love what you do.</div>
+            <div class="glass-card-quote-author">— Steve Jobs</div>
+        </div>
+        <div class="glass-card glass-card-fact" style="bottom: 8%; left: 12%;">
+            <div class="glass-card-quote-mark">“</div>
+            <div class="glass-card-desc">Alone we can do so little; together we can do so much.</div>
+            <div class="glass-card-quote-author">— Helen Keller</div>
+        </div>
+        <div class="glass-card glass-card-tech" style="bottom: -3%; right: 6%;">
+            <div class="glass-card-quote-mark">“</div>
+            <div class="glass-card-desc">Call it a clan, call it a network, call it a tribe, call it a family: Whatever you call it, whoever you are, you need one.</div>
+            <div class="glass-card-quote-author">— Jane Howard</div>
+        </div>
         <div style="max-width: 700px; margin: 0 auto;">
             <div class="typing-headline-group">
     <div class="typing-headline" style="margin-bottom: 0.1em;">
-        <span style="display:inline-block;">Discover <span class="typing-highlight">your people</span></span>
+        <span style="display:inline-block;">Discover <span class="typing-highlight">your people,</span></span>
     </div>
     <div class="typing-headline" style="margin-bottom: 36px;">
         <span id="volhub-typing" style="display: inline-block; min-width: 220px;">
@@ -81,15 +219,15 @@
         </span>
     </div>
 </div>
-            <p style="text-align: center; font-size: 1.6em; max-width: 900px; margin: 0 auto 0 auto; color: #c7d2fe; font-weight: 500; white-space: nowrap; overflow-x: auto;">
+            <p style="text-align: center; font-size: 1.6em; max-width: 900px; margin: 0 auto 0 auto; color: #44476a; font-weight: 500; white-space: nowrap; overflow-x: auto;">
     Volhub is where you <span class="typing-highlight">connect</span>, <span class="typing-highlight">collaborate</span>, and <span class="typing-highlight">belong</span>.
 </p>
-<p style="text-align: center; font-size: 1.6em; max-width: 900px; margin: 0 auto 50px auto; color: #c7d2fe; font-weight: 500; margin-top: 0;">
+<p style="text-align: center; font-size: 1.6em; max-width: 900px; margin: 0 auto 50px auto; color: #44476a; font-weight: 500; margin-top: 0;">
     Find your tribe, join communities you care about, and make every event meaningful.
 </p>
             <div style="text-align:center; margin-top: 64px;">
                 <a href="{% url 'Guest:sign_up' %}" class="btn btn-primary get-started-btn" style="font-size: 1.13em; padding: 14px 38px;">Get Started</a>
-                <a href="#about" class="btn btn-outline" style="font-size: 1.07em; margin-left: 16px; color: #fff;">Learn More</a>
+                <a href="#about" class="btn btn-outline" style="font-size: 1.07em; margin-left: 16px; color: #22223b; border-color: #22223b;">Learn More</a>
             </div>
         </div>
     </section>
