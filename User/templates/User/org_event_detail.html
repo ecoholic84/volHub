@@ -256,6 +256,16 @@
         <div class="org-event-details">
             {% include 'User/org_event_card.html' with event=event %}
 
+            {# Delete Event Button: Only show if the logged-in user is the event creator #}
+            {% if event.user.id == request.session.u_id %}
+            <form action="{% url 'User:delete_event' event.id %}" method="post" style="margin-bottom: 18px;">
+                {% csrf_token %}
+                <button type="submit" class="org-request-action-btn reject" onclick="return confirm('Are you sure you want to delete this event? This action cannot be undone.');">
+                    <i class="fa fa-trash"></i> Delete Event
+                </button>
+            </form>
+            {% endif %}
+
             <!-- Volunteer Requests -->
             <div class="org-vol-requests-section">
                 <div class="org-tabs">

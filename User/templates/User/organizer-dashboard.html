@@ -133,6 +133,15 @@
     gap: 28px;
     margin-top: 18px;
 }
+.org-dashboard-events-grid.single-card {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+.org-dashboard-events-grid.single-card > div {
+    max-width: 400px;
+    flex: 1 1 400px;
+}
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
         gap: 22px;
@@ -355,7 +364,7 @@
             <p style="color: red;">{{ error }}</p>
         {% endif %}
         <!-- Event Cards -->
-        <div class="org-dashboard-events-grid">
+        <div class="org-dashboard-events-grid{% if events|length == 1 %} single-card{% endif %}">
             {% for event in events %}
                 <div>{% include 'User/partials/org_event_card.html' with event=event %}</div>
             {% empty %}

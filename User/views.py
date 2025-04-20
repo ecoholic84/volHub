@@ -307,6 +307,22 @@ def event_detail(request, event_id):
 
 # Organizer dashboard
 
+def delete_event(request, event_id):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    try:
+        event = tbl_event.objects.get(id=event_id)
+    except tbl_event.DoesNotExist:
+        messages.error(request, 'Event not found.')
+        return redirect('User:organizer_dashboard')
+    # Only allow the creator to delete
+    if event.user.id != request.session.get('u_id'):
+        messages.error(request, 'You are not authorized to delete this event.')
+        return redirect('User:organizer_dashboard')
+    event.delete()
+    messages.success(request, 'Event deleted successfully!')
+    return redirect('User:organizer_dashboard')
+
 def applied_volunteer_profile(request, req_id):
     # Only allow access if user is logged in
     if 'u_id' not in request.session:
