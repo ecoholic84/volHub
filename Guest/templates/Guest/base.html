@@ -29,7 +29,6 @@
                 </nav>
                 <div class="header-right">
                     <a href="{% url 'Guest:sign_up' %}" class="btn btn-secondary">Sign Up</a>
-                    
                 </div>
                 <div class="mobile-menu-btn" aria-label="Toggle mobile menu" role="button" tabindex="0">
                     <div class="bar"></div>
@@ -63,6 +62,7 @@
                             <i class="fa fa-caret-down"></i>
                         </button>
                         <div class="dropdown-menu">
+                            <a href="{% url 'User:switch_dashboard' %}{% if dashboard_type %}?from={{ dashboard_type }}{% endif %}"><i class="fa fa-exchange-alt"></i> Switch Dashboard</a>
                             <a href="{% url 'User:volunteer_dashboard' %}"><i class="fa fa-tachometer-alt"></i> Dashboard</a>
                             <a href="{% url 'User:profile' %}"><i class="fa fa-user"></i> Profile</a>
                             <a href="{% url 'User:logout' %}"><i class="fa fa-sign-out-alt"></i> Logout</a>

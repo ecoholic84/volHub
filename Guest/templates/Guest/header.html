@@ -35,7 +35,7 @@
                     <span class="avatar-placeholder">{{ user.username|make_list|first|upper }}</span>
                   {% endif %}
                 </span>
-                <span class="user-name d-none-sm">{{ user.username }}</span>
+                <span class="user-name d-none-sm">{{ user.user_name|default:user.user_username }}</span>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="6 9 12 15 18 9"></polyline>
                 </svg>

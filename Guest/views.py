@@ -34,6 +34,8 @@ def user_registration(request):
             user_password=request.POST.get('txt_password')
         )
         request.session['u_id'] = user.id
+        request.session['name'] = user.user_name or ''
+        request.session['username'] = user.user_username or ''
         del request.session['temp_email']
         return redirect('Guest:user_who')
     return render(request, 'Guest/user_registration.html')

@@ -16,7 +16,7 @@ from django.contrib import messages
 
 # Create your views here.
 def logout(request):
-    del request.session["u_id"]
+    request.session.flush()  # This deletes all session data for the user
     return redirect("Guest:index")
 
 def myProfile(request):
@@ -219,7 +219,8 @@ def volunteer_dashboard(request):
         'user': user,
         'upcoming_events': upcoming_events,
         'applied_events': applied_events,
-        'username': request.session.get('username', 'User')
+        'username': request.session.get('username', 'User'),
+        'dashboard_type': 'volunteer'
     }
     return render(request, 'User/volunteer_dashboard.html', context)
 
@@ -263,10 +264,9 @@ def volunteer_dashboard(request):
 #         'has_requested': has_requested
 #     })
 
-
 def event_detail(request, event_id):
     if 'u_id' not in request.session or not tbl_user.objects.filter(
-        id=request.session['u_id'], user_type='volunteer'
+        Q(id=request.session['u_id']) & Q(user_type__in=['volunteer', 'both'])
     ).exists():
         return redirect('Guest:login')
 
@@ -381,20 +381,36 @@ def edit_event(request, event_id):
         'cities': cities
     })
 
+def switch_dashboard(request):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    from_dashboard = request.GET.get('from')
+    if from_dashboard == 'volunteer':
+        return redirect('User:organizer_dashboard')
+    elif from_dashboard == 'organizer':
+        return redirect('User:volunteer_dashboard')
+    # fallback to user_type logic
+    if user.user_type in ["organizer", "both"]:
+        return redirect('User:organizer_dashboard')
+    else:
+        return redirect('User:volunteer_dashboard')
+
 def organizer_dashboard(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
     
     user = tbl_user.objects.get(id=request.session['u_id'])
-    if user.user_type != "organizer":
-        return redirect('User:user_dashboard')  # Matches your initial redirect
+    if user.user_type not in ["organizer", "both"]:
+        return redirect('User:volunteer_dashboard')
     
     # Fetch events created by this organizer
     organizer_events = tbl_event.objects.filter(user=user).select_related('industry', 'event_city')
     
     return render(request, 'User/organizer-dashboard.html', {
         'events': organizer_events,
-        'organizer': user
+        'organizer': user,
+        'dashboard_type': 'organizer'
     })
 
 # View for the page which the organizer approves and rejects volunteers
@@ -576,7 +592,7 @@ def edit_profile(request, page=1):
 
 def create_vol_profile(request):
     thisUser = tbl_user.objects.get(id=request.session['u_id'])
-    industries = tbl_industry.objects.all()  # Get all industries
+    industries = tbl_industry.objects.all()  # Get all industries for the dropdown
     
     if request.method == "POST":
         # Update user fields from form data
@@ -606,24 +622,16 @@ def create_vol_profile(request):
         thisUser.user_organization_name = request.POST.get('user_organization_name')
         thisUser.user_job_title = request.POST.get('user_job_title')
         
-        # Get industry from tbl_industry
-        industry_id = request.POST.get('user_industry')
-        if industry_id:
-            try:
-                thisUser.user_industry = tbl_industry.objects.get(id=industry_id)
-            except tbl_industry.DoesNotExist:
-                return render(request, 'User/create_vol_profile.html', {
-                    'thisUser': thisUser,
-                    'industries': industries,  # Pass industries to template
-                    'error': 'Selected industry does not exist.'
-                })
+        # Get industry name from dropdown
+        thisUser.user_industry = request.POST.get('user_industry')  # Store as string
         
         thisUser.user_location = request.POST.get('user_location')
         thisUser.user_official_address = request.POST.get('user_official_address')
         thisUser.user_official_contact_number = request.POST.get('user_official_contact_number')
         
         thisUser.save()
-        return redirect('User:organizer_dashboard')
+        messages.success(request, 'Volunteer profile updated successfully!')
+        return redirect('User:volunteer_dashboard')
     else:
         return render(request, 'User/create_vol_profile.html', {
             'thisUser': thisUser,

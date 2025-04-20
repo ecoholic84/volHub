@@ -105,7 +105,7 @@
 </head>
 <body>
     <div class="profile-card">
-        <h2 class="profile-title">Complete Your Organizer Profile</h2>
+        <h2 class="profile-title">Complete Your Volunteer Profile</h2>
         
         {% if error %}
         <div class="alert alert-danger" role="alert">
@@ -113,7 +113,7 @@
         </div>
         {% endif %}
         
-        <form method="POST" id="organizerProfileForm" action="{% url 'User:create_organizer_profile' %}">
+        <form method="POST" id="organizerProfileForm" action="{% url 'User:create_vol_profile' %}">
             {% csrf_token %}
             
             <!-- Personal Information -->
@@ -210,11 +210,18 @@
             
             <div class="mb-3">
                 <label class="form-label">Industry</label>
-                <select name="user_industry" class="form-select">
+                <select name="user_industry" class="form-select" required>
                     <option value="">Select Industry</option>
-                    {% for industry in industries %}
-                    <option value="{{ industry.id }}" {% if thisUser.user_industry.id == industry.id %}selected{% endif %}>{{ industry.industry_name }}</option>
-                    {% endfor %}
+                    <option value="Technology" {% if thisUser.user_industry == "Technology" %}selected{% endif %}>Technology</option>
+                    <option value="Healthcare" {% if thisUser.user_industry == "Healthcare" %}selected{% endif %}>Healthcare</option>
+                    <option value="Education" {% if thisUser.user_industry == "Education" %}selected{% endif %}>Education</option>
+                    <option value="Finance" {% if thisUser.user_industry == "Finance" %}selected{% endif %}>Finance</option>
+                    <option value="Retail" {% if thisUser.user_industry == "Retail" %}selected{% endif %}>Retail</option>
+                    <option value="Manufacturing" {% if thisUser.user_industry == "Manufacturing" %}selected{% endif %}>Manufacturing</option>
+                    <option value="Non-Profit" {% if thisUser.user_industry == "Non-Profit" %}selected{% endif %}>Non-Profit</option>
+                    <option value="Hospitality" {% if thisUser.user_industry == "Hospitality" %}selected{% endif %}>Hospitality</option>
+                    <option value="Transportation" {% if thisUser.user_industry == "Transportation" %}selected{% endif %}>Transportation</option>
+                    <option value="Construction" {% if thisUser.user_industry == "Construction" %}selected{% endif %}>Construction</option>
                 </select>
             </div>
             
@@ -253,7 +260,7 @@
                 <textarea name="user_past_volunteering" class="form-control" rows="4" placeholder="Describe your past volunteering experience, including organizations, roles, and duration">{{ thisUser.user_past_volunteering|default:'' }}</textarea>
             </div>
             
-            <button type="submit" class="btn btn-primary w-100">Complete Organizer Profile</button>
+            <button type="submit" class="btn btn-primary w-100">Complete Volunteer Profile</button>
         </form>
     </div>
 

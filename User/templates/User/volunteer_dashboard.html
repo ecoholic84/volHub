@@ -1,15 +1,56 @@
 {% extends 'Guest/base.html' %}
 {% load static %}
 {% block content %}
+{% if messages %}
+  <div class="org-message-banner">
+    {% for message in messages %}
+      <div class="org-message org-message-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+{% endif %}
 <link rel="stylesheet" href="{% static 'User/css/volunteer_dashboard.css' %}">
 <style>
+    .org-message-banner {
+        max-width: 1200px;
+        margin: 0 auto 24px auto;
+        padding-top: 18px;
+    }
+    .org-message {
+        padding: 16px 28px;
+        border-radius: 10px;
+        font-size: 1.08rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 8px rgba(79,70,229,0.09);
+        border: 1.5px solid #4F46E5;
+        background: #f0f7ff;
+        color: #2e3a59;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        animation: fadeInDown 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .org-message-success {
+        border-color: #22c55e;
+        background: #e7faed;
+        color: #227a3a;
+    }
+    .org-message-error, .org-message-danger {
+        border-color: #ef4444;
+        background: #fbeaea;
+        color: #b91c1c;
+    }
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
 .vol-banner {
     background: linear-gradient(90deg, #6366f1 0%, #4f46e5 100%);
     border-radius: 999px;
-    width: 70%;
+    width: 80%;
     padding: 36px 38px 28px 38px;
-    margin-top: 36px;
-    margin-bottom: 30px;
+    margin-top: 20px;
+    margin-bottom: 20px;
     margin-left: auto;
     margin-right: auto;
     display: flex;
@@ -102,7 +143,7 @@
                 </svg>
             </div>
             <div class="vol-banner-text">
-                <h1 class="vol-banner-title">Welcome, {{ user_username|default:"Volunteer" }}!</h1>
+                <h1 class="vol-banner-title">Welcome, {{ user.user_name|default:user.user_username|default:"Volunteer" }}!</h1>
                 <p class="vol-banner-subtitle">Explore opportunities and track your volunteer journey</p>
             </div>
         </div>

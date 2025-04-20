@@ -121,7 +121,7 @@ img {
 .btn-outline:hover {
     background-color: var(--secondary-color);
     border-color: var(--secondary-color);
-    color: white;
+    color: white !important;
     transform: translateY(-3px);
     box-shadow: 0 10px 20px var(--shadow-hover);
 }
