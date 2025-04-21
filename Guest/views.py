@@ -49,6 +49,8 @@ def user_who(request):
         selectedType = request.POST.get('user_type')
         user.user_type = selectedType
         user.save()
+        if not user.is_basic_profile_complete:
+            return redirect('User:create_profile')
         if selectedType == "volunteer":
             return redirect('User:volunteer_dashboard')
         elif selectedType == "organizer":
