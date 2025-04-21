@@ -309,7 +309,17 @@
         <!-- Left Side - Profile Information -->
         <div class="profile-left">
             <div class="profile-image">
-                <img src="{% if user.user_photo %}{{ user.user_photo.url }}{% else %}https://randomuser.me/api/portraits/men/32.jpg{% endif %}" alt="Profile Picture">
+                <img src="{% if user.user_photo %}{{ user.user_photo.url }}
+                                {% elif request.session.gender == 'Male' %}
+                                    https://avatar.iran.liara.run/public/boy
+                                {% elif request.session.gender == 'Female' %}
+                                    https://avatar.iran.liara.run/public/girl
+                                {% elif request.session.username %}
+                                    https://avatar.iran.liara.run/username?username={{ request.session.username|urlencode }}&bold=false&length=1
+                                {% else %}
+                                    /static/Guest/images/default-profile.png
+                                {% endif %}" 
+                            alt="Profile Picture" class="profile-photo">
             </div>
             <h1 class="profile-name">{{ user.user_name|default:"John Doe" }}</h1>
             <p class="profile-username">@{{ user.user_username|default:"johndoe" }}</p>
@@ -361,6 +371,9 @@
                 {% if user.user_type == 'organizer' or user.user_type == 'both' %}
                     <span class="badge organizer-badge">Organizer</span>
                 {% endif %}
+            </div>
+            <div style="text-align:center; margin-top:18px;">
+                <a href="{% url 'User:edit_profile' 1 %}" class="btn btn-primary" style="padding:8px 24px; font-size:1rem; border-radius:20px;">Edit Profile</a>
             </div>
         </div>
         

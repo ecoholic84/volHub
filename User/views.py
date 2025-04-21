@@ -96,39 +96,66 @@ from django.core.exceptions import ObjectDoesNotExist
 from User.models import tbl_user, tbl_country, tbl_state, tbl_city  # Adjust imports as needed
 
 # Basic Profile Creation
+import magic  # Ensure you have python-magic installed
+
 def create_profile(request):
     country = tbl_country.objects.all()
     state = tbl_state.objects.all()
     thisUser = tbl_user.objects.get(id=request.session['u_id'])
+
     if request.method == "POST":
-        print("POST data:", request.POST)  # Debug line
-        print("FILES data:", request.FILES)  # Debug line for file uploads
-        thisUser.user_name = request.POST.get('txt_name')
-        thisUser.user_username = request.POST.get('txt_username')
-        thisUser.user_email = request.POST.get('txt_email')
-        thisUser.user_contact = request.POST.get('txt_contact')  # Add contact
-        thisUser.user_gender = request.POST.get('txt_gender')
-        city_id = request.POST.get('sel_city')
+        data = request.POST
+        files = request.FILES
+
+        # Basic fields
+        thisUser.user_name = data.get('txt_name')
+        thisUser.user_username = data.get('txt_username')
+        thisUser.user_email = data.get('txt_email')
+        thisUser.user_contact = data.get('txt_contact')
+        thisUser.user_gender = data.get('txt_gender')
+        thisUser.user_bio = data.get('txt_bio')
+
+        # City
+        city_id = data.get('sel_city')
+        if city_id:
+            thisUser.user_city_id = city_id  # Django auto handles FK assignment
+
+        # Profile photo with checks
+        file = files.get('txt_file')
+        if file:
+            if file.size > 5 * 1024 * 1024:
+                return render(request, 'User/create_profile.html', {
+                    'country': country, 'state': state, 'thisUser': thisUser,
+                    'error': 'Image too large (max 5MB).'
+                })
+            if not magic.Magic(mime=True).from_buffer(file.read(1024)).startswith('image/'):
+                return render(request, 'User/create_profile.html', {
+                    'country': country, 'state': state, 'thisUser': thisUser,
+                    'error': 'Invalid image format.'
+                })
+            file.seek(0)
+            thisUser.user_photo = file
+
         try:
-            thisUser.user_city = tbl_city.objects.get(id=city_id) if city_id else None
-        except ObjectDoesNotExist:
+            thisUser.save()
+            request.session['gender'] = thisUser.user_gender
+            request.session['profile_photo_url'] = thisUser.user_photo.url if thisUser.user_photo else ''
+        except Exception as e:
             return render(request, 'User/create_profile.html', {
-                'country': country,
-                'state': state,
-                'error': f"City with ID {city_id} does not exist."
+                'country': country, 'state': state, 'thisUser': thisUser,
+                'error': f"Error saving profile: {str(e)}"
             })
-        if 'txt_photo' in request.FILES:  # Check if a file was uploaded
-            thisUser.user_photo = request.FILES['txt_photo']  # Add profile photo
-        thisUser.user_bio = request.POST.get('txt_bio')
-        thisUser.save()
-        if thisUser.user_type == 'volunteer':
-            return redirect('User:volunteer_dashboard')
-        elif thisUser.user_type == 'organizer':
-            return redirect('User:organizer_dashboard')
-        else:
-            return redirect('User:user_who')
-    else:
-        return render(request, 'User/create_profile.html', {'country': country, 'state': state,'thisUser':thisUser})
+
+        return redirect({
+            'volunteer': 'User:volunteer_dashboard',
+            'organizer': 'User:organizer_dashboard',
+            'both': 'User:volunteer_dashboard'
+        }.get(thisUser.user_type, 'User:user_who'))
+
+    return render(request, 'User/create_profile.html', {
+        'country': country, 'state': state, 'thisUser': thisUser
+    })
+
     
 def profile_country_ajax(request):
     state=tbl_state.objects.filter(country=request.GET.get("did"))
@@ -401,6 +428,10 @@ def switch_dashboard(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
     user = tbl_user.objects.get(id=request.session['u_id'])
+    # Always set user_type to 'both' if not already
+    if user.user_type != 'both':
+        user.user_type = 'both'
+        user.save()
     from_dashboard = request.GET.get('from')
     if from_dashboard == 'volunteer':
         return redirect('User:organizer_dashboard')

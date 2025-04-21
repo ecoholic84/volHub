@@ -53,11 +53,18 @@
                     </div>
                     <div class="user-dropdown" tabindex="0">
                         <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            <img src="{% if request.session.profile_photo_url %}{{ request.session.profile_photo_url }}
-    {% elif request.session.gender|lower == 'male' %}https://avatar.iran.liara.run/public/boy
-    {% elif request.session.gender|lower == 'female' %}https://avatar.iran.liara.run/public/girl
-    {% elif request.session.username %}https://avatar.iran.liara.run/username?username={{ request.session.username|urlencode }}&bold=false&length=1
-    {% else %}/static/Guest/images/default-profile.png{% endif %}" alt="PP" class="profile-photo">
+                            <img src="{% if user.user_photo %}{{ user.user_photo.url }}
+                                {% elif request.session.gender == 'Male' %}
+                                    https://avatar.iran.liara.run/public/boy
+                                {% elif request.session.gender == 'Female' %}
+                                    https://avatar.iran.liara.run/public/girl
+                                {% elif request.session.username %}
+                                    https://avatar.iran.liara.run/username?username={{ request.session.username|urlencode }}&bold=false&length=1
+                                {% else %}
+                                    /static/Guest/images/default-profile.png
+                                {% endif %}" 
+                            alt="PP" class="profile-photo">
+
                             <span class="username">{{ request.session.name|default:request.session.username }}</span>
                             <i class="fa fa-caret-down"></i>
                         </button>

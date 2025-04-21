@@ -36,6 +36,12 @@ def user_registration(request):
         request.session['u_id'] = user.id
         request.session['name'] = user.user_name or ''
         request.session['username'] = user.user_username or ''
+        # Set gender and profile photo URL in session if available
+        request.session['gender'] = getattr(user, 'user_gender', '')
+        if getattr(user, 'user_photo', None):
+            request.session['profile_photo_url'] = user.user_photo.url if user.user_photo else ''
+        else:
+            request.session['profile_photo_url'] = ''
         del request.session['temp_email']
         return redirect('Guest:user_who')
     return render(request, 'Guest/user_registration.html')
@@ -72,9 +78,16 @@ def login(request):
             user = tbl_user.objects.get(user_email=email, user_password=password)
             request.session['u_id'] = user.id
             request.session["username"] = user.user_username
+            # Set gender and profile photo URL in session if available
+            request.session['gender'] = getattr(user, 'user_gender', '')
+            if getattr(user, 'user_photo', None):
+                request.session['profile_photo_url'] = user.user_photo.url if user.user_photo else ''
+            else:
+                request.session['profile_photo_url'] = ''
             redirect_url = (
                 'User:volunteer_dashboard' if user.user_type == "volunteer"
                 else 'User:organizer_dashboard' if user.user_type == "organizer"
+                else 'User:volunteer_dashboard' if user.user_type == "both"
                 else 'Guest:user_who'
             )
             return redirect(redirect_url)
