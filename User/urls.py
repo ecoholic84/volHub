@@ -1,5 +1,8 @@
 from django.urls import path,include 
 from User import views
+from django.conf import settings
+from django.conf.urls.static import static
+
 app_name='User'
 urlpatterns = [
     path('switch-dashboard/', views.switch_dashboard, name='switch_dashboard'),
@@ -42,4 +45,5 @@ urlpatterns = [
     path('delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
     path('converse/<int:event_id>/', views.converse, name='converse'),
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+

@@ -98,6 +98,11 @@ from User.models import tbl_user, tbl_country, tbl_state, tbl_city  # Adjust imp
 # Basic Profile Creation
 import magic  # Ensure you have python-magic installed
 
+import magic
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import tbl_country, tbl_state, tbl_user
+
 def create_profile(request):
     country = tbl_country.objects.all()
     state = tbl_state.objects.all()
@@ -118,32 +123,42 @@ def create_profile(request):
         # City
         city_id = data.get('sel_city')
         if city_id:
-            thisUser.user_city_id = city_id  # Django auto handles FK assignment
+            thisUser.user_city_id = city_id
 
-        # Profile photo with checks
-        file = files.get('txt_file')
+        # Profile photo with validation
+        file = files.get('txt_photo')
         if file:
+            print(f"Received file: {file.name}, size: {file.size}")  # Debugging
             if file.size > 5 * 1024 * 1024:
+                messages.error(request, 'Image too large (max 5MB).')
                 return render(request, 'User/create_profile.html', {
-                    'country': country, 'state': state, 'thisUser': thisUser,
-                    'error': 'Image too large (max 5MB).'
+                    'country': country, 'state': state, 'thisUser': thisUser
                 })
-            if not magic.Magic(mime=True).from_buffer(file.read(1024)).startswith('image/'):
+            mime = magic.Magic(mime=True)
+            if not mime.from_buffer(file.read(1024)).startswith('image/'):
+                messages.error(request, 'Invalid image format.')
                 return render(request, 'User/create_profile.html', {
-                    'country': country, 'state': state, 'thisUser': thisUser,
-                    'error': 'Invalid image format.'
+                    'country': country, 'state': state, 'thisUser': thisUser
                 })
-            file.seek(0)
+            file.seek(0)  # Reset file pointer
             thisUser.user_photo = file
+
+        # Check for basic profile completeness
+        if (thisUser.user_name and thisUser.user_username and thisUser.user_email and thisUser.user_contact and
+            thisUser.user_gender and thisUser.user_city_id and thisUser.user_bio):
+            thisUser.is_basic_profile_complete = True
+        else:
+            thisUser.is_basic_profile_complete = False
 
         try:
             thisUser.save()
             request.session['gender'] = thisUser.user_gender
             request.session['profile_photo_url'] = thisUser.user_photo.url if thisUser.user_photo else ''
         except Exception as e:
+            print(f"Error saving profile: {str(e)}")  # Debugging
+            messages.error(request, f"Error saving profile: {str(e)}")
             return render(request, 'User/create_profile.html', {
-                'country': country, 'state': state, 'thisUser': thisUser,
-                'error': f"Error saving profile: {str(e)}"
+                'country': country, 'state': state, 'thisUser': thisUser
             })
 
         return redirect({
@@ -227,6 +242,7 @@ def volunteer_dashboard(request):
     user = tbl_user.objects.get(id=user_id)
     
     # Fetch upcoming events (exclude ALL events the user has ever applied to, regardless of request status)
+    # Only events with visibility=1 (public) are shown to volunteers. Private events (visibility=0) are hidden even if admin approved.
     today = timezone.now().date()
     applied_event_ids = tbl_request.objects.filter(user_id=user_id).values_list('event_id', flat=True)
     upcoming_events = tbl_event.objects.filter(
@@ -413,7 +429,7 @@ def edit_event(request, event_id):
         event.required_skills.set(selected_skills)
 
         messages.success(request, 'Event updated successfully!')
-        return redirect('User:org_event_detail', event_id=event.id)
+        return redirect('User:event_action', event_id=event.id)
 
     return render(request, 'User/edit_event.html', {
         'event': event,
@@ -474,6 +490,11 @@ def event_action(request, event_id):
     requests = tbl_request.objects.filter(event=event).select_related('user')
 
     if request.method == 'POST':
+        # Handle visibility toggle
+        if 'toggle_visibility' in request.POST:
+            event.visibility = 0 if event.visibility else 1
+            event.save()
+            messages.success(request, f"Event visibility set to {'Private' if event.visibility == 0 else 'Public'}.")
         request_id = request.POST.get('request_id')
         action = request.POST.get('action')
         req = tbl_request.objects.filter(id=request_id, event=event).first()
@@ -485,11 +506,13 @@ def event_action(request, event_id):
                 user_name = req.user.user_name
                 event = req.event  # Or use req.event if you're directly accessing the event via the request
 
+                event_date = event.event_datetime.strftime('%d-%m-%Y')
+                event_time = event.event_datetime.strftime('%I:%M %p')
                 event_details = (
-                    f"Event Title   : {event.event_title}\n"
-                    f"Date & Time   : {event.event_datetime.strftime('%B %d, %Y at %I:%M %p')}\n"
-                    f"Venue         : {event.event_venue}, {event.event_city.name}\n"
-                    f"Stipend       : {event.event_stipend}\n"
+                    f"- Event     : {event.event_title}\n"
+                    f"- Date      : {event_date}\n"
+                    f"- Time      : {event_time}\n"
+                    f"- Venue     : {event.event_venue}, {event.event_city.name}\n"
                 )
 
                 message_body = (
@@ -676,6 +699,27 @@ def create_vol_profile(request):
         thisUser.user_official_address = request.POST.get('user_official_address')
         thisUser.user_official_contact_number = request.POST.get('user_official_contact_number')
         
+        # Check for volunteer profile completeness
+        if (
+            thisUser.user_address and
+            thisUser.user_degree_type and
+            thisUser.user_institution and
+            thisUser.user_field_of_study and
+            thisUser.user_graduation_month and
+            thisUser.user_graduation_year and
+            thisUser.user_emergency_name and
+            thisUser.user_emergency_phone and
+            thisUser.user_organization_name and
+            thisUser.user_job_title and
+            thisUser.user_industry and
+            thisUser.user_location and
+            thisUser.user_official_contact_number and
+            thisUser.user_official_address
+        ):
+            thisUser.is_volunteer_profile_complete = True
+        else:
+            thisUser.is_volunteer_profile_complete = False
+
         thisUser.save()
         messages.success(request, 'Volunteer profile updated successfully!')
         return redirect('User:volunteer_dashboard')

@@ -236,6 +236,13 @@
     <a href="{% url 'User:edit_event' event.id %}" class="btn btn-primary" style="position:absolute;top:24px;right:180px;padding:10px 22px;font-weight:600;background:#6366f1;color:#fff;border-radius:8px;text-decoration:none;transition:background 0.18s;z-index:3;">
         <i class="fa fa-edit" style="margin-right:8px;"></i>Edit Event
     </a>
+    <form method="post" style="position:absolute;top:24px;right:340px;z-index:3;">
+        {% csrf_token %}
+        <button type="submit" name="toggle_visibility" value="1" class="btn btn-visibility-toggle" style="padding:10px 22px;font-weight:600;background:{% if event.visibility %}#22c55e{% else %}#ef4444{% endif %};color:#fff;border-radius:8px;text-decoration:none;transition:background 0.18s;">
+            <i class="fa fa-eye{% if not event.visibility %}-slash{% endif %}" style="margin-right:8px;"></i>
+            {% if event.visibility %}Public{% else %}Private{% endif %}
+        </button>
+    </form>
     <a href="{% url 'User:converse' event.id %}" class="btn btn-converse" style="position:absolute;top:24px;right:32px;padding:10px 22px;font-weight:600;background:#fbbf24;color:#fff;border-radius:8px;text-decoration:none;transition:background 0.18s;z-index:3;">
         <i class="fa fa-envelope" style="margin-right:8px;"></i>Converse
     </a>

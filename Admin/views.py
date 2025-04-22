@@ -5,6 +5,8 @@ from User.models import *
 from datetime import datetime
 from django.urls import reverse
 from django.db import IntegrityError
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 
@@ -254,6 +256,19 @@ def adminDashboard(request):
         if action == "accept":
             event.event_status = 1  # Accepted
             event.save()
+            # Send formal acceptance email to organizer
+            organizer_email = event.user.user_email
+            organizer_name = event.user.user_name
+            event_name = event.event_title
+            subject = f"Your event '{event_name}' has been approved"
+            body = (
+                f"Hi {organizer_name},\n\n"
+                f"After careful consideration, we are pleased to inform you that your event \"{event_name}\" has been approved by our team.\n"
+                "We appreciate your initiative and effort in organizing this event.\n\n"
+                "Best wishes for your event's success.\n\n"
+                "Warm regards,\nThe VolHub Admin Team"
+            )
+            send_mail(subject, body, settings.EMAIL_HOST_USER, [event.user.user_email])
             message = f"Event '{event.event_title}' accepted successfully!"
             return render(request, 'Admin/adminDashboard.html', {
                 'events': all_events,
@@ -262,6 +277,19 @@ def adminDashboard(request):
         elif action == "reject":
             event.event_status = 2  # Rejected
             event.save()
+            # Send formal rejection email to organizer
+            organizer_email = event.user.user_email
+            organizer_name = event.user.user_name
+            event_name = event.event_title
+            subject = f"Your event '{event_name}' has been rejected"
+            body = (
+                f"Hi {organizer_name},\n\n"
+                f"After careful consideration, we regret to inform you that your event \"{event_name}\" has not been approved at this time.\n"
+                "We appreciate your effort and encourage you to continue submitting valuable proposals in the future.\n\n"
+                "Thank you for your understanding.\n\n"
+                "Warm regards,\nThe VolHub Admin Team"
+            )
+            send_mail(subject, body, settings.EMAIL_HOST_USER, [organizer_email])
             message = f"Event '{event.event_title}' rejected successfully!"
             return render(request, 'Admin/adminDashboard.html', {
                 'events': all_events,
