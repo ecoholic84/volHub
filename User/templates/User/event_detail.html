@@ -215,7 +215,7 @@
             <div class="meta-info">
                 <p><i class="event-meta-icon">📅</i> {{ event.event_datetime|date:"F j, Y, g:i A" }}</p>
                 <p><i class="event-meta-icon">📍</i> {{ event.event_venue|default:"Location TBA" }}</p>
-                <a href="{% url 'Guest:profile' event.user.user_username %}" class="organizer-details-link" id="know-organizer-link">✨ Know the Organizer</a>
+                <a href="{% url 'User:organizer_profile' event.id %}" class="organizer-details-link" id="know-organizer-link">✨ Know the Organizer</a>
 <style>
 #know-organizer-link {
     color: #6366f1;

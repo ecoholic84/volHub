@@ -1,0 +1,869 @@
+{% extends 'Guest/base.html' %}
+
+{% block title %}Profile | VolHub{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --primary: #4F46E5;
+        --primary-light: #818cf8;
+        --primary-dark: #3730A3;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --background: #f9fafb;
+        --card-bg: #ffffff;
+        --text: #111827;
+        --text-secondary: #4b5563;
+        --text-tertiary: #6b7280;
+        --border: #e5e7eb;
+        --border-light: #f3f4f6;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius-sm: 0.25rem;
+        --radius: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
+    }
+
+    /* Base Styles */
+    body {
+        background-color: var(--background);
+        color: var(--text);
+        line-height: 1.5;
+    }
+
+    /* Profile Layout */
+    .profile-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Profile Header */
+    .profile-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .profile-cover {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border-radius: var(--radius-lg);
+        margin-bottom: -75px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .profile-cover::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .profile-avatar {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 5px solid var(--card-bg);
+        background-color: var(--card-bg);
+        overflow: hidden;
+        position: relative;
+        z-index: 1;
+        box-shadow: var(--shadow-md);
+    }
+
+    .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .profile-info {
+        margin-top: 1rem;
+    }
+
+    .profile-name {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.25rem;
+    }
+
+    .profile-username {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.75rem;
+    }
+
+    .profile-bio {
+        max-width: 600px;
+        margin: 0 auto 1.5rem;
+        color: var(--text-secondary);
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    .profile-badges {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.875rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        gap: 0.375rem;
+    }
+
+    .badge-volunteer {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+
+    .badge-organizer {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.25rem;
+        border-radius: var(--radius);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+        background-color: white;
+        color: var(--text);
+        border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+        background-color: var(--border-light);
+    }
+
+    /* Profile Stats */
+    .profile-stats {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text);
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    /* Profile Details */
+    .profile-details {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+    }
+
+    .detail-item i {
+        color: var(--primary);
+    }
+
+    .detail-item a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .detail-item a:hover {
+        text-decoration: underline;
+    }
+
+    /* Main Content */
+    .profile-content {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    /* Tabs */
+    .tabs-container {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .tabs-header {
+        display: flex;
+        border-bottom: 1px solid var(--border);
+        background-color: var(--background);
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .tabs-header::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab-btn {
+        padding: 1rem 1.5rem;
+        background: none;
+        border: none;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s;
+        white-space: nowrap;
+        position: relative;
+    }
+
+    .tab-btn:hover {
+        color: var(--primary);
+    }
+
+    .tab-btn.active {
+        color: var(--primary);
+    }
+
+    .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background-color: var(--primary);
+    }
+
+    .tab-content {
+        padding: 1.5rem;
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    /* Timeline */
+    .timeline {
+        position: relative;
+    }
+
+    .timeline-item {
+        position: relative;
+        padding-left: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .timeline-item:last-child {
+        padding-bottom: 0;
+    }
+
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0.25rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: var(--primary-light);
+        z-index: 1;
+    }
+
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        left: 0.5rem;
+        top: 1.25rem;
+        bottom: 0;
+        width: 1px;
+        background-color: var(--border);
+    }
+
+    .timeline-item:last-child::after {
+        display: none;
+    }
+
+    .timeline-date {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-card {
+        background-color: var(--background);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+    }
+
+    .timeline-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .timeline-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.75rem;
+    }
+
+    .timeline-description {
+        font-size: 0.875rem;
+        color: var(--text-tertiary);
+        line-height: 1.5;
+    }
+
+    .empty-state {
+        padding: 3rem 1.5rem;
+        text-align: center;
+        color: var(--text-secondary);
+    }
+
+    .empty-state-icon {
+        font-size: 2.5rem;
+        color: var(--border);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state-description {
+        font-size: 0.875rem;
+        max-width: 20rem;
+        margin: 0 auto;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .profile-cover {
+            height: 150px;
+            margin-bottom: -60px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+        }
+
+        .profile-stats {
+            gap: 1.5rem;
+        }
+
+        .profile-details {
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+        }
+
+        .profile-stats {
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .profile-actions {
+            flex-direction: column;
+        }
+
+        .action-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        <div class="profile-cover"></div>
+        <div class="profile-avatar">
+            <img src="{% if user.user_photo %}{{ user.user_photo.url }}
+                        {% elif request.session.gender == 'Male' %}
+                            https://avatar.iran.liara.run/public/boy
+                        {% elif request.session.gender == 'Female' %}
+                            https://avatar.iran.liara.run/public/girl
+                        {% elif request.session.username %}
+                            https://avatar.iran.liara.run/username?username={{ request.session.username|urlencode }}&bold=false&length=1
+                        {% else %}
+                            /static/Guest/images/default-profile.png
+                        {% endif %}" 
+                    alt="Profile Picture">
+        </div>
+        
+        <div class="profile-info">
+            <h1 class="profile-name">{{ organizer.user_name|default:"John Doe" }}</h1>
+            <p class="profile-username">@{{ organizer.user_username|default:"johndoe" }}</p>
+            
+            <div class="profile-badges">
+                {% if organizer.user_type == 'volunteer' or organizer.user_type == 'both' %}
+                    <span class="badge badge-volunteer">
+                        <i class="fas fa-hands-helping"></i> Volunteer
+                    </span>
+                {% endif %}
+                {% if organizer.user_type == 'organizer' or organizer.user_type == 'both' %}
+                    <span class="badge badge-organizer">
+                        <i class="fas fa-calendar-check"></i> Organizer
+                    </span>
+                {% endif %}
+            </div>
+            
+            <p class="profile-bio">{{ organizer.user_bio|default:"Passionate volunteer with experience in community service. Dedicated to positive impact." }}</p>
+            
+            <div class="profile-details">
+                <div class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>
+                        {{ organizer.user_city.name|default:"City" }},
+                        {{ organizer.user_city.state.name|default:"State" }},
+                        {{ organizer.user_city.state.country.country_name|default:"Country" }}
+                    </span>
+                </div>
+                {% if organizer.user_links %}
+                <div class="detail-item">
+                    <i class="fas fa-globe"></i>
+                    <a href="{% if organizer.user_links|slice:':8' == 'https://' %}{{ organizer.user_links }}{% else %}https://{{ organizer.user_links }}{% endif %}" target="_blank">{{ user.user_links }}</a>
+                </div>
+                {% endif %}
+                <div class="detail-item">
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:{{ organizer.user_email }}">{{ organizer.user_email }}</a>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <a href="{% url 'User:edit_profile' 1 %}" class="action-btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </a>
+                <button id="share-profile-btn" class="action-btn btn-secondary">
+                    <i class="fas fa-share-alt"></i> Share Profile
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="profile-content">
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="education">
+                    <i class="fas fa-graduation-cap"></i> Education
+                </button>
+                <button class="tab-btn" data-tab="work">
+                    <i class="fas fa-briefcase"></i> Work Experience
+                </button>
+                <button class="tab-btn" data-tab="volunteer">
+                    <i class="fas fa-hands-helping"></i> Volunteering
+                </button>
+                {% if organizer.user_type == 'organizer' or organizer.user_type == 'both' %}
+                    <button class="tab-btn" data-tab="events">
+                        <i class="fas fa-calendar-alt"></i> Organized Events
+                    </button>
+                {% endif %}
+                <button class="tab-btn" data-tab="skills">
+                    <i class="fas fa-star"></i> Skills
+                </button>
+            </div>
+            
+            <div class="tab-content active" id="education">
+                <div class="timeline">
+                    {% if organizer.user_degree_type or organizer.user_institution or organizer.user_field_of_study or organizer.user_graduation_year %}
+                        <div class="timeline-item">
+                            <div class="timeline-date">{{ organizer.user_graduation_year|default:"N/A" }} - {{ organizer.user_industry|default:"Industry" }}</div>
+                            <div class="timeline-card">
+                                <h3 class="timeline-title">{{ organizer.user_degree_type|default:"Degree" }} in {{ organizer.user_field_of_study|default:"Field of Study" }}</h3>
+                                <p class="timeline-subtitle">{{ organizer.user_institution|default:"Institution" }}</p>
+                                <p class="timeline-description">{{ organizer.user_bio|default:"No description available" }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h3 class="empty-state-title">No education records</h3>
+                            <p class="empty-state-description">Add your education details to complete your profile.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="tab-content" id="work">
+                <div class="timeline">
+                    {% if organizer.user_job_title or organizer.user_organization_name or organizer.user_industry %}
+                        <div class="timeline-item">
+                            <div class="timeline-date">{{ organizer.user_graduation_year|default:"N/A" }} - Present</div>
+                            <div class="timeline-card">
+                                <h3 class="timeline-title">{{ organizer.user_job_title|default:"Job Title" }}</h3>
+                                <p class="timeline-subtitle">{{ organizer.user_organization_name|default:"Organization" }}</p>
+                                <p class="timeline-description">{{ organizer.user_bio|default:"No description available" }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-briefcase"></i>
+                            </div>
+                            <h3 class="empty-state-title">No work experience</h3>
+                            <p class="empty-state-description">Add your work experience to showcase your professional background.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="tab-content" id="volunteer">
+                <div class="timeline">
+                    {% for request in organizer.volunteer_requests.all %}
+                        {% if request.request_status == 1 or request.request_status == 2 %}
+                            <div class="timeline-item">
+                                <div class="timeline-date">{{ request.request_datetime|date:"M Y" }}</div>
+                                <div class="timeline-card">
+                                    <h3 class="timeline-title">{{ request.event.event_title }}</h3>
+                                    <p class="timeline-subtitle">
+                                        <i class="fas fa-map-marker-alt"></i> {{ request.event.event_venue }}, {{ request.event.event_city.city_name }}
+                                    </p>
+                                    <p class="timeline-description">
+                                        Status: 
+                                        {% if request.request_status == 1 %}
+                                            <span style="color: var(--success);">Accepted</span>
+                                        {% elif request.request_status == 2 %}
+                                            <span style="color: var(--danger);">Rejected</span>
+                                        {% endif %}
+                                        on {{ request.request_datetime|date:"F d, Y" }}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% empty %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-hands-helping"></i>
+                            </div>
+                            <h3 class="empty-state-title">No volunteering history</h3>
+                            <p class="empty-state-description">Apply to volunteer opportunities to build your volunteering history.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="tab-content" id="events">
+                <div class="timeline">
+                    {% for event in organizer.event_set.all %}
+                        <div class="timeline-item">
+                            <div class="timeline-date">{{ event.event_datetime|date:"M Y" }}</div>
+                            <div class="timeline-card">
+                                <h3 class="timeline-title">{{ event.event_title }}</h3>
+                                <p class="timeline-subtitle">
+                                    <i class="fas fa-map-marker-alt"></i> {{ event.event_venue }}, {{ event.event_city.city_name }}
+                                </p>
+                                <p class="timeline-description">{{ event.event_content }}</p>
+                                <div style="margin-top: 0.75rem;">
+                                    <a href="{% url 'User:event_action' event.id %}" class="action-btn btn-secondary" style="font-size: 0.75rem; padding: 0.375rem 0.75rem;">
+                                        <i class="fas fa-eye"></i> View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <h3 class="empty-state-title">No organized events</h3>
+                            <p class="empty-state-description">Create events to build your organizer portfolio.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <div class="tab-content" id="skills">
+                <div class="skills-container">
+                    {% if organizer.skills.all %}
+                        <div class="skills-grid">
+                            {% for skill in organizer.skills.all %}
+                                <div class="skill-badge">
+                                    <i class="fas fa-check-circle"></i> {{ skill.skill_name }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3 class="empty-state-title">No skills added</h3>
+                            <p class="empty-state-description">Add skills to showcase your abilities to event organizers.</p>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <style>
+                    .skills-grid {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 0.75rem;
+                        margin-top: 1rem;
+                    }
+                    
+                    .skill-badge {
+                        background-color: var(--background);
+                        color: var(--text-secondary);
+                        padding: 0.5rem 1rem;
+                        border-radius: 9999px;
+                        font-size: 0.875rem;
+                        font-weight: 500;
+                        display: flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                    }
+                    
+                    .skill-badge i {
+                        color: var(--primary);
+                    }
+                </style>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Share Profile Modal -->
+<div id="share-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 100; align-items: center; justify-content: center;">
+    <div style="background-color: white; border-radius: var(--radius); padding: 1.5rem; width: 90%; max-width: 400px; box-shadow: var(--shadow-lg);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-size: 1.25rem; font-weight: 600; margin: 0;">Share Profile</h3>
+            <button id="close-modal" style="background: none; border: none; font-size: 1.25rem; cursor: pointer; color: var(--text-tertiary);">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <p style="margin-bottom: 1rem; color: var(--text-secondary);">Share your profile with others:</p>
+        <div style="display: flex; margin-bottom: 1rem;">
+            <input type="text" id="share-url" value="{{ request.build_absolute_uri }}" style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm) 0 0 var(--radius-sm); outline: none;" readonly>
+            <button id="copy-url" style="background-color: var(--primary); color: white; border: none; padding: 0.75rem 1rem; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; cursor: pointer;">
+                <i class="fas fa-copy"></i>
+            </button>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 1rem;">
+            <a href="#" class="social-share-btn" data-platform="facebook" style="color: #1877f2; font-size: 1.5rem;">
+                <i class="fab fa-facebook"></i>
+            </a>
+            <a href="#" class="social-share-btn" data-platform="twitter" style="color: #1da1f2; font-size: 1.5rem;">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="social-share-btn" data-platform="linkedin" style="color: #0077b5; font-size: 1.5rem;">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="#" class="social-share-btn" data-platform="whatsapp" style="color: #25d366; font-size: 1.5rem;">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Copied Notification -->
+<div id="copied-notification" style="display: none; position: fixed; bottom: 1rem; right: 1rem; background-color: var(--primary); color: white; padding: 0.75rem 1.5rem; border-radius: var(--radius); box-shadow: var(--shadow-md); z-index: 100;">
+    <i class="fas fa-check-circle"></i> Profile URL copied to clipboard!
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tab functionality
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons and panes
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Show corresponding tab content
+                const tabId = this.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+        
+        // Share profile functionality
+        const shareBtn = document.getElementById('share-profile-btn');
+        const shareModal = document.getElementById('share-modal');
+        const closeModal = document.getElementById('close-modal');
+        const copyUrlBtn = document.getElementById('copy-url');
+        const shareUrl = document.getElementById('share-url');
+        const copiedNotification = document.getElementById('copied-notification');
+        
+        if (shareBtn && shareModal) {
+            shareBtn.addEventListener('click', function() {
+                shareModal.style.display = 'flex';
+            });
+            
+            closeModal.addEventListener('click', function() {
+                shareModal.style.display = 'none';
+            });
+            
+            // Close modal when clicking outside
+            shareModal.addEventListener('click', function(e) {
+                if (e.target === shareModal) {
+                    shareModal.style.display = 'none';
+                }
+            });
+            
+            // Copy URL functionality
+            copyUrlBtn.addEventListener('click', function() {
+                shareUrl.select();
+                document.execCommand('copy');
+                
+                // Show notification
+                copiedNotification.style.display = 'block';
+                
+                // Hide notification after 3 seconds
+                setTimeout(function() {
+                    copiedNotification.style.display = 'none';
+                }, 3000);
+            });
+            
+            // Social sharing functionality
+            const socialShareBtns = document.querySelectorAll('.social-share-btn');
+            
+            socialShareBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const platform = this.getAttribute('data-platform');
+                    const url = encodeURIComponent(shareUrl.value);
+                    const text = encodeURIComponent('Check out my volunteer profile on VolHub!');
+                    
+                    let shareUrl;
+                    
+                    switch(platform) {
+                        case 'facebook':
+                            shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                            break;
+                        case 'twitter':
+                            shareUrl = `https://twitter.com/intent/tweet?url=${url}&text=${text}`;
+                            break;
+                        case 'linkedin':
+                            shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                            break;
+                        case 'whatsapp':
+                            shareUrl = `https://wa.me/?text=${text}%20${url}`;
+                            break;
+                    }
+                    
+                    if (shareUrl) {
+                        window.open(shareUrl, '_blank', 'width=600,height=400');
+                    }
+                });
+            });
+        }
+        
+        // Add impact score animation
+        const statValues = document.querySelectorAll('.stat-value');
+        
+        statValues.forEach(value => {
+            const finalValue = parseInt(value.textContent);
+            
+            if (!isNaN(finalValue) && finalValue > 0) {
+                let currentValue = 0;
+                const duration = 1500;
+                const increment = finalValue / (duration / 16);
+                
+                const animate = () => {
+                    currentValue += increment;
+                    
+                    if (currentValue < finalValue) {
+                        value.textContent = Math.floor(currentValue);
+                        requestAnimationFrame(animate);
+                    } else {
+                        value.textContent = finalValue;
+                    }
+                };
+                
+                animate();
+            }
+        });
+    });
+</script>
+{% endblock %}

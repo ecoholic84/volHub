@@ -437,6 +437,27 @@ def organizer_dashboard(request):
         'dashboard_type': 'organizer'
     })
 
+# Organizer Profile View
+
+def organizer_profile(request, event_id):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    try:
+        event = tbl_event.objects.get(id=event_id)
+        organizer = event.user
+    except tbl_event.DoesNotExist:
+        from django.contrib import messages
+        messages.error(request, 'Event not found.')
+        return redirect('User:volunteer_dashboard')
+    # Add extra context from profile view
+    is_volunteer = 'volunteer' in organizer.user_type.lower() or 'both' in organizer.user_type.lower()
+    is_organizer = 'organizer' in organizer.user_type.lower() or 'both' in organizer.user_type.lower()
+    return render(request, 'User/organizer_profile.html', {
+        'organizer': organizer,
+        'is_volunteer': is_volunteer,
+        'is_organizer': is_organizer
+    })
+
 # Organizer Analytics View
 
 def organizer_analytics(request):

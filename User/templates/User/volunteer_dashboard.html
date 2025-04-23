@@ -1,13 +1,7 @@
 {% extends 'Guest/base.html' %}
 {% load static %}
 {% block content %}
-{% if messages %}
-  <div class="org-message-banner">
-    {% for message in messages %}
-      <div class="org-message org-message-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  </div>
-{% endif %}
+
 <link rel="stylesheet" href="{% static 'User/css/volunteer_dashboard.css' %}">
 <style>
     .org-message-banner {
