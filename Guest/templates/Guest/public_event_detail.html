@@ -1,0 +1,127 @@
+{% extends 'Guest/base.html' %}
+
+{% block title %}Event Details | VolHub{% endblock %}
+
+{% block extra_head %}
+<style>
+    .public-event-hero {
+        background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+        color: #fff;
+        padding: 38px 0 26px 0;
+        text-align: center;
+        border-radius: 0 0 28px 28px;
+        box-shadow: 0 4px 24px rgba(79,70,229,0.08);
+        margin-bottom: 0;
+    }
+    .public-event-title {
+        font-size: 2.3rem;
+        font-weight: 700;
+        margin-bottom: 7px;
+        letter-spacing: 0.5px;
+    }
+    .public-event-meta {
+        font-size: 1.12rem;
+        opacity: 0.97;
+        margin-bottom: 0;
+    }
+    .public-event-details-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 12px rgba(79,70,229,0.07);
+        max-width: 900px;
+        margin: -56px auto 0 auto;
+        padding: 38px 38px 28px 38px;
+        position: relative;
+        z-index: 2;
+    }
+    .public-event-details-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px 36px;
+        margin-bottom: 24px;
+    }
+    .public-event-details-list p {
+        margin: 0;
+        font-size: 1.08rem;
+    }
+    .public-event-description {
+        font-size: 1.13rem;
+        color: #312e81;
+        margin: 18px 0 28px 0;
+        line-height: 1.7;
+        background: #f6f9ff;
+        border-radius: 10px;
+        padding: 22px 20px;
+    }
+    .public-event-cta {
+        display: flex;
+        gap: 18px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+    .public-event-btn {
+        background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        padding: 13px 34px;
+        border-radius: 8px;
+        font-size: 1.13rem;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(79,70,229,0.09);
+        transition: background 0.16s, color 0.16s;
+        text-decoration: none;
+    }
+    .public-event-btn:hover {
+        background: #6366f1;
+        color: #fff;
+    }
+    .public-event-signup-hint {
+        margin-top: 12px;
+        color: #6366f1;
+        font-size: 1.07rem;
+        text-align: center;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if event %}
+<div class="public-event-hero">
+    <h1 class="public-event-title">{{ event.event_title }}</h1>
+    <p class="public-event-meta">
+        <i class="fa fa-calendar-alt"></i> {{ event.event_datetime|date:'F j, Y, g:i A' }}
+        &nbsp;|&nbsp;
+        <i class="fa fa-map-marker-alt"></i> {{ event.event_venue }}
+    </p>
+</div>
+<div class="public-event-details-card">
+    <div class="public-event-details-list">
+        <p><strong>Organizer:</strong> {{ event.user.user_name }}</p>
+        <p><strong>City:</strong> {{ event.event_city.name }}</p>
+        <p><strong>Category:</strong> {{ event.industry.industry_name }}</p>
+        <p><strong>Slots:</strong> {{ event.volunteer_slots }}</p>
+    </div>
+    <div class="public-event-description">
+        {{ event.event_content|linebreaksbr }}
+    </div>
+    <div class="public-event-cta">
+        {% if not request.session.u_id %}
+            <a href="{% url 'Guest:sign_up' %}" class="public-event-btn">Sign Up to Apply</a>
+        {% else %}
+            <a href="{% url 'User:event_detail' event.id %}" class="public-event-btn">Apply as Volunteer</a>
+        {% endif %}
+    </div>
+    {% if not request.session.u_id %}
+        <div class="public-event-signup-hint">
+            Already have an account? <a href="{% url 'Guest:login' %}" style="color:#6366f1;text-decoration:underline;">Log in here</a> to apply.
+        </div>
+    {% endif %}
+</div>
+{% else %}
+<div class="public-event-hero" style="background: #ef4444;">
+    <h1 class="public-event-title">Event Not Found</h1>
+    <p class="public-event-meta">The event you're looking for doesn't exist or is not public.</p>
+</div>
+{% endif %}
+{% endblock %}

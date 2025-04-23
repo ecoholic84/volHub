@@ -14,5 +14,5 @@ urlpatterns = [
     path('forgotpassword/',views.forgotpassword,name="forgotpassword"),
     path('otp/',views.otp,name="otp"),
     path('newpass/',views.newpass,name="newpass"),
-
+    path('public-event/<int:event_id>/', views.public_event_detail, name="public_event_detail"),
 ]

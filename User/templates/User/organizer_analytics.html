@@ -1,0 +1,923 @@
+{% extends 'Guest/base.html' %}
+
+{% block title %}Analytics | Organizer Dashboard | VolHub{% endblock %}
+
+{% block extra_head %}
+<style>
+    :root {
+        --primary: #4F46E5;
+        --primary-light: #818cf8;
+        --primary-dark: #3730A3;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --background: #f9fafb;
+        --card-bg: #ffffff;
+        --text: #111827;
+        --text-secondary: #4b5563;
+        --text-tertiary: #6b7280;
+        --border: #e5e7eb;
+        --border-light: #f3f4f6;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius-sm: 0.25rem;
+        --radius: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
+    }
+
+    /* Dashboard Layout */
+    .dashboard {
+        display: flex;
+        min-height: calc(100vh - 83px);
+        background-color: var(--background);
+    }
+
+    /* Sidebar */
+    .dashboard-sidebar {
+        width: 240px;
+        background-color: var(--card-bg);
+        border-right: 1px solid var(--border);
+        height: 100%;
+        position: fixed;
+        top: 83px;
+        left: 0;
+        bottom: 0;
+        z-index: 10;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem 1rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .sidebar-logo {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .sidebar-nav {
+        padding: 1rem 0;
+    }
+
+    .nav-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .nav-group-title {
+        padding: 0 1.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-tertiary);
+        margin-bottom: 0.5rem;
+    }
+
+    .nav-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .nav-item {
+        margin: 0.25rem 0;
+    }
+
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.625rem 1.25rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        border-radius: 0;
+        transition: background-color 0.2s, color 0.2s;
+        position: relative;
+        gap: 0.75rem;
+    }
+
+    .nav-link:hover {
+        background-color: rgba(79, 70, 229, 0.05);
+        color: var(--primary);
+    }
+
+    .nav-link.active {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: var(--primary);
+    }
+
+    .nav-link i {
+        width: 1.25rem;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    /* Main Content */
+    .dashboard-main {
+        flex: 1;
+        padding: 2rem;
+        margin-left: 240px;
+    }
+
+    /* Page Header */
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text);
+        margin: 0 0 0.5rem 0;
+    }
+
+    .page-description {
+        color: var(--text-secondary);
+        font-size: 0.9375rem;
+    }
+
+    /* Analytics Cards */
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .analytics-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+    }
+
+    .analytics-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+    }
+
+    .analytics-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .analytics-card-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+
+    .analytics-card-content {
+        margin-bottom: 1rem;
+    }
+
+    .analytics-card-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .analytics-card-description {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .analytics-card-footer {
+        display: flex;
+        align-items: center;
+        font-size: 0.875rem;
+    }
+
+    .analytics-trend-up {
+        color: var(--success);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .analytics-trend-down {
+        color: var(--danger);
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    /* Charts */
+    .chart-container {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .chart-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .chart-action {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        border-radius: var(--radius-sm);
+        background-color: var(--background);
+        border: 1px solid var(--border);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: background-color 0.2s, color 0.2s;
+    }
+
+    .chart-action:hover {
+        background-color: var(--border-light);
+    }
+
+    .chart-action.active {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+
+    .chart {
+        height: 300px;
+        position: relative;
+    }
+
+    /* Table */
+    .table-container {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        margin-bottom: 2rem;
+        overflow-x: auto;
+    }
+
+    .table-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .table-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .table-search {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: var(--background);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 0.375rem 0.75rem;
+    }
+
+    .table-search input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 0.875rem;
+        color: var(--text);
+        width: 200px;
+    }
+
+    .table-search i {
+        color: var(--text-tertiary);
+    }
+
+    .analytics-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .analytics-table th {
+        text-align: left;
+        padding: 0.75rem 1rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-tertiary);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .analytics-table td {
+        padding: 1rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .analytics-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .analytics-table tr:hover td {
+        background-color: rgba(79, 70, 229, 0.05);
+    }
+
+    .event-name {
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .event-status {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    .status-approved {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+    }
+
+    .status-pending {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+    }
+
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 1024px) {
+        .dashboard-sidebar {
+            transform: translateX(-100%);
+        }
+
+        .dashboard-sidebar.active {
+            transform: translateX(0);
+        }
+
+        .dashboard-main {
+            margin-left: 0;
+        }
+
+        .sidebar-toggle {
+            display: flex;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-main {
+            padding: 1.5rem;
+        }
+
+        .analytics-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Sidebar Toggle Button */
+    .sidebar-toggle {
+        position: fixed;
+        top: 100px;
+        left: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        color: var(--primary);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        box-shadow: var(--shadow-md);
+        cursor: pointer;
+        z-index: 30;
+        border: 1px solid var(--border);
+    }
+
+    /* Chart Placeholder */
+    .chart-placeholder {
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-tertiary);
+    }
+
+    .chart-placeholder-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: var(--primary-light);
+    }
+
+    .chart-placeholder-text {
+        font-size: 1rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .chart-placeholder-description {
+        font-size: 0.875rem;
+        text-align: center;
+        max-width: 400px;
+    }
+
+    /* Bar Chart Simulation */
+    .bar-chart {
+        height: 300px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-around;
+        padding: 0 1rem;
+    }
+
+    .bar-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .bar {
+        width: 40px;
+        background-color: var(--primary-light);
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+        transition: height 0.5s ease;
+    }
+
+    .bar-label {
+        margin-top: 0.5rem;
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+    }
+
+    /* Donut Chart Simulation */
+    .donut-chart {
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .donut {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(
+            var(--primary) 0% 60%,
+            var(--warning) 60% 85%,
+            var(--danger) 85% 100%
+        );
+        position: relative;
+    }
+
+    .donut::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 120px;
+        height: 120px;
+        background-color: var(--card-bg);
+        border-radius: 50%;
+    }
+
+    .donut-legend {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-left: 2rem;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .legend-color {
+        width: 12px;
+        height: 12px;
+        border-radius: 2px;
+    }
+
+    .legend-approved {
+        background-color: var(--primary);
+    }
+
+    .legend-pending {
+        background-color: var(--warning);
+    }
+
+    .legend-rejected {
+        background-color: var(--danger);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <!-- Sidebar Toggle Button (Mobile) -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <div class="nav-group">
+                <div class="nav-group-title">Main</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{% url 'User:organizer_dashboard' %}" class="nav-link">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'User:Event' %}" class="nav-link">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Events</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-users"></i>
+                            <span>Volunteers</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'User:organizer_analytics' %}" class="nav-link active">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Account</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{% url 'User:profile' %}" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'User:edit_profile' 1 %}" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Support</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{% url 'User:feedback' %}" class="nav-link">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'User:complaint' %}" class="nav-link">
+                            <i class="fas fa-envelope"></i>
+                            <span>Contact Us</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Analytics Dashboard</h1>
+            <p class="page-description">Track your events performance and volunteer engagement</p>
+        </div>
+
+        <!-- Analytics Cards -->
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <div class="analytics-card-header">
+                    <div class="analytics-card-title">Total Events</div>
+                    <div class="analytics-card-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+                <div class="analytics-card-content">
+                    <div class="analytics-card-value">{{ events|length }}</div>
+                    <div class="analytics-card-description">Events created</div>
+                </div>
+                <div class="analytics-card-footer">
+                    <div class="analytics-trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>12% from last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-card">
+                <div class="analytics-card-header">
+                    <div class="analytics-card-title">Volunteer Signups</div>
+                    <div class="analytics-card-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                </div>
+                <div class="analytics-card-content">
+                    <div class="analytics-card-value">0</div>
+                    <div class="analytics-card-description">Total volunteer signups</div>
+                </div>
+                <div class="analytics-card-footer">
+                    <div class="analytics-trend-up">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>5% from last month</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-card">
+                <div class="analytics-card-header">
+                    <div class="analytics-card-title">Engagement Rate</div>
+                    <div class="analytics-card-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+                <div class="analytics-card-content">
+                    <div class="analytics-card-value">0%</div>
+                    <div class="analytics-card-description">Average volunteer engagement</div>
+                </div>
+                <div class="analytics-card-footer">
+                    <div class="analytics-trend-down">
+                        <i class="fas fa-arrow-down"></i>
+                        <span>3% from last month</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Event Performance Chart -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">Event Performance</div>
+                <div class="chart-actions">
+                    <button class="chart-action active">Week</button>
+                    <button class="chart-action">Month</button>
+                    <button class="chart-action">Year</button>
+                </div>
+            </div>
+            <div class="chart">
+                {% if events %}
+                <div class="bar-chart">
+                    <div class="bar-group">
+                        <div class="bar" style="height: 180px;"></div>
+                        <div class="bar-label">Mon</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 120px;"></div>
+                        <div class="bar-label">Tue</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 220px;"></div>
+                        <div class="bar-label">Wed</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 150px;"></div>
+                        <div class="bar-label">Thu</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 200px;"></div>
+                        <div class="bar-label">Fri</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 100px;"></div>
+                        <div class="bar-label">Sat</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar" style="height: 80px;"></div>
+                        <div class="bar-label">Sun</div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="chart-placeholder">
+                    <div class="chart-placeholder-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="chart-placeholder-text">No event data available</div>
+                    <div class="chart-placeholder-description">Create events to see performance analytics</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Event Status Distribution -->
+        <div class="chart-container">
+            <div class="chart-header">
+                <div class="chart-title">Event Status Distribution</div>
+            </div>
+            <div class="chart">
+                {% if events %}
+                <div class="donut-chart">
+                    <div class="donut"></div>
+                    <div class="donut-legend">
+                        <div class="legend-item">
+                            <div class="legend-color legend-approved"></div>
+                            <span>Approved (60%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-pending"></div>
+                            <span>Pending (25%)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-rejected"></div>
+                            <span>Rejected (15%)</span>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="chart-placeholder">
+                    <div class="chart-placeholder-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <div class="chart-placeholder-text">No event data available</div>
+                    <div class="chart-placeholder-description">Create events to see status distribution</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Events Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <div class="table-title">Recent Events</div>
+                <div class="table-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search events...">
+                </div>
+            </div>
+            <table class="analytics-table">
+                <thead>
+                    <tr>
+                        <th>Event Name</th>
+                        <th>Date</th>
+                        <th>Location</th>
+                        <th>Status</th>
+                        <th>Volunteers</th>
+                        <th>Views</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if events %}
+                        {% for event in events %}
+                        <tr>
+                            <td class="event-name">{{ event.event_title }}</td>
+                            <td>{{ event.event_datetime|date:"M d, Y" }}</td>
+                            <td>{{ event.event_venue|default:"Location TBA" }}</td>
+                            <td>
+                                <span class="event-status status-{{ event.status|lower }}">
+                                    {{ event.status }}
+                                </span>
+                            </td>
+                            <td>0</td>
+                            <td>{{ forloop.counter0|add:5 }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 2rem;">
+                                No events created yet. <a href="{% url 'User:Event' %}" style="color: var(--primary); text-decoration: none;">Create your first event</a>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar toggle functionality
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggle = sidebarToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggle && window.innerWidth <= 1024) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        }
+        
+        // Responsive adjustments
+        function handleResize() {
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('active');
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+        
+        // Chart actions
+        const chartActions = document.querySelectorAll('.chart-action');
+        if (chartActions.length > 0) {
+            chartActions.forEach(action => {
+                action.addEventListener('click', function() {
+                    chartActions.forEach(a => a.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Simulate chart data change
+                    const bars = document.querySelectorAll('.bar');
+                    if (bars.length > 0) {
+                        bars.forEach(bar => {
+                            const randomHeight = Math.floor(Math.random() * 200) + 50;
+                            bar.style.height = `${randomHeight}px`;
+                        });
+                    }
+                });
+            });
+        }
+        
+        // Search functionality
+        const searchInput = document.querySelector('.table-search input');
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const tableRows = document.querySelectorAll('.analytics-table tbody tr');
+                
+                tableRows.forEach(row => {
+                    const eventName = row.querySelector('.event-name');
+                    if (eventName) {
+                        const text = eventName.textContent.toLowerCase();
+                        if (text.includes(searchTerm)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        }
+    });
+</script>
+{% endblock %}

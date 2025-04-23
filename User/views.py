@@ -5,14 +5,15 @@ from User.models import *
 from Admin.models import *
 import json
 from django.http import JsonResponse
-from .models import tbl_skill, tbl_user, tbl_request, tbl_event
+from .models import tbl_skill, tbl_user, tbl_request, tbl_event, tbl_country, tbl_state, tbl_user, tbl_city
 from django.db.models import Q
 from django.utils import timezone
 from django.contrib import messages
 from django.http import HttpResponseBadRequest
 from django.core.mail import send_mail
 from django.conf import settings
-from django.contrib import messages
+import magic
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 def logout(request):
@@ -89,20 +90,8 @@ def editComplaint(request,eid):
         return redirect('User:complaint') #complaint here is the url which we have defined in urls.py, Django looks for a URL pattern name that matches 'User/complaint' in your urls.py file.
     else:
         return render(request,'User/complaint.html', {"editComplaint":thisComplaint})
-    
-
-from django.shortcuts import render, redirect
-from django.core.exceptions import ObjectDoesNotExist
-from User.models import tbl_user, tbl_country, tbl_state, tbl_city  # Adjust imports as needed
 
 # Basic Profile Creation
-import magic  # Ensure you have python-magic installed
-
-import magic
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import tbl_country, tbl_state, tbl_user
-
 def create_profile(request):
     country = tbl_country.objects.all()
     state = tbl_state.objects.all()
@@ -267,45 +256,6 @@ def volunteer_dashboard(request):
     }
     return render(request, 'User/volunteer_dashboard.html', context)
 
-
-
-# def event_detail(request, event_id):
-#     # Check if user is logged in and is a volunteer
-#     if 'u_id' not in request.session or not tbl_user.objects.filter(
-#         id=request.session['u_id'], user_type='volunteer'
-#     ).exists():
-#         return redirect('Guest:login')
-
-#     # Fetch event with visibility and status checks
-#     event = tbl_event.objects.filter(id=event_id, visibility=1, event_status=1).first()
-#     if not event:
-#         messages.error(request, "Event not found or not available.")
-#         return redirect('User:volunteer_dashboard')
-
-#     # Check if user has already requested this event
-#     has_requested = tbl_request.objects.filter(
-#         user_id=request.session['u_id'], event_id=event_id
-#     ).exists()
-
-#     # Handle form submission (request or undo)
-#     if request.method == 'POST':
-#         user = tbl_user.objects.get(id=request.session['u_id'])
-#         if 'undo' in request.POST and has_requested:
-#             tbl_request.objects.filter(user=user, event=event).delete()
-#             messages.success(request, "Request undone successfully.")
-#         elif 'request' in request.POST and not has_requested:
-#             tbl_request.objects.create(user=user, event=event, request_status=0)
-#             messages.success(request, "Request submitted successfully.")
-#         else:
-#             messages.warning(request, 
-#                 "You have already requested this event." if has_requested 
-#                 else "Nothing to undo.")
-#         return redirect('User:event_detail', event_id=event_id)
-
-#     return render(request, 'User/event_detail.html', {
-#         'event': event,
-#         'has_requested': has_requested
-#     })
 
 def event_detail(request, event_id):
     if 'u_id' not in request.session or not tbl_user.objects.filter(
@@ -476,6 +426,45 @@ def organizer_dashboard(request):
         'dashboard_type': 'organizer'
     })
 
+# Organizer Analytics View
+
+def organizer_analytics(request):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    if user.user_type not in ["organizer", "both"]:
+        return redirect('User:volunteer_dashboard')
+
+    events = tbl_event.objects.filter(user=user).prefetch_related('required_skills', 'requests')
+
+    # Status breakdown
+    status_map = {0: 'Pending', 1: 'Approved', 2: 'Rejected'}
+    status_counts = {'Approved': 0, 'Pending': 0, 'Rejected': 0}
+    for event in events:
+        status_label = status_map.get(event.event_status, 'Pending')
+        status_counts[status_label] = status_counts.get(status_label, 0) + 1
+
+    # Volunteer signups per event
+    volunteer_counts = {}
+    total_volunteers = 0
+    for event in events:
+        count = event.requests.count()
+        volunteer_counts[event.id] = count
+        total_volunteers += count
+
+    engagement_rate = 0
+    if events.count() > 0:
+        engagement_rate = int((total_volunteers / events.count()) * 100) if total_volunteers > 0 else 0
+
+    context = {
+        'organizer': user,
+        'events': events,
+        'status_counts': status_counts,
+        'total_volunteers': total_volunteers,
+        'engagement_rate': engagement_rate,
+    }
+    return render(request, 'User/organizer_analytics.html', context)
+
 # View for the page which the organizer approves and rejects volunteers
 def event_action(request, event_id):
     if 'u_id' not in request.session:
@@ -494,7 +483,6 @@ def event_action(request, event_id):
         if 'toggle_visibility' in request.POST:
             event.visibility = 0 if event.visibility else 1
             event.save()
-            messages.success(request, f"Event visibility set to {'Private' if event.visibility == 0 else 'Public'}.")
         request_id = request.POST.get('request_id')
         action = request.POST.get('action')
         req = tbl_request.objects.filter(id=request_id, event=event).first()
@@ -509,10 +497,10 @@ def event_action(request, event_id):
                 event_date = event.event_datetime.strftime('%d-%m-%Y')
                 event_time = event.event_datetime.strftime('%I:%M %p')
                 event_details = (
-                    f"- Event     : {event.event_title}\n"
-                    f"- Date      : {event_date}\n"
-                    f"- Time      : {event_time}\n"
-                    f"- Venue     : {event.event_venue}, {event.event_city.name}\n"
+                    f"Event     : {event.event_title}\n"
+                    f"Date      : {event_date}\n"
+                    f"Time      : {event_time}\n"
+                    f"Venue     : {event.event_venue}, {event.event_city.name}\n"
                 )
 
                 message_body = (
@@ -556,11 +544,19 @@ def event_action(request, event_id):
             message = f"Request from {req.user.user_email} rejected successfully!"
             req.save()
             messages.success(request, message)
-        return redirect('User:event_action', event_id=event_id)
+            return redirect('User:event_action', event_id=event_id)
+
+    # Resolve city, state, and country for the event location
+    event_city = event.event_city if event and event.event_city_id else None
+    event_state = event_city.state if event_city and event_city.state_id else None
+    event_country = event_state.country if event_state and event_state.country_id else None
 
     return render(request, 'User/org_event_detail.html', {
         'event': event,
         'requests': requests,
+        'event_city': event_city,
+        'event_state': event_state,
+        'event_country': event_country,
     })
 
 
@@ -791,6 +787,34 @@ def skill_search_ajax(request):
     term = request.GET.get('term', '')
     skills = tbl_skill.objects.filter(skill_name__icontains=term).values('id', 'skill_name')[:10]
     return JsonResponse(list(skills), safe=False)
+
+# Settings View
+def settings_page(request):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        if action == 'change_password':
+            old_password = request.POST.get('old_password')
+            new_password = request.POST.get('new_password')
+            confirm_password = request.POST.get('confirm_password')
+            if user.user_password != old_password:
+                messages.error(request, 'Current password is incorrect.')
+            elif new_password != confirm_password:
+                messages.error(request, 'New passwords do not match.')
+            elif not new_password:
+                messages.error(request, 'New password cannot be empty.')
+            else:
+                user.user_password = new_password
+                user.save()
+                messages.success(request, 'Password changed successfully!')
+        elif action == 'delete_account':
+            user.delete()
+            request.session.flush()
+            messages.success(request, 'Your account has been deleted.')
+            return redirect('Guest:login')
+    return render(request, 'User/settings.html')
 
 # Public Profile View
 def profile(request):

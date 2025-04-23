@@ -54,7 +54,7 @@
                     </div>
                     <div class="user-dropdown" tabindex="0">
                         <button class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            <img src="{% if user.user_photo %}{{ user.user_photo.url }}
+                            <img src="{% if request.session.profile_photo_url %}{{ request.session.profile_photo_url }}
                                 {% elif request.session.gender == 'Male' %}
                                     https://avatar.iran.liara.run/public/boy
                                 {% elif request.session.gender == 'Female' %}
@@ -63,7 +63,7 @@
                                     https://avatar.iran.liara.run/username?username={{ request.session.username|urlencode }}&bold=false&length=1
                                 {% else %}
                                     /static/Guest/images/default-profile.png
-                                {% endif %}" 
+                                {% endif %}"
                             alt="PP" class="profile-photo">
 
                             <span class="username">{{ request.session.name|default:request.session.username }}</span>
@@ -107,20 +107,46 @@
             <style>
             .user-dropdown { position: relative; display: inline-block; }
             .dropdown-toggle {
-                background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.6em; padding: 6px 14px 6px 8px; border-radius: 2em;
-                transition: background 0.18s;
+                background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 0.6em; padding: 7px 16px 7px 8px; border-radius: 2em;
+                transition: background 0.18s, box-shadow 0.28s;
+                box-shadow: 0 0 0 0 #6366f1;
+                position: relative;
+                overflow: hidden;
             }
-            .dropdown-toggle:hover, .user-dropdown:focus-within .dropdown-toggle { background: #e0e7ff; }
+            .dropdown-toggle:hover, .user-dropdown:focus-within .dropdown-toggle, .user-dropdown.open .dropdown-toggle {
+                background: #e0e7ff;
+                animation: wave-highlight 0.7s cubic-bezier(.4,1.6,.7,1) 1;
+                box-shadow: 0 0 0 8px #6366f11a;
+            }
+            @keyframes wave-highlight {
+                0% { box-shadow: 0 0 0 0 #6366f11a; }
+                50% { box-shadow: 0 0 0 12px #6366f14d; }
+                100% { box-shadow: 0 0 0 8px #6366f11a; }
+            }
             .profile-photo {
-                width: 36px; height: 36px; border-radius: 50%; object-fit: cover; border: 2px solid #6366f1; background: #fff;
+                width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #6366f1; background: #fff; box-shadow: 0 2px 8px 0 rgba(99,102,241,0.08);
+                transition: box-shadow 0.25s;
             }
-            .username { font-weight: 500; color: #3730A3; }
+            .dropdown-toggle:hover .profile-photo, .user-dropdown.open .profile-photo {
+                box-shadow: 0 0 0 4px #6366f1cc;
+            }
+            .username {
+                font-weight: 600;
+                font-family: 'Poppins', 'Outfit', sans-serif;
+                font-size: 1.09em;
+                letter-spacing: 0.01em;
+                background: linear-gradient(90deg, #6366f1 10%, #a5b4fc 90%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                text-fill-color: transparent;
+            }
             .dropdown-menu {
-                display: none; position: absolute; right: 0; top: 110%; min-width: 170px; background: #fff; border-radius: 12px; box-shadow: 0 6px 32px 0 rgba(60,60,90,0.13); z-index: 20; padding: 0.7em 0;
+                display: none; position: absolute; right: 0; top: 110%; min-width: 180px; background: #fff; border-radius: 14px; box-shadow: 0 6px 32px 0 rgba(60,60,90,0.13); z-index: 20; padding: 0.7em 0;
+                border: 1px solid #e0e7ff;
             }
-            .user-dropdown.open .dropdown-menu, .user-dropdown:focus-within .dropdown-menu {
-                display: block;
-            }
+            .user-dropdown.open .dropdown-menu { display: block; }
+
             .dropdown-menu a {
                 display: flex; align-items: center; gap: 0.7em; padding: 10px 22px; color: #3730A3; text-decoration: none; font-weight: 500; transition: background 0.16s, color 0.16s;
             }

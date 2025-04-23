@@ -4,374 +4,686 @@
 
 {% block extra_head %}
 <style>
-
-    
-    .org-message-banner {
-        max-width: 1200px;
-        margin: 0 auto 24px auto;
-        padding-top: 18px;
+    :root {
+        --primary: #4F46E5;
+        --primary-light: #818cf8;
+        --primary-dark: #3730A3;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --background: #f9fafb;
+        --card-bg: #ffffff;
+        --text: #111827;
+        --text-secondary: #4b5563;
+        --text-tertiary: #6b7280;
+        --border: #e5e7eb;
+        --border-light: #f3f4f6;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius-sm: 0.25rem;
+        --radius: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
     }
-    .org-message {
-        padding: 16px 28px;
-        border-radius: 10px;
-        font-size: 1.08rem;
-        font-weight: 600;
-        margin-bottom: 10px;
-        box-shadow: 0 2px 8px rgba(79,70,229,0.09);
-        border: 1.5px solid #4F46E5;
-        background: #f0f7ff;
-        color: #2e3a59;
+
+    /* Dashboard Layout */
+    .dashboard {
+        display: flex;
+        min-height: calc(100vh - 83px);
+        background-color: var(--background);
+    }
+
+    /* Sidebar */
+    .dashboard-sidebar {
+        width: 240px;
+        background-color: var(--card-bg);
+        border-right: 1px solid var(--border);
+        height: 100%;
+        position: fixed;
+        top: 83px;
+        left: 0;
+        bottom: 0;
+        z-index: 10;
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar-header {
+        padding: 1.5rem 1rem;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .sidebar-logo {
+        font-weight: 700;
+        font-size: 1.25rem;
+        color: var(--primary);
         display: flex;
         align-items: center;
-        gap: 10px;
-        animation: fadeInDown 0.7s cubic-bezier(0.23, 1, 0.32, 1);
-    }
-    .org-message-success {
-        border-color: #22c55e;
-        background: #e7faed;
-        color: #227a3a;
-    }
-    .org-message-error, .org-message-danger {
-        border-color: #ef4444;
-        background: #fbeaea;
-        color: #b91c1c;
-    }
-    @keyframes fadeInDown {
-        from { opacity: 0; transform: translateY(-30px); }
-        to { opacity: 1; transform: translateY(0); }
+        gap: 0.5rem;
     }
 
-    .org-dashboard-container {
-        display: flex;
-        gap: 32px;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 32px 0;
+    .sidebar-nav {
+        padding: 1rem 0;
     }
-    .org-dashboard-sidebar {
-        min-width: 220px;
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 2px 12px rgba(79,70,229,0.07);
-        padding: 24px 18px;
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        height: fit-content;
+
+    .nav-group {
+        margin-bottom: 1.5rem;
     }
-    .org-dashboard-sidebar .sidebar-section {
-        margin-bottom: 18px;
-    }
-    .org-dashboard-sidebar .sidebar-title {
+
+    .nav-group-title {
+        padding: 0 1.25rem;
+        font-size: 0.75rem;
         font-weight: 600;
-        margin-bottom: 8px;
-        color: #4F46E5;
-        font-size: 1.09rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--text-tertiary);
+        margin-bottom: 0.5rem;
     }
-    .org-dashboard-sidebar ul {
+
+    .nav-list {
         list-style: none;
         padding: 0;
         margin: 0;
     }
-    .org-dashboard-sidebar li {
-        margin-bottom: 8px;
+
+    .nav-item {
+        margin: 0.25rem 0;
     }
-    .org-dashboard-sidebar a {
-        color: #222;
-        text-decoration: none;
-        font-weight: 500;
-        transition: color 0.2s;
-    }
-    .org-dashboard-sidebar a:hover {
-        color: #4F46E5;
-    }
-    .org-dashboard-main {
-        flex: 1;
-        min-width: 0;
-    }
-    .org-dashboard-welcome {
-        background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
-        color: #fff;
-        border-radius: 16px;
-        padding: 32px 32px 24px 32px;
-        margin-bottom: 30px;
+
+    .nav-link {
         display: flex;
         align-items: center;
-        gap: 24px;
+        padding: 0.625rem 1.25rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        border-radius: 0;
+        transition: background-color 0.2s, color 0.2s;
+        position: relative;
+        gap: 0.75rem;
     }
-    .org-dashboard-welcome .welcome-avatar {
+
+    .nav-link:hover {
+        background-color: rgba(79, 70, 229, 0.05);
+        color: var(--primary);
+    }
+
+    .nav-link.active {
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background-color: var(--primary);
+    }
+
+    .nav-link i {
+        width: 1.25rem;
+        text-align: center;
+        font-size: 1rem;
+    }
+
+    /* Main Content */
+    .dashboard-main {
+        flex: 1;
+        padding: 2rem;
+        margin-left: 240px;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-md);
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .welcome-avatar {
         width: 64px;
         height: 64px;
         border-radius: 50%;
-        background: #fff;
-        color: #4F46E5;
+        background: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2.5rem;
+        font-size: 1.75rem;
         font-weight: 700;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        color: var(--primary);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-    .org-dashboard-welcome .welcome-text {
-        font-size: 1.25rem;
-        font-weight: 500;
+
+    .welcome-content h1 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 0 0 0.5rem 0;
     }
-    .org-dashboard-events-header {
+
+    .welcome-content p {
+        margin: 0;
+        opacity: 0.9;
+    }
+
+    /* Dashboard Stats */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 16px;
+        margin-bottom: 1rem;
     }
-    .org-dashboard-events-title {
+
+    .stat-title {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-tertiary);
+    }
+
+    .stat-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: var(--radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+    }
+
+    .stat-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-description {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    /* Section Headers */
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
         font-size: 1.25rem;
         font-weight: 600;
-        color: #4F46E5;
+        color: var(--text);
     }
-    .org-dashboard-events-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 28px;
-    margin-top: 18px;
-}
-.org-dashboard-events-grid.single-card {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-}
-.org-dashboard-events-grid.single-card > div {
-    max-width: 400px;
-    flex: 1 1 400px;
-}
+
+    /* Events Grid */
+    .events-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-        gap: 22px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
     }
-    /* Event Card Grid Compatibility */
+
+    /* Event Card Styling - Enhancing the existing card */
     .event-card {
-        background: #fff;
-        border-radius: 16px;
-        box-shadow: 0 2px 12px rgba(79,70,229,0.07);
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s, box-shadow 0.2s;
+        height: 100%;
         display: flex;
         flex-direction: column;
-        overflow: hidden;
-        transition: box-shadow 0.18s;
-        min-width: 0;
-        height: 100%;
     }
+
     .event-card:hover {
-        box-shadow: 0 8px 26px rgba(79,70,229,0.16);
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-md);
     }
-    .event-card .event-image {
-        width: 100%;
-        aspect-ratio: 16/9;
-        background: #f3f4f6;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-    }
-    .event-card .event-thumbnail {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 0;
-    }
-    .event-card .event-details {
-        flex: 1;
-        padding: 18px 18px 15px 18px;
-        display: flex;
-        flex-direction: column;
-        gap: 7px;
-    }
-    .event-card .event-title {
-        font-size: 1.13rem;
-        font-weight: 700;
-        margin: 0 0 2px 0;
-        color: #4F46E5;
-    }
-    .event-card .event-meta {
-        display: flex;
-        gap: 18px;
-        font-size: 0.97rem;
-        color: #555;
-        margin-bottom: 2px;
-    }
-    .event-card .event-date, .event-card .event-location {
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-    .event-card .meta-icon {
-        width: 17px;
-        height: 17px;
-        color: #818cf8;
-    }
-    .event-card .event-description {
-        font-size: 0.99rem;
-        color: #444;
-        margin: 0 0 10px 0;
-        flex: 1;
-    }
-    .event-card .event-button {
-        align-self: flex-end;
-        background: #4F46E5;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 7px 18px;
-        font-size: 0.97rem;
-        font-weight: 600;
-        text-decoration: none;
-        transition: background 0.18s;
-        margin-top: 10px;
-    }
-    .event-card .event-button:hover {
-        background: #6366f1;
-    }
-    .event-card .event-placeholder {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #e0e7ff;
-    }
-    .event-card .industry-badge {
-        position: absolute;
-        top: 12px;
-        right: 12px;
-        background-color: #6366f1;
-        color: white;
-        font-size: 12px;
-        font-weight: 600;
-        padding: 6px 12px;
-        border-radius: 999px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        z-index: 5;
-        white-space: nowrap;
-    }
-    .org-fab-create {
+
+    /* Create Button */
+    .create-button {
         position: fixed;
-        bottom: 36px;
-        right: 36px;
-        background: #4F46E5;
-        color: #fff;
-        border: none;
+        bottom: 2rem;
+        right: 2rem;
+        width: 3.5rem;
+        height: 3.5rem;
         border-radius: 50%;
-        width: 62px;
-        height: 62px;
-        font-size: 2.1rem;
-        box-shadow: 0 4px 18px rgba(79,70,229,0.18);
-        cursor: pointer;
+        background-color: var(--primary);
+        color: white;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 100;
-        transition: background 0.2s;
+        font-size: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+        border: none;
+        z-index: 20;
     }
-    .org-fab-create:hover {
-        background: #6366f1;
-    }
-    /* Remove .org-card-container, not used anymore */
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-        padding: 20px;
-        background-color: #f4f4f4;
-    }
-    .org-event-card {
-        background: white;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        width: 300px;
-        padding: 15px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        text-decoration: none;
-        color: black;
-        transition: transform 0.2s;
-    }
-    .org-event-card:hover {
+
+    .create-button:hover {
+        background-color: var(--primary-dark);
         transform: scale(1.05);
     }
-    .org-event-card h3 {
-        margin: 0 0 10px 0;
-        color: #007BFF;
+
+    /* Empty State */
+    .empty-state {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        box-shadow: var(--shadow);
     }
-    .org-event-card p {
-        margin: 5px 0;
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--primary-light);
+        margin-bottom: 1.5rem;
     }
-    .org-status-pending {
-        color: orange;
+
+    .empty-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 0.75rem;
     }
-    .org-status-approved {
-        color: green;
+
+    .empty-description {
+        color: var(--text-secondary);
+        max-width: 400px;
+        margin: 0 auto 1.5rem auto;
     }
-    .org-status-rejected {
-        color: red;
+
+    .empty-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        text-decoration: none;
     }
-    @media (max-width: 900px) {
-        .org-dashboard-container { flex-direction: column; gap: 0; }
-        .org-dashboard-sidebar { margin-bottom: 30px; }
+
+    .empty-action:hover {
+        background-color: var(--primary-dark);
+    }
+
+    /* Alert Messages */
+    .alert-container {
+        max-width: 100%;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert {
+        padding: 1rem 1.25rem;
+        border-radius: var(--radius);
+        font-size: 0.9375rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideInDown 0.3s ease-out;
+    }
+
+    .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: var(--success);
+    }
+
+    .alert-error, .alert-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+    }
+
+    .alert-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+    }
+
+    @keyframes slideInDown {
+        from {
+            transform: translateY(-10px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Mobile Responsiveness */
+    @media (max-width: 1024px) {
+        .dashboard-sidebar {
+            transform: translateX(-100%);
+        }
+
+        .dashboard-sidebar.active {
+            transform: translateX(0);
+        }
+
+        .dashboard-main {
+            margin-left: 0;
+        }
+
+        .sidebar-toggle {
+            display: flex;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-main {
+            padding: 1.5rem;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .welcome-section {
+            flex-direction: column;
+            text-align: center;
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .events-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Sidebar Toggle Button */
+    .sidebar-toggle {
+        position: fixed;
+        top: 100px;
+        left: 1rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background-color: var(--card-bg);
+        color: var(--primary);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        box-shadow: var(--shadow-md);
+        cursor: pointer;
+        z-index: 30;
+        border: 1px solid var(--border);
     }
 </style>
 {% endblock %}
 
 {% block content %}
-{% if messages %}
-  <div class="org-message-banner">
-    {% for message in messages %}
-      <div class="org-message org-message-{{ message.tags }}">{{ message }}</div>
-    {% endfor %}
-  </div>
-{% endif %}
-<div class="org-dashboard-container">
-    <div class="org-dashboard-sidebar">
-        <div class="sidebar-section">
-            <h3 class="sidebar-title">Navigation</h3>
-            <ul>
-    <li><a href="{% url 'User:organizer_dashboard' %}"><i class="fa fa-tachometer-alt"></i> Dashboard</a></li>
-    <li><a href="{% url 'User:Event' %}"><i class="fa fa-calendar-plus"></i> Events</a></li>
-    <li><a href="{% url 'User:profile' %}"><i class="fa fa-user"></i> Profile</a></li>
-    <li><a href="{% url 'User:edit_profile' 1 %}"><i class="fa fa-cog"></i> Settings</a></li>
-</ul>
-        </div>
-        <div class="sidebar-section">
-            <h3 class="sidebar-title">Support</h3>
-            <ul>
-    <li><a href="{% url 'User:feedback' %}"><i class="fa fa-question-circle"></i> Help</a></li>
-    <li><a href="{% url 'User:complaint' %}"><i class="fa fa-envelope"></i> Contact Us</a></li>
-</ul>
-        </div>
-    </div>
-    <div class="org-dashboard-main">
-        <div class="org-dashboard-welcome">
-            <div class="welcome-avatar">O</div>
-            <div class="welcome-text">Welcome back, {{ organizer.user_name }}!</div>
-        </div>
-        <div class="org-dashboard-events-header">
-            <h2 class="org-dashboard-events-title">Your Events</h2>
-            <a href="{% url 'User:Event' %}" class="org-fab-create" title="Create Event"><i class="fa fa-plus"></i></a>
-        </div>
+<div class="dashboard">
+    <!-- Sidebar Toggle Button (Mobile) -->
+    <button class="sidebar-toggle" id="sidebarToggle">
+        <i class="fas fa-bars"></i>
+    </button>
 
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" id="sidebar">
+        <div class="sidebar-nav">
+            <div class="nav-group">
+                <div class="nav-group-title">Main</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{% url 'User:organizer_dashboard' %}" class="nav-link active">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#your-events" class="nav-link">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Events</span>
+                        </a>
+                    </li>
 
+                    <li class="nav-item">
+                        <a href="{% url 'User:organizer_analytics' %}" class="nav-link">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Account</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{% url 'User:profile' %}" class="nav-link">
+                            <i class="fas fa-user"></i>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'User:settings_page' %}" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-group-title">Support</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="{% url 'User:feedback' %}" class="nav-link">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Help</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'User:complaint' %}" class="nav-link">
+                            <i class="fas fa-envelope"></i>
+                            <span>Contact Us</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
         <!-- Success/Error Messages -->
         {% if success %}
-            <p style="color: green;">{{ success }}</p>
-        {% endif %}
-        {% if error %}
-            <p style="color: red;">{{ error }}</p>
-        {% endif %}
-        <!-- Event Cards -->
-        <div class="org-dashboard-events-grid{% if events|length == 1 %} single-card{% endif %}">
-            {% for event in events %}
-                <div>{% include 'User/partials/org_event_card.html' with event=event %}</div>
-            {% empty %}
-                <p>No events created yet.</p>
-            {% endfor %}
+        <div class="alert-container">
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                {{ success }}
+            </div>
         </div>
+        {% endif %}
         
-    </div>
+        {% if error %}
+        <div class="alert-container">
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ error }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Welcome Section -->
+        <section class="welcome-section">
+            <div class="welcome-avatar">
+                {% if organizer.user_name|slice:":1" %}
+                    {{ organizer.user_name|slice:":1" }}
+                {% else %}
+                    O
+                {% endif %}
+            </div>
+            <div class="welcome-content">
+                <h1>Welcome back, {{ organizer.user_name }}!</h1>
+                <p>Manage your events and volunteers from your dashboard</p>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Total Events</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+                <div class="stat-value">{{ events|length }}</div>
+                <div class="stat-description">Events created</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Active Events</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+                <div class="stat-value">
+                    {% with active_count=0 %}
+                        {% for event in events %}
+                            {% if event.status == 'Approved' %}
+                                {% with active_count=active_count|add:1 %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ active_count }}
+                    {% endwith %}
+                </div>
+                <div class="stat-description">Currently active</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-title">Volunteers</div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
+                <div class="stat-value">0</div>
+                <div class="stat-description">Total volunteers</div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title" id="your-events">Your Events</h2>
+                <a href="{% url 'User:Event' %}" class="empty-action">
+                    <i class="fas fa-plus"></i> Create Event
+                </a>
+            </div>
+
+            {% if events %}
+            <div class="events-grid">
+                {% for event in events %}
+                    <div>{% include 'User/partials/org_event_card.html' with event=event %}</div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <i class="fas fa-calendar-plus"></i>
+                </div>
+                <h3 class="empty-title">No events created yet</h3>
+                <p class="empty-description">Create your first event to start recruiting volunteers and making a difference in your community.</p>
+                <a href="{% url 'User:Event' %}" class="empty-action">
+                    <i class="fas fa-plus"></i> Create Your First Event
+                </a>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Create Event FAB -->
+        <a href="{% url 'User:Event' %}" class="create-button" title="Create Event">
+            <i class="fas fa-plus"></i>
+        </a>
+    </main>
 </div>
-{% endblock %}  
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Sidebar toggle functionality
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('sidebar');
+        
+        if (sidebarToggle && sidebar) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+            });
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnToggle = sidebarToggle.contains(event.target);
+                
+                if (!isClickInsideSidebar && !isClickOnToggle && window.innerWidth <= 1024) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        }
+        
+        // Responsive adjustments
+        function handleResize() {
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('active');
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+        
+        // Auto-hide alerts after 5 seconds
+        const alerts = document.querySelectorAll('.alert');
+        if (alerts.length > 0) {
+            setTimeout(function() {
+                alerts.forEach(alert => {
+                    alert.style.opacity = '0';
+                    alert.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 500);
+                });
+            }, 5000);
+        }
+    });
+</script>
+{% endblock %}

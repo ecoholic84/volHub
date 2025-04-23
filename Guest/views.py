@@ -160,3 +160,10 @@ def newpass(request):
             return render(request,"Guest/NewPassword.html",{"msg":"Error in confirm password..!!!"})
     else:
         return render(request,"Guest/NewPassword.html")
+
+def public_event_detail(request, event_id):
+    try:
+        event = tbl_event.objects.get(id=event_id, visibility=1, event_status=1)
+        return render(request, 'Guest/public_event_detail.html', {'event': event})
+    except tbl_event.DoesNotExist:
+        return render(request, 'Guest/public_event_detail.html', {'event': None})

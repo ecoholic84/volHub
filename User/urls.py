@@ -13,7 +13,7 @@ urlpatterns = [
     path('myProfile/', views.myProfile, name='myProfile'),
     path('editProfile/', views.editProfile, name='editProfile'),
 
-    path('changePassword/', views.changePassword, name='changePassword'),
+    path('change-password/', views.changePassword, name='changePassword'),
 
     path('feedback/', views.Feedback, name='feedback'),
     path('deleteFeedback/<int:did>', views.deleteFeedback, name='deleteFeedback'),
@@ -34,6 +34,7 @@ urlpatterns = [
     # Dashboard redirection views
     path('volunteer-dashboard/', views.volunteer_dashboard, name='volunteer_dashboard'),
     path('organizer-dashboard/', views.organizer_dashboard, name='organizer_dashboard'),
+    path('organizer-analytics/', views.organizer_analytics, name='organizer_analytics'),
 
     # Volunteer request action
     path('event-detail/<int:event_id>/', views.event_detail, name='event_detail'),
@@ -44,6 +45,7 @@ urlpatterns = [
     path('event-action/<int:event_id>/', views.event_action, name='event_action'),
     path('delete-event/<int:event_id>/', views.delete_event, name='delete_event'),
     path('converse/<int:event_id>/', views.converse, name='converse'),
+    path('settings-page/', views.settings_page, name='settings_page'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

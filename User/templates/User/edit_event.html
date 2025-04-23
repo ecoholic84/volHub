@@ -2,216 +2,754 @@
 {% block title %}Edit Event | VolHub{% endblock %}
 {% block extra_head %}
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <style>
-    .event-create-container {
-        max-width: 650px;
-        margin: 42px auto 32px auto;
-        background: #fff;
-        border-radius: 18px;
-        box-shadow: 0 2px 16px rgba(79,70,229,0.08);
-        padding: 36px 32px 30px 32px;
-    }
-    .event-create-title {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #4F46E5;
-        margin-bottom: 20px;
-        text-align: center;
-        letter-spacing: -1px;
-    }
-    .event-form-group {
-        margin-bottom: 22px;
-        position: relative;
-    }
-    .event-form-label {
-        font-weight: 600;
-        color: #6366f1;
-        margin-bottom: 7px;
-        display: block;
-        font-size: 1.04rem;
-    }
-    .event-form-input,
-    .event-form-select {
-        width: 100%;
-        padding: 12px 13px;
-        border: 1.5px solid #d1d5db;
-        border-radius: 8px;
-        font-size: 1rem;
-        background: #f8fafc;
-        transition: border 0.2s;
-        outline: none;
-    }
-    .event-form-input:focus,
-    .event-form-select:focus {
-        border-color: #4F46E5;
-        background: #fff;
-    }
-    .event-form-row {
-        display: flex;
-        gap: 18px;
-    }
-    .event-form-row > .event-form-group {
-        flex: 1;
-        margin-bottom: 0;
-    }
-    .event-form-multiselect {
-        width: 100% !important;
-    }
-    .event-form-submit-btn {
-        width: 100%;
-        background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        font-size: 1.16rem;
-        font-weight: 600;
-        padding: 14px 0;
-        cursor: pointer;
-        margin-top: 10px;
-        box-shadow: 0 2px 8px rgba(79,70,229,0.07);
-        transition: background 0.2s;
-    }
-    .event-form-submit-btn:hover {
-        background: linear-gradient(90deg, #818cf8 0%, #6366f1 100%);
-    }
-    .event-form-icon {
-        margin-right: 8px;
-        color: #6366f1;
-        font-size: 1.1rem;
-    }
-    @media (max-width: 700px) {
-        .event-create-container { padding: 22px 8px; }
-        .event-form-row { flex-direction: column; gap: 0; }
-    }
+  :root {
+      --primary: #4F46E5;
+      --primary-light: #6366f1;
+      --primary-lighter: #818cf8;
+      --border-color: #e2e8f0;
+      --bg-input: #f8fafc;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+  }
+
+  body {
+      background-color: #f9fafb;
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+  }
+
+  .event-edit-container {
+      max-width: 800px;
+      margin: 32px auto 64px;
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 20px rgba(79, 70, 229, 0.08);
+      padding: 40px;
+      position: relative;
+  }
+
+  .event-edit-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 32px;
+      text-align: center;
+      letter-spacing: -0.025em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+  }
+
+  .form-section {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border-color);
+  }
+
+  .form-section:last-of-type {
+      border-bottom: none;
+      margin-bottom: 16px;
+  }
+
+  .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+  }
+
+  .event-form-group {
+      margin-bottom: 20px;
+      position: relative;
+  }
+
+  .event-form-label {
+      font-weight: 500;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      display: block;
+      font-size: 0.9rem;
+  }
+
+  .event-form-input,
+  .event-form-select,
+  .event-form-textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      background: var(--bg-input);
+      transition: all 0.2s ease;
+      outline: none;
+      color: var(--text-primary);
+  }
+
+  .event-form-textarea {
+      min-height: 120px;
+      resize: vertical;
+  }
+
+  .event-form-input:focus,
+  .event-form-select:focus,
+  .event-form-textarea:focus {
+      border-color: var(--primary-light);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  .event-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 0;
+  }
+
+  .event-form-row.three-columns {
+      grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .event-form-file {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+  }
+
+  .file-input-wrapper {
+      position: relative;
+      margin-top: 8px;
+  }
+
+  .file-input-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background-color: var(--bg-input);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+  }
+
+  .file-input-label:hover {
+      border-color: var(--primary-light);
+      background-color: rgba(99, 102, 241, 0.05);
+  }
+
+  .file-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+  }
+
+  .file-name {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      word-break: break-all;
+  }
+
+  .current-file {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      padding: 8px 12px;
+      background-color: rgba(99, 102, 241, 0.05);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+  }
+
+  .current-file a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+  }
+
+  .current-file a:hover {
+      text-decoration: underline;
+  }
+
+  .select2-container--default .select2-selection--multiple {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      min-height: 45px;
+      padding: 4px 8px;
+  }
+
+  .select2-container--default.select2-container--focus .select2-selection--multiple {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  }
+
+  .select2-container--default .select2-selection--multiple .select2-selection__choice {
+      background-color: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 4px 8px;
+      color: var(--primary);
+  }
+
+  .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+      color: var(--primary);
+      margin-right: 5px;
+  }
+
+  .select2-dropdown {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+  }
+
+  .select2-container--default .select2-results__option--highlighted[aria-selected] {
+      background-color: var(--primary);
+  }
+
+  .event-form-submit-btn {
+      width: 50%;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      padding: 14px 0;
+      cursor: pointer;
+      margin-top: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+  }
+
+  .event-form-submit-btn:hover {
+      background: linear-gradient(90deg, var(--primary-light) 0%, var(--primary) 100%);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+  }
+
+  .event-form-submit-btn:active {
+      transform: translateY(0);
+  }
+
+  .event-form-icon {
+      color: inherit;
+  }
+
+  /* Flatpickr customization */
+  .flatpickr-calendar {
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+  }
+
+  .flatpickr-day.selected, 
+  .flatpickr-day.startRange, 
+  .flatpickr-day.endRange, 
+  .flatpickr-day.selected.inRange, 
+  .flatpickr-day.startRange.inRange, 
+  .flatpickr-day.endRange.inRange, 
+  .flatpickr-day.selected:focus, 
+  .flatpickr-day.startRange:focus, 
+  .flatpickr-day.endRange:focus, 
+  .flatpickr-day.selected:hover, 
+  .flatpickr-day.startRange:hover, 
+  .flatpickr-day.endRange:hover, 
+  .flatpickr-day.selected.prevMonthDay, 
+  .flatpickr-day.startRange.prevMonthDay, 
+  .flatpickr-day.endRange.prevMonthDay, 
+  .flatpickr-day.selected.nextMonthDay, 
+  .flatpickr-day.startRange.nextMonthDay, 
+  .flatpickr-day.endRange.nextMonthDay {
+      background: var(--primary);
+      border-color: var(--primary);
+  }
+
+  .flatpickr-time input:hover, 
+  .flatpickr-time .flatpickr-am-pm:hover, 
+  .flatpickr-time input:focus, 
+  .flatpickr-time .flatpickr-am-pm:focus {
+      background: rgba(99, 102, 241, 0.1);
+  }
+
+  /* Tooltip styles */
+  .tooltip {
+      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+      cursor: help;
+  }
+
+  .tooltip .tooltip-icon {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+  }
+
+  .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.8rem;
+      font-weight: normal;
+      box-shadow: var(--shadow-md);
+  }
+
+  .tooltip .tooltip-text::after {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+  }
+
+  .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+  }
+
+  .action-buttons {
+      display: flex;
+      gap: 16px;
+      margin-top: 24px;
+  }
+
+  .action-buttons .event-form-submit-btn {
+      margin-top: 0;
+  }
+
+  .cancel-btn {
+      flex: 1;
+      padding: 14px 0;
+      background-color: #fff;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      width: 50%;
+  }
+
+  .cancel-btn:hover {
+      background-color: var(--bg-input);
+      color: var(--text-primary);
+  }
+
+  @media (max-width: 768px) {
+      .event-edit-container {
+          padding: 24px 20px;
+          margin: 16px 12px 48px;
+      }
+      
+      .event-form-row,
+      .event-form-row.three-columns {
+          grid-template-columns: 1fr;
+          gap: 0;
+      }
+      
+      .action-buttons {
+          flex-direction: column;
+      }
+
+      .cancel-btn,
+      .event-form-submit-btn {
+          width: 100%;
+      }
+  }
 </style>
 {% endblock %}
+
 {% block content %}
-<div class="event-create-container">
-    <div class="event-create-title"><i class="fa fa-calendar-edit event-form-icon"></i>Edit Event</div>
-    <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
-        {% csrf_token %}
-        <div class="event-form-group">
-            <label class="event-form-label" for="txt_title"><i class="fa fa-heading event-form-icon"></i>Title</label>
-            <input class="event-form-input" type="text" id="txt_title" name="txt_title" value="{{ event.event_title }}" required>
-        </div>
-        <div class="event-form-group">
-            <label class="event-form-label" for="txt_description"><i class="fa fa-align-left event-form-icon"></i>Description</label>
-            <textarea class="event-form-input" id="txt_description" name="txt_description" rows="4" required></textarea>
-        </div>
-        <div class="event-form-row">
-            <div class="event-form-group">
-                <label class="event-form-label" for="txt_file"><i class="fa fa-image event-form-icon"></i>File</label>
-                <input class="event-form-input" type="file" id="txt_file" name="txt_file">
-                {% if event.event_file %}
-                    <div style="margin-top:4px;"><a href="{{ event.event_file.url }}" target="_blank">Current File</a></div>
-                {% endif %}
-            </div>
-            <div class="event-form-group">
-                <label class="event-form-label" for="txt_datetime"><i class="fa fa-clock event-form-icon"></i>Date and Time</label>
-                <input class="event-form-input" type="datetime-local" id="txt_datetime" name="txt_datetime" value="{{ event.event_datetime|date:'Y-m-d\\TH:i' }}" required>
-            </div>
-        </div>
-        <div class="event-form-row">
-            <div class="event-form-group">
-                <label class="event-form-label" for="sel_industry"><i class="fa fa-industry event-form-icon"></i>Industry</label>
-                <select class="event-form-select" id="sel_industry" name="sel_industry" required>
-                    <option value="">----Select----</option>
-                    {% for i in industry %}
-                    <option value="{{i.id}}" {% if event.industry.id == i.id %}selected{% endif %}>{{i.industry_name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="event-form-group">
-                <label class="event-form-label" for="txt_venue"><i class="fa fa-map-marker-alt event-form-icon"></i>Venue</label>
-                <input class="event-form-input" type="text" id="txt_venue" name="txt_venue" value="{{ event.event_venue }}" required>
-            </div>
-        </div>
-        <div class="event-form-row">
-            <div class="event-form-group">
-                <label class="event-form-label" for="sel_country"><i class="fa fa-flag event-form-icon"></i>Country</label>
-                <select class="event-form-select" id="sel_country" name="sel_country" required>
-                    <option value="">----Select----</option>
-                    {% for i in country %}
-                    <option value="{{i.id}}" {% if event.event_city.state.country.id == i.id %}selected{% endif %}>{{i.country_name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="event-form-group">
-                <label class="event-form-label" for="sel_state"><i class="fa fa-map event-form-icon"></i>State</label>
-                <select class="event-form-select" id="sel_state" name="sel_state" required>
-                    <option value="">----Select----</option>
-                    {% for i in states %}
-                    <option value="{{i.id}}" {% if event.event_city.state.id == i.id %}selected{% endif %}>{{i.state_name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="event-form-group">
-                <label class="event-form-label" for="sel_city"><i class="fa fa-city event-form-icon"></i>City</label>
-                <select class="event-form-select" id="sel_city" name="sel_city" required>
-                    <option value="">----Select----</option>
-                    {% for i in cities %}
-                    <option value="{{i.id}}" {% if event.event_city.id == i.id %}selected{% endif %}>{{i.city_name}}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </div>
-        <div class="event-form-row">
-            <div class="event-form-group">
-                <label class="event-form-label" for="txt_stipend"><i class="fa fa-money-bill event-form-icon"></i>Stipend</label>
-                <input class="event-form-input" type="text" id="txt_stipend" name="txt_stipend" value="{{ event.event_stipend }}">
-            </div>
-            <div class="event-form-group">
-                <label class="event-form-label" for="txt_slots"><i class="fa fa-users event-form-icon"></i>Volunteer Slots</label>
-                <input class="event-form-input" type="text" id="txt_slots" name="txt_slots" value="{{ event.event_slots }}">
-            </div>
-            <div class="event-form-group">
-                <label class="event-form-label" for="txt_deadline"><i class="fa fa-calendar-times event-form-icon"></i>Application Deadline</label>
-                <input class="event-form-input" type="datetime-local" id="txt_deadline" name="txt_deadline" value="{{ event.event_deadline|date:'Y-m-d\\TH:i' }}">
-            </div>
-        </div>
-        <div class="event-form-group">
-            <label class="event-form-label" for="sel_skills"><i class="fa fa-tools event-form-icon"></i>Required Skills</label>
-            <select class="event-form-select event-form-multiselect" id="sel_skills" name="sel_skills" multiple="multiple" style="width: 100%;">
-                {% for skill in skills %}
-                <option value="{{ skill.id }}" {% if skill in event.required_skills.all %}selected{% endif %}>{{ skill.skill_name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <button type="submit" class="event-form-submit-btn"><i class="fa fa-save event-form-icon"></i>Save Changes</button>
-    </form>
+<div class="event-edit-container">
+  <div class="event-edit-title">
+      <i class="fa fa-edit event-form-icon"></i>
+      Edit Event
+  </div>
+
+  <form action="" method="POST" enctype="multipart/form-data" autocomplete="off" id="event-form">
+      {% csrf_token %}
+      
+      <!-- Basic Info Section -->
+      <div class="form-section">
+          <div class="section-title">
+              <i class="fa fa-info-circle event-form-icon"></i>
+              Event Details
+          </div>
+          
+          <div class="event-form-group">
+              <label class="event-form-label" for="txt_title">
+                  Title
+                  <span class="tooltip">
+                      <i class="fa fa-question-circle tooltip-icon"></i>
+                      <span class="tooltip-text">Enter a clear, descriptive title for your event</span>
+                  </span>
+              </label>
+              <input class="event-form-input" type="text" id="txt_title" name="txt_title" value="{{ event.event_title }}" required>
+          </div>
+          
+          <div class="event-form-group">
+              <label class="event-form-label" for="txt_description">
+                  Description
+                  <span class="tooltip">
+                      <i class="fa fa-question-circle tooltip-icon"></i>
+                      <span class="tooltip-text">Provide details about your event, its purpose, and what attendees can expect</span>
+                  </span>
+              </label>
+              <textarea class="event-form-textarea" id="txt_description" name="txt_description" rows="4" required>{{ event.event_description }}</textarea>
+          </div>
+          
+          <div class="event-form-group event-form-file">
+              <label class="event-form-label" for="txt_file">
+                  Event Image
+                  <span class="tooltip">
+                      <i class="fa fa-question-circle tooltip-icon"></i>
+                      <span class="tooltip-text">Upload an image for your event (optional)</span>
+                  </span>
+              </label>
+              <div class="file-input-wrapper">
+                  <label for="txt_file" class="file-input-label">
+                      <i class="fa fa-cloud-upload-alt"></i>
+                      <span id="file-label-text">Choose a new file or drag it here</span>
+                  </label>
+                  <input class="file-input" type="file" id="txt_file" name="txt_file" accept="image/*">
+              </div>
+              <div class="file-name" id="file-name"></div>
+              {% if event.event_file %}
+              <div class="current-file">
+                  <i class="fa fa-file-image"></i>
+                  <span>Current file:</span>
+                  <a href="{{ event.event_file.url }}" target="_blank">View file</a>
+              </div>
+              {% endif %}
+          </div>
+          
+          <div class="event-form-group">
+              <label class="event-form-label" for="sel_industry">
+                  Industry
+                  <span class="tooltip">
+                      <i class="fa fa-question-circle tooltip-icon"></i>
+                      <span class="tooltip-text">Select the industry most relevant to your event</span>
+                  </span>
+              </label>
+              <select class="event-form-select" id="sel_industry" name="sel_industry" required>
+                  <option value="">Select an industry</option>
+                  {% for i in industry %}
+                  <option value="{{i.id}}" {% if event.industry.id == i.id %}selected{% endif %}>{{i.industry_name}}</option>
+                  {% endfor %}
+              </select>
+          </div>
+      </div>
+      
+      <!-- Location Section -->
+      <div class="form-section">
+          <div class="section-title">
+              <i class="fa fa-map-marker-alt event-form-icon"></i>
+              Location
+          </div>
+          
+          <div class="event-form-group">
+              <label class="event-form-label" for="txt_venue">
+                  Venue
+                  <span class="tooltip">
+                      <i class="fa fa-question-circle tooltip-icon"></i>
+                      <span class="tooltip-text">Enter the specific venue name or address</span>
+                  </span>
+              </label>
+              <input class="event-form-input" type="text" id="txt_venue" name="txt_venue" value="{{ event.event_venue }}" required>
+          </div>
+          
+          <div class="event-form-row three-columns">
+              <div class="event-form-group">
+                  <label class="event-form-label" for="sel_country">
+                      Country
+                  </label>
+                  <select class="event-form-select" id="sel_country" name="sel_country" required>
+                      <option value="">Select a country</option>
+                      {% for i in country %}
+                      <option value="{{i.id}}" {% if event.event_city.state.country.id == i.id %}selected{% endif %}>{{i.country_name}}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              
+              <div class="event-form-group">
+                  <label class="event-form-label" for="sel_state">
+                      State/Province
+                  </label>
+                  <select class="event-form-select" id="sel_state" name="sel_state" required>
+                      <option value="">Select a state</option>
+                      {% for i in states %}
+                      <option value="{{i.id}}" {% if event.event_city.state.id == i.id %}selected{% endif %}>{{i.state_name}}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              
+              <div class="event-form-group">
+                  <label class="event-form-label" for="sel_city">
+                      City
+                  </label>
+                  <select class="event-form-select" id="sel_city" name="sel_city" required>
+                      <option value="">Select a city</option>
+                      {% for i in cities %}
+                      <option value="{{i.id}}" {% if event.event_city.id == i.id %}selected{% endif %}>{{i.city_name}}</option>
+                      {% endfor %}
+                  </select>
+              </div>
+          </div>
+      </div>
+      
+      <!-- Timing Section -->
+      <div class="form-section">
+          <div class="section-title">
+              <i class="fa fa-clock event-form-icon"></i>
+              Timing
+          </div>
+          
+          <div class="event-form-row">
+              <div class="event-form-group">
+                  <label class="event-form-label" for="txt_datetime">
+                      Event Date & Time
+                      <span class="tooltip">
+                          <i class="fa fa-question-circle tooltip-icon"></i>
+                          <span class="tooltip-text">When will the event take place?</span>
+                      </span>
+                  </label>
+                  <input class="event-form-input datepicker" type="text" id="txt_datetime" name="txt_datetime" placeholder="Select date and time" value="{{ event.event_datetime|date:'Y-m-d H:i' }}" required>
+              </div>
+              
+              <div class="event-form-group">
+                  <label class="event-form-label" for="txt_deadline">
+                      Application Deadline
+                      <span class="tooltip">
+                          <i class="fa fa-question-circle tooltip-icon"></i>
+                          <span class="tooltip-text">Last date for volunteers to apply</span>
+                      </span>
+                  </label>
+                  <input class="event-form-input datepicker" type="text" id="txt_deadline" name="txt_deadline" placeholder="Select date and time" value="{{ event.event_deadline|date:'Y-m-d H:i' }}" required>
+              </div>
+          </div>
+      </div>
+      
+      <!-- Requirements Section -->
+      <div class="form-section">
+          <div class="section-title">
+              <i class="fa fa-users event-form-icon"></i>
+              Volunteer Requirements
+          </div>
+          
+          <div class="event-form-row">
+              <div class="event-form-group">
+                  <label class="event-form-label" for="txt_stipend">
+                      Stipend
+                      <span class="tooltip">
+                          <i class="fa fa-question-circle tooltip-icon"></i>
+                          <span class="tooltip-text">Amount to be paid to volunteers (optional)</span>
+                      </span>
+                  </label>
+                  <input class="event-form-input" type="text" id="txt_stipend" name="txt_stipend" value="{{ event.event_stipend }}" placeholder="Leave blank if none">
+              </div>
+              
+              <div class="event-form-group">
+                  <label class="event-form-label" for="txt_slots">
+                      Volunteer Slots
+                      <span class="tooltip">
+                          <i class="fa fa-question-circle tooltip-icon"></i>
+                          <span class="tooltip-text">Number of volunteers needed</span>
+                      </span>
+                  </label>
+                  <input class="event-form-input" type="number" id="txt_slots" name="txt_slots" min="1" value="{{ event.event_slots }}" required>
+              </div>
+          </div>
+          
+          <div class="event-form-group">
+              <label class="event-form-label" for="sel_skills">
+                  Required Skills
+                  <span class="tooltip">
+                      <i class="fa fa-question-circle tooltip-icon"></i>
+                      <span class="tooltip-text">Select all skills that volunteers should have</span>
+                  </span>
+              </label>
+              <select class="event-form-select event-form-multiselect" id="sel_skills" name="sel_skills" multiple="multiple">
+                  {% for skill in skills %}
+                  <option value="{{ skill.id }}" {% if skill in event.required_skills.all %}selected{% endif %}>{{ skill.skill_name }}</option>
+                  {% endfor %}
+              </select>
+          </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+          <a href="{% url 'User:event_action' event.id %}" class="cancel-btn">
+              <i class="fa fa-times event-form-icon"></i>
+              Cancel
+          </a>
+          <button type="submit" class="event-form-submit-btn">
+              <i class="fa fa-save event-form-icon"></i>
+              Save Changes
+          </button>
+      </div>
+  </form>
 </div>
 {% endblock %}
+
 {% block scripts %}
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
-    $(document).ready(function() {
-        $('#sel_skills').select2({
-            placeholder: "Select skills",
-            allowClear: true
-        });
-        $("#sel_country").change(function () {
-            var did = $(this).val();
-            var ur = "{% url 'User:profile_country_ajax' %}";
-            $.ajax({
-                url: ur,
-                data: { did: did },
-                success: function (data) {
-                    $("#sel_state").html(data);
-                },
-            });
-        });
-        $("#sel_state").change(function () {
-            var did = $(this).val();
-            var ur = "{% url 'User:profile_state_ajax' %}";
-            $.ajax({
-                url: ur,
-                data: { did: did },
-                success: function (data) {
-                    $("#sel_city").html(data);
-                },
-            });
-        });
-    });
+  $(document).ready(function() {
+      // Initialize Select2
+      $('#sel_skills').select2({
+          placeholder: "Select required skills",
+          allowClear: true,
+          closeOnSelect: false
+      });
+      
+      $('#sel_industry, #sel_country, #sel_state, #sel_city').select2({
+          minimumResultsForSearch: 6
+      });
+      
+      // Initialize Flatpickr for date-time pickers
+      flatpickr(".datepicker", {
+          enableTime: true,
+          dateFormat: "Y-m-d H:i", // Format Django expects (YYYY-MM-DD HH:MM)
+          time_24hr: false,
+          minuteIncrement: 15,
+          allowInput: true,
+          disableMobile: false, // Better mobile experience
+          altInput: true,
+          altFormat: "F j, Y at h:i K", // Display format (Month Day, Year at Hour:Minute AM/PM)
+          minDate: "today" // Prevent selecting dates before today
+      });
+      
+      // File upload handling
+      $('#txt_file').on('change', function() {
+          const fileName = $(this).val().split('\\').pop();
+          if (fileName) {
+              $('#file-label-text').text('File selected');
+              $('#file-name').text(fileName);
+          } else {
+              $('#file-label-text').text('Choose a new file or drag it here');
+              $('#file-name').text('');
+          }
+      });
+      
+      // Country-State-City AJAX
+      $("#sel_country").change(function () {
+          var did = $(this).val();
+          var ur = "{% url 'User:profile_country_ajax' %}";
+          $.ajax({
+              url: ur,
+              data: { did: did },
+              success: function (data) {
+                  $("#sel_state").html(data);
+                  $("#sel_state").trigger('change');
+              },
+          });
+      });
+
+      $("#sel_state").change(function () {
+          var did = $(this).val();
+          var ur = "{% url 'User:profile_state_ajax' %}";
+          $.ajax({
+              url: ur,
+              data: { did: did },
+              success: function (data) {
+                  $("#sel_city").html(data);
+              },
+          });
+      });
+      
+      // Form validation
+      $('#event-form').on('submit', function(e) {
+          let isValid = true;
+          
+          $(this).find('input[required], select[required], textarea[required]').each(function() {
+              if (!$(this).val()) {
+                  isValid = false;
+                  $(this).addClass('error').css('border-color', '#ef4444');
+              } else {
+                  $(this).removeClass('error').css('border-color', '');
+              }
+          });
+          
+          if (!isValid) {
+              e.preventDefault();
+              alert('Please fill in all required fields before submitting.');
+              
+              // Scroll to first error
+              $('html, body').animate({
+                  scrollTop: $('.error:first').offset().top - 100
+              }, 300);
+          }
+      });
+      
+      // Unsaved changes warning
+      let formChanged = false;
+      
+      $('#event-form input, #event-form textarea, #event-form select').on('change', function() {
+          formChanged = true;
+      });
+      
+      window.addEventListener('beforeunload', function(e) {
+          if (formChanged) {
+              e.preventDefault();
+              e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
+          }
+      });
+      
+      // Disable warning when form is submitted
+      $('#event-form').on('submit', function() {
+          formChanged = false;
+      });
+      
+      // Also disable warning when cancel button is clicked
+      $('.cancel-btn').on('click', function() {
+          formChanged = false;
+      });
+  });
 </script>
 {% endblock %}
