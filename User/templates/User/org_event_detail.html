@@ -752,9 +752,11 @@
 
     <!-- Status Badges -->
     <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem; justify-content: center;">
-        <div class="event-status status-{% if event.status == 'Pending' %}pending{% elif event.status == 'Approved' %}approved{% else %}rejected{% endif %}">
-            <i class="fas fa-{% if event.status == 'Pending' %}clock{% elif event.status == 'Approved' %}check-circle{% else %}times-circle{% endif %}"></i>
-            <span>{{ event.status|default:"Pending" }}</span>
+        <div class="event-status status-{% if event.event_status == 1 %}approved{% elif event.event_status == 2 %}rejected{% else %}pending{% endif %}">
+            <i class="fas fa-{% if event.event_status == 1 %}check-circle{% elif event.event_status == 2 %}times-circle{% else %}clock{% endif %}"></i>
+            <span>
+                {% if event.event_status == 1 %}Approved{% elif event.event_status == 2 %}Rejected{% else %}Pending{% endif %}
+            </span>
         </div>
         <div class="event-status {% if event.visibility %}status-approved{% else %}status-rejected{% endif %}">
             <i class="fas fa-eye{% if not event.visibility %}-slash{% endif %}"></i>
@@ -856,31 +858,24 @@
             
             <div class="tabs">
                 <div class="tabs-header">
-                    {% with pending_count=0 approved_count=0 rejected_count=0 %}
-                        {% for req in requests %}
-                            {% if req.request_status == 0 %}{% with pending_count=pending_count|add:1 %}{% endwith %}{% endif %}
-                            {% if req.request_status == 1 %}{% with approved_count=approved_count|add:1 %}{% endwith %}{% endif %}
-                            {% if req.request_status == 2 %}{% with rejected_count=rejected_count|add:1 %}{% endwith %}{% endif %}
-                        {% endfor %}
-                        <button class="tab-button active" data-tab="pending">
-                            <i class="fas fa-clock"></i> Pending Requests
-                            <span class="count">
-                                ({{ pending_count }})
-                            </span>
-                        </button>
-                        <button class="tab-button" data-tab="approved">
-                            <i class="fas fa-check-circle"></i> Approved Volunteers
-                            <span class="count">
-                                ({{ approved_count }})
-                            </span>
-                        </button>
-                        <button class="tab-button" data-tab="rejected">
-                            <i class="fas fa-times-circle"></i> Rejected Requests
-                            <span class="count">
-                                ({{ rejected_count }})
-                            </span>
-                        </button>
-                    {% endwith %}
+                    <button class="tab-button active" data-tab="pending">
+    <i class="fas fa-clock"></i> Pending Requests
+    <span class="count">
+        ({{ pending_count }})
+    </span>
+</button>
+<button class="tab-button" data-tab="approved">
+    <i class="fas fa-check-circle"></i> Approved Volunteers
+    <span class="count">
+        ({{ approved_count }})
+    </span>
+</button>
+<button class="tab-button" data-tab="rejected">
+    <i class="fas fa-times-circle"></i> Rejected Requests
+    <span class="count">
+        ({{ rejected_count }})
+    </span>
+</button>
                 </div>
 
                 <!-- Pending Requests Tab -->

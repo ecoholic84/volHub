@@ -283,14 +283,6 @@
             </div>
         </div>
     </div>
-    {% elif user and user.user_type != 'organizer' %}
-        <div style="max-width:500px;margin:40px auto;background:#fff;padding:36px 32px;border-radius:16px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,0.08);">
-            <h2>This profile does not belong to an organizer.</h2>
-        </div>
-    {% else %}
-        <div style="max-width:500px;margin:40px auto;background:#fff;padding:36px 32px;border-radius:16px;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,0.08);">
-            <h2>User not found or not public.</h2>
-        </div>
     {% endif %}
 </body>
 </html>

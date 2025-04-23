@@ -478,6 +478,11 @@ def event_action(request, event_id):
 
     requests = tbl_request.objects.filter(event=event).select_related('user')
 
+    # Add counts for template
+    pending_count = requests.filter(request_status=0).count()
+    approved_count = requests.filter(request_status=1).count()
+    rejected_count = requests.filter(request_status=2).count()
+
     if request.method == 'POST':
         # Handle visibility toggle
         if 'toggle_visibility' in request.POST:
@@ -557,6 +562,9 @@ def event_action(request, event_id):
         'event_city': event_city,
         'event_state': event_state,
         'event_country': event_country,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'rejected_count': rejected_count,
     })
 
 

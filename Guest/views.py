@@ -6,6 +6,8 @@ import random
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
+
+
 def index(request):
     return render(request, 'Guest/index.html')
 
@@ -99,9 +101,7 @@ def login(request):
         return render(request, 'Guest/login.html', {'msg': "Invalid login"})
     return render(request, 'Guest/login.html')
 
-from User.models import tbl_event, tbl_request
-
-def profile(request, name):
+def public_profile(request, name):
     # Show public profile for organizer or volunteer
     try:
         user = tbl_user.objects.get(user_username=name)
@@ -110,17 +110,17 @@ def profile(request, name):
         # Organizer Journey: events organized by this user
         organized_events = tbl_event.objects.filter(user=user)
         if (user.user_type == 'organizer' or user.user_type == 'volunteer') and user.user_visibility:
-            return render(request, "Guest/Profile.html", {
+            return render(request, "Guest/public_profile.html", {
                 "user": user,
                 "volunteer_events": volunteer_events,
                 "organized_events": organized_events
             })
         elif user.user_type != 'organizer':
-            return render(request, "Guest/Profile.html", {"user": user})
+            return render(request, "Guest/public_profile.html", {"user": user})
         else:
-            return render(request, "Guest/Profile.html", {"user": ''})
+            return render(request, "Guest/public_profile.html", {"user": ''})
     except tbl_user.DoesNotExist:
-        return render(request, "Guest/Profile.html", {"user": ''})
+        return render(request, "Guest/public_profile.html", {"user": ''})
     
 def forgotpassword(request):
     if request.method == "POST":

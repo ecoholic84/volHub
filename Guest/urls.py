@@ -9,7 +9,7 @@ urlpatterns = [
     path('user_who/', views.user_who, name='user_who'),
     path('login/', views.login, name='login'),
     path('ajax_place/', views.ajax_place, name='ajax_place'),
-    path('profile/<str:name>',views.profile, name="profile"),
+    path('show-profile/<str:name>',views.public_profile, name="profile"),
 
     path('forgotpassword/',views.forgotpassword,name="forgotpassword"),
     path('otp/',views.otp,name="otp"),
