@@ -18,7 +18,9 @@
             <!-- Unauthenticated Header -->
             <div class="container">
                 <div class="logo" id="logo">
-                    <span>Vol<span class="highlight">Hub</span></span>
+                    <a href="{% if request.session.last_dashboard_url %}{{ request.session.last_dashboard_url }}{% else %}{% url 'User:volunteer_dashboard' %}{% endif %}" style="text-decoration:none; color:inherit;">
+                        <span>Vol<span class="highlight">Hub</span></span>
+                    </a>
                 </div>
                 <nav>
                     <ul>
@@ -41,7 +43,9 @@
             <!-- Authenticated Header with Dropdown -->
             <div class="container">
                 <div class="logo" id="logo">
-                    <span>Vol<span class="highlight">Hub</span></span>
+                    <a href="{% if request.session.last_dashboard_url %}{{ request.session.last_dashboard_url }}{% else %}{% url 'User:volunteer_dashboard' %}{% endif %}" style="text-decoration:none; color:inherit;">
+                        <span>Vol<span class="highlight">Hub</span></span>
+                    </a>
                 </div>
                 <div class="header-right">
                     <div class="notification-bell" tabindex="0">
@@ -71,7 +75,7 @@
                         </button>
                         <div class="dropdown-menu">
                             <a href="{% url 'User:switch_dashboard' %}{% if dashboard_type %}?from={{ dashboard_type }}{% endif %}"><i class="fa fa-exchange-alt"></i> Switch Dashboard</a>
-                            <a href="{% url 'User:volunteer_dashboard' %}"><i class="fa fa-tachometer-alt"></i> Dashboard</a>
+                            <a href="{% if request.session.last_dashboard_url %}{{ request.session.last_dashboard_url }}{% else %}{% url 'User:volunteer_dashboard' %}{% endif %}"><i class="fa fa-tachometer-alt"></i> Dashboard</a>
                             <a href="{% url 'User:profile' %}"><i class="fa fa-user"></i> Profile</a>
                             <a href="{% url 'User:logout' %}"><i class="fa fa-sign-out-alt"></i> Logout</a>
                         </div>
