@@ -636,12 +636,19 @@
                 
                 <div class="form-group">
                     <label class="form-label" for="user_industry">Industry</label>
-                    <select id="user_industry" name="user_industry" class="form-select">
+                    <select id="user_industry" name="user_industry" class="form-select" required>
                         <option value="">Select Industry</option>
-                        {% for industry in industries %}
-                        <option value="{{ industry.id }}" {% if thisUser.user_industry.id == industry.id %}selected{% endif %}>{{ industry.industry_name }}</option>
-                        {% endfor %}
-                    </select>
+                        <option value="Technology" {% if thisUser.user_industry == "Technology" %}selected{% endif %}>Technology</option>
+                        <option value="Healthcare" {% if thisUser.user_industry == "Healthcare" %}selected{% endif %}>Healthcare</option>
+                            <option value="Education" {% if thisUser.user_industry == "Education" %}selected{% endif %}>Education</option>
+                            <option value="Finance" {% if thisUser.user_industry == "Finance" %}selected{% endif %}>Finance</option>
+                            <option value="Retail" {% if thisUser.user_industry == "Retail" %}selected{% endif %}>Retail</option>
+                            <option value="Manufacturing" {% if thisUser.user_industry == "Manufacturing" %}selected{% endif %}>Manufacturing</option>
+                            <option value="Non-Profit" {% if thisUser.user_industry == "Non-Profit" %}selected{% endif %}>Non-Profit</option>
+                            <option value="Hospitality" {% if thisUser.user_industry == "Hospitality" %}selected{% endif %}>Hospitality</option>
+                            <option value="Transportation" {% if thisUser.user_industry == "Transportation" %}selected{% endif %}>Transportation</option>
+                            <option value="Construction" {% if thisUser.user_industry == "Construction" %}selected{% endif %}>Construction</option>
+                        </select>
                 </div>
                 
                 <div class="form-group">
@@ -757,18 +764,90 @@
             });
         });
         
-        // Form validation for JSON format in links field
+        // Enhanced: Auto-detect GitHub links and label others as 'Other'
         document.getElementById('organizerProfileForm').addEventListener('submit', function(event) {
             const linksField = document.querySelector('textarea[name="user_links"]');
-            const linksValue = linksField.value.trim();
-            
+            let linksValue = linksField.value.trim();
+
             if (linksValue) {
+                let parsed = null;
                 try {
-                    JSON.parse(linksValue);
+                    // Try to parse as JSON first
+                    parsed = JSON.parse(linksValue);
                 } catch (error) {
+                    // Not valid JSON, try to parse as plain URL or comma/line separated
+                    let linksObj = {};
+                    // Accept comma, newline, or space separated values
+                    let parts = linksValue.split(/[\n,]+/).map(x => x.trim()).filter(Boolean);
+                    for (let part of parts) {
+                        // Extract URL from "Platform: URL" or just URL
+                        let url = part;
+                        let label = 'Other';
+                        if (part.includes(':')) {
+                            let segs = part.split(':');
+                            if (segs.length > 1 && segs[1].trim().match(/^\/\//)) {
+                                // e.g. GitHub: https://github.com/xyz
+                                label = segs[0].trim();
+                                url = segs.slice(1).join(':').trim();
+                            } else {
+                                // e.g. github.com/xyz
+                                url = part.trim();
+                            }
+                        }
+                        // Detect GitHub
+                        if (/github\.com/i.test(url.replace('www.', ''))) {
+                            label = 'GitHub';
+                        }
+                        // Clean up URL (add protocol if missing)
+                        if (!/^https?:\/\//.test(url)) {
+                            url = 'https://' + url.replace(/^www\./, '');
+                        }
+                        // Avoid duplicates
+                        if (!linksObj[label]) {
+                            linksObj[label] = url;
+                        } else {
+                            // If duplicate, append a number
+                            let i = 2;
+                            while (linksObj[label + i]) i++;
+                            linksObj[label + i] = url;
+                        }
+                    }
+                    // If nothing valid, block submit
+                    if (Object.keys(linksObj).length === 0) {
+                        event.preventDefault();
+                        alert('Please enter at least one valid professional link.');
+                        linksField.focus();
+                        return;
+                    }
+                    linksField.value = JSON.stringify(linksObj);
+                }
+                // If valid JSON but not an object, block submit
+                if (parsed && (typeof parsed !== 'object' || Array.isArray(parsed))) {
                     event.preventDefault();
-                    alert('Please enter valid JSON format for Professional Links.\nExample: {"GitHub": "https://github.com/username", "LinkedIn": "https://linkedin.com/in/username"}');
+                    alert('Please enter valid JSON object for Professional Links.');
                     linksField.focus();
+                    return;
+                }
+                // If valid JSON, also auto-detect GitHub and relabel
+                if (parsed && typeof parsed === 'object') {
+                    let newObj = {};
+                    for (let key in parsed) {
+                        let url = parsed[key];
+                        let label = key;
+                        if (/github\.com/i.test(url.replace('www.', ''))) {
+                            label = 'GitHub';
+                        } else if (label.toLowerCase() !== 'github') {
+                            label = 'Other';
+                        }
+                        if (!newObj[label]) {
+                            newObj[label] = url;
+                        } else {
+                            let i = 2;
+                            while (newObj[label + i]) i++;
+                            newObj[label + i] = url;
+                        }
+                    }
+                    linksField.value = JSON.stringify(newObj);
                 }
             }
         });

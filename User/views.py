@@ -323,7 +323,9 @@ def volunteer_dashboard(request):
         'upcoming_events': upcoming_events,
         'applied_events': applied_events,
         'username': request.session.get('username', 'User'),
-        'dashboard_type': 'volunteer'
+        'dashboard_type': 'volunteer',
+        'is_basic_profile_complete': getattr(user, 'is_basic_profile_complete', False),
+        'is_volunteer_profile_complete': getattr(user, 'is_volunteer_profile_complete', False)
     }
     return render(request, 'User/volunteer_dashboard.html', context)
 
@@ -506,7 +508,9 @@ def organizer_dashboard(request):
         'active_events': active_events,
         'total_volunteers': total_volunteers,
         'organizer': user,
-        'dashboard_type': 'organizer'
+        'dashboard_type': 'organizer',
+        'is_basic_profile_complete': getattr(user, 'is_basic_profile_complete', False),
+        'is_organizer_profile_complete': getattr(user, 'is_organizer_profile_complete', False)
     })
 
 # Organizer Profile View
@@ -806,6 +810,13 @@ def create_vol_profile(request):
         thisUser.user_location = request.POST.get('user_location')
         thisUser.user_official_address = request.POST.get('user_official_address')
         thisUser.user_official_contact_number = request.POST.get('user_official_contact_number')
+
+        # Emergency details
+        thisUser.user_emergency_name = request.POST.get('user_emergency_name')
+        thisUser.user_emergency_phone = request.POST.get('user_emergency_phone')
+
+        # Past volunteer experience
+        thisUser.user_past_volunteering = request.POST.get('user_past_volunteering')
         
         # Check for volunteer profile completeness
         if (
@@ -813,8 +824,6 @@ def create_vol_profile(request):
             thisUser.user_degree_type and
             thisUser.user_institution and
             thisUser.user_field_of_study and
-            thisUser.user_graduation_month and
-            thisUser.user_graduation_year and
             thisUser.user_emergency_name and
             thisUser.user_emergency_phone and
             thisUser.user_organization_name and
@@ -856,36 +865,33 @@ def create_organizer_profile(request):
         thisUser.user_graduation_month = request.POST.get('user_graduation_month')
         thisUser.user_graduation_year = request.POST.get('user_graduation_year')
         
-        # Emergency Contact
-        thisUser.user_emergency_name = request.POST.get('user_emergency_name')
-        thisUser.user_emergency_phone = request.POST.get('user_emergency_phone')
-        
         # Work Details
         thisUser.user_organization_name = request.POST.get('user_organization_name')
         thisUser.user_job_title = request.POST.get('user_job_title')
         
-        # Get industry from tbl_industry
-        industry_id = request.POST.get('user_industry')
-        if industry_id:
-            try:
-                thisUser.user_industry = tbl_industry.objects.get(id=industry_id)
-            except tbl_industry.DoesNotExist:
-                return render(request, 'User/create_organizer_profile.html', {
-                    'thisUser': thisUser,
-                    'industries': industries,
-                    'error': 'Selected industry does not exist.'
-                })
+        # Get industry
+        thisUser.user_industry = request.POST.get('user_industry')
         
         thisUser.user_location = request.POST.get('user_location')
         thisUser.user_official_address = request.POST.get('user_official_address')
         thisUser.user_official_contact_number = request.POST.get('user_official_contact_number')
-        
-        # Past Volunteering Experience
-        has_volunteering = request.POST.get('has_volunteering') == 'yes'
-        if has_volunteering:
-            thisUser.user_past_volunteering = request.POST.get('user_past_volunteering')
+
+        # Check for organizer profile completeness
+        if (
+            thisUser.user_address and
+            thisUser.user_degree_type and
+            thisUser.user_institution and
+            thisUser.user_field_of_study and
+            thisUser.user_organization_name and
+            thisUser.user_job_title and
+            thisUser.user_industry and
+            thisUser.user_location and
+            thisUser.user_official_contact_number and
+            thisUser.user_official_address
+        ):
+            thisUser.is_organizer_profile_complete = True
         else:
-            thisUser.user_past_volunteering = None
+            thisUser.is_organizer_profile_complete = False
         
         thisUser.save()
         return redirect('User:organizer_dashboard')

@@ -891,12 +891,6 @@
                         {{ user.user_city.state.country.country_name|default:"Country" }}
                     </span>
                 </div>
-                {% if user.user_links %}
-                <div class="detail-item">
-                    <i class="fas fa-globe"></i>
-                    <a href="{% if user.user_links|slice:':8' == 'https://' %}{{ user.user_links }}{% else %}https://{{ user.user_links }}{% endif %}" target="_blank">{{ user.user_links }}</a>
-                </div>
-                {% endif %}
                 <div class="detail-item">
                     <i class="fas fa-envelope"></i>
                     <a href="mailto:{{ user.user_email }}">{{ user.user_email }}</a>

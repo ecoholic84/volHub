@@ -322,16 +322,6 @@
     </style>
 </head>
 <body>
-    <!-- Display error messages -->
-    {% if messages %}
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            {% for message in messages %}
-                {{ message }}
-            {% endfor %}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    {% endif %}
-
     <!-- Main Content -->
     <div class="profile-container">
         <div class="profile-header">

@@ -573,16 +573,6 @@
     }
 </style>
 
-<!-- Success/Error Messages -->
-{% if messages %}
-    {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">
-            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}exclamation-circle{% endif %}"></i>
-            {{ message }}
-        </div>
-    {% endfor %}
-{% endif %}
-
 <div class="event-detail-container">
     <!-- Hero Section - Kept as requested -->
     <div class="event-hero">

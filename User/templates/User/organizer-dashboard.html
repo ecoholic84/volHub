@@ -647,7 +647,22 @@
 </div>
 
 <script>
+    // Profile completion status from Django context
+    const isBasicProfileComplete = "{{ is_basic_profile_complete|yesno:'true,false' }}" === "true";
+    const isOrganizerProfileComplete = "{{ is_organizer_profile_complete|yesno:'true,false' }}" === "true";
     document.addEventListener('DOMContentLoaded', function() {
+        // Intercept Create Event button clicks
+        document.querySelectorAll('a[href="{% url 'User:Event' %}"]').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                if (!isBasicProfileComplete || !isOrganizerProfileComplete) {
+                    e.preventDefault();
+                    if (confirm('Your organizer profile is incomplete. Would you like to complete your profile now?')) {
+                        window.location.href = '{% url "User:create_organizer_profile" %}';
+                    }
+                    // else: do nothing
+                }
+            });
+        });
         // Sidebar toggle functionality
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebar = document.getElementById('sidebar');

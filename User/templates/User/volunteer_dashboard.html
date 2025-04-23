@@ -215,5 +215,22 @@
 
 <script src="{% static 'User/js/static-tabs.js' %}"></script>
 <script src="{% static 'User/js/volunteer-search.js' %}"></script>
-
+<script>
+    // Profile completion status from Django context
+    const isBasicProfileComplete = "{{ is_basic_profile_complete|yesno:'true,false' }}" === "true";
+    const isVolunteerProfileComplete = "{{ is_volunteer_profile_complete|yesno:'true,false' }}" === "true";
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.event-card-link').forEach(function(link) {
+            link.addEventListener('click', function(e) {
+                if (!isBasicProfileComplete || !isVolunteerProfileComplete) {
+                    e.preventDefault();
+                    if (confirm('Your volunteer profile is incomplete. Would you like to complete your profile now?')) {
+                        window.location.href = '{% url "User:create_vol_profile" %}';
+                    }
+                    // else: do nothing, user stays on dashboard
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
