@@ -4,107 +4,512 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Complete Your Organizer Profile</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <style>
         :root {
-            --primary: #3a86ff;
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --primary-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --secondary: #f97316;
+            --secondary-light: #fb923c;
+            --background: #f8fafc;
             --surface: #ffffff;
-            --background: #f8f9fa;
-            --text: #212529;
-            --border: #e9ecef;
+            --surface-hover: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-tertiary: #94a3b8;
+            --border: #e2e8f0;
+            --error: #ef4444;
+            --success: #10b981;
+            --radius-sm: 0.375rem;
+            --radius: 0.75rem;
+            --radius-lg: 1rem;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             background-color: var(--background);
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-primary);
+            line-height: 1.5;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            color: var(--text);
-            padding: 20px 0;
+            padding: 1.5rem;
         }
-        
+
         .profile-card {
-            background: var(--surface);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
             width: 100%;
-            max-width: 600px;
-            padding: 30px;
-            margin: auto;
+            max-width: 550px;
+            padding: 2.5rem;
+            margin: 2rem auto;
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: var(--primary-gradient);
+        }
+
+        .back-button {
+            position: absolute;
+            top: 1.5rem;
+            left: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
+            color: var(--primary);
+        }
+
+        .back-button svg {
+            width: 16px;
+            height: 16px;
+        }
+
         .profile-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .profile-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40%;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 3px;
+        }
+
+        .progress-container {
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--border);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .progress-step {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--surface);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            position: relative;
+            z-index: 2;
+            transition: var(--transition);
+        }
+
+        .progress-step.active {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            transform: scale(1.1);
+        }
+
+        .progress-step.completed {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .progress-bar-container {
+            height: 0.5rem;
+            background-color: var(--border);
+            border-radius: 9999px;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-gradient);
+            border-radius: 9999px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.3) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .progress-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .section-title {
             font-size: 1.25rem;
             font-weight: 600;
-            text-align: center;
-            margin-bottom: 20px;
-            color: var(--text);
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            position: relative;
         }
-        
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: var(--text);
-            margin: 20px 0 15px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--border);
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 3rem;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 3px;
         }
-        
-        .form-floating {
-            margin-bottom: 12px;
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
         }
-        
-        .form-control, .form-select {
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            padding: 12px 16px;
-            height: 45px;
-            font-size: 0.925rem;
-        }
-        
-        .form-control:focus, .form-select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.15);
-        }
-        
+
         .form-label {
-            font-size: 0.8rem;
+            display: block;
+            font-size: 0.875rem;
             font-weight: 500;
-            color: #6c757d;
-            margin-bottom: 4px;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
         }
-        
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background-color: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background-color: var(--surface);
+        }
+
+        .form-control:hover:not(:focus) {
+            border-color: var(--primary-light);
+            background-color: var(--surface-hover);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background-color: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+            background-color: var(--surface);
+        }
+
+        .form-select:hover:not(:focus) {
+            border-color: var(--primary-light);
+            background-color: var(--surface-hover);
+        }
+
         textarea.form-control {
-            height: auto;
-            min-height: 80px;
+            min-height: 120px;
+            resize: vertical;
         }
-        
-        .btn-primary {
-            background-color: var(--primary);
-            border: none;
-            border-radius: 8px;
-            height: 45px;
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row > * {
+            flex: 1;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.875rem 1.75rem;
+            font-size: 0.95rem;
             font-weight: 500;
-            margin-top: 20px;
+            line-height: 1;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
-        
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .btn:focus:not(:active)::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(30, 30);
+                opacity: 0;
+            }
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+        }
+
         .btn-primary:hover {
-            background-color: #2a75f3;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.4);
+            transform: translateY(-2px);
         }
-        
-        @media (max-width: 576px) {
+
+        .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(99, 102, 241, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: var(--surface);
+            color: var(--text-primary);
+            border: 1.5px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--surface-hover);
+            border-color: var(--text-tertiary);
+            box-shadow: var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            border-left: 4px solid var(--error);
+        }
+
+        .form-step {
+            animation: fadeSlideIn 0.5s ease;
+        }
+
+        .d-none {
+            display: none;
+        }
+
+        @keyframes fadeSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Decorative elements */
+        .decorative-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+        .shape-1 {
+            top: -50px;
+            right: -50px;
+            width: 200px;
+            height: 200px;
+        }
+
+        .shape-2 {
+            bottom: -30px;
+            left: -30px;
+            width: 150px;
+            height: 150px;
+        }
+
+        .text-muted {
+            color: var(--text-tertiary);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        @media (max-width: 640px) {
             .profile-card {
-                padding: 20px;
-                border-radius: 12px;
+                padding: 1.75rem;
+                border-radius: var(--radius);
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .progress-step {
+                width: 2rem;
+                height: 2rem;
+                font-size: 0.875rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="profile-card">
+        <!-- Decorative shapes -->
+        <div class="decorative-shape shape-1"></div>
+        <div class="decorative-shape shape-2"></div>
+        
+        <!-- Back button -->
+        <button type="button" class="back-button" onclick="history.back()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back
+        </button>
+        
         <h2 class="profile-title">Complete Your Organizer Profile</h2>
         
         {% if error %}
@@ -113,124 +518,245 @@
         </div>
         {% endif %}
         
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-step active" data-step="1">1</div>
+                <div class="progress-step" data-step="2">2</div>
+                <div class="progress-step" data-step="3">3</div>
+            </div>
+            <div class="progress-bar-container">
+                <div id="profileFormProgress" class="progress-bar" style="width: 33.33%;"></div>
+            </div>
+            <div class="progress-text" id="progressText">Step 1 of 3 - Personal Information</div>
+        </div>
+
         <form method="POST" id="organizerProfileForm" action="{% url 'User:create_vol_profile' %}">
             {% csrf_token %}
             
-            <!-- Personal Information -->
-            <h3 class="section-title">Personal Information</h3>
-            
-            <div class="mb-3">
-                <label class="form-label">Address</label>
-                <input type="text" name="user_address" class="form-control" placeholder="Enter your address">
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Professional Links</label>
-                <textarea name="user_links" class="form-control" rows="3" placeholder="Enter your GitHub, LinkedIn URLs (JSON format)"></textarea>
-                <small class="text-muted">Format: {"GitHub": "https://github.com/username", "LinkedIn": "https://linkedin.com/in/username"}</small>
-            </div>
-            
-            <!-- Educational Information -->
-            <h3 class="section-title">Educational Information</h3>
-            
-            <div class="mb-3">
-                <label class="form-label">Degree Type</label>
-                <select name="user_degree_type" class="form-select">
-                    <option value="">Select Degree Type</option>
-                    <option value="Bachelor's">Bachelor's</option>
-                    <option value="Master's">Master's</option>
-                    <option value="PhD">PhD</option>
-                    <option value="Associate's">Associate's</option>
-                    <option value="Diploma">Diploma</option>
-                </select>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Institution</label>
-                <input type="text" name="user_institution" class="form-control" placeholder="Enter your institution name">
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Field of Study</label>
-                <input type="text" name="user_field_of_study" class="form-control" placeholder="Enter your field of study">
-            </div>
-            
-            <div class="row g-3 mb-3">
-                <div class="col-md-6">
-                    <label class="form-label">Graduation Month</label>
-                    <select name="user_graduation_month" class="form-select">
-                        <option value="">Select Month</option>
-                        <option value="1">January</option>
-                        <option value="2">February</option>
-                        <option value="3">March</option>
-                        <option value="4">April</option>
-                        <option value="5">May</option>
-                        <option value="6">June</option>
-                        <option value="7">July</option>
-                        <option value="8">August</option>
-                        <option value="9">September</option>
-                        <option value="10">October</option>
-                        <option value="11">November</option>
-                        <option value="12">December</option>
-                    </select>
+            <!-- Step 1: Personal Information -->
+            <div class="form-step" id="step-1">
+                <h3 class="section-title">Personal Information</h3>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_address">Address</label>
+                    <input type="text" id="user_address" name="user_address" class="form-control" placeholder="Enter your address" value="{{ thisUser.user_address|default:'' }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Graduation Year</label>
-                    <select name="user_graduation_year" class="form-select">
-                        <option value="">Select Year</option>
-                        <script>
-                            const currentYear = new Date().getFullYear();
-                            for (let year = currentYear + 5; year >= 1950; year--) {
-                                document.write(`<option value="${year}">${year}</option>`);
-                            }
-                        </script>
-                    </select>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_links">Professional Links</label>
+                    <textarea id="user_links" name="user_links" class="form-control" rows="3" placeholder="Enter your GitHub, LinkedIn URLs (JSON format)">{{ thisUser.user_links|default:'' }}</textarea>
+                    <small class="text-muted">Format: {"GitHub": "https://github.com/username", "LinkedIn": "https://linkedin.com/in/username"}</small>
+                </div>
+                
+                <div class="button-group">
+                    <div></div> <!-- Empty div for spacing -->
+                    <button type="button" class="btn btn-primary next-step">Continue</button>
                 </div>
             </div>
             
-            <!-- Work Details -->
-            <h3 class="section-title">Work Details</h3>
-            
-            <div class="mb-3">
-                <label class="form-label">Organization Name</label>
-                <input type="text" name="user_organization_name" class="form-control" placeholder="Enter your organization name">
+            <!-- Step 2: Educational Information -->
+            <div class="form-step d-none" id="step-2">
+                <h3 class="section-title">Educational Information</h3>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_degree_type">Degree Type</label>
+                    <select id="user_degree_type" name="user_degree_type" class="form-select">
+                        <option value="">Select Degree Type</option>
+                        <option value="Bachelor's" {% if thisUser.user_degree_type == "Bachelor's" %}selected{% endif %}>Bachelor's</option>
+                        <option value="Master's" {% if thisUser.user_degree_type == "Master's" %}selected{% endif %}>Master's</option>
+                        <option value="PhD" {% if thisUser.user_degree_type == "PhD" %}selected{% endif %}>PhD</option>
+                        <option value="Associate's" {% if thisUser.user_degree_type == "Associate's" %}selected{% endif %}>Associate's</option>
+                        <option value="Diploma" {% if thisUser.user_degree_type == "Diploma" %}selected{% endif %}>Diploma</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_institution">Institution</label>
+                    <input type="text" id="user_institution" name="user_institution" class="form-control" placeholder="Enter your institution name" value="{{ thisUser.user_institution|default:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_field_of_study">Field of Study</label>
+                    <input type="text" id="user_field_of_study" name="user_field_of_study" class="form-control" placeholder="Enter your field of study" value="{{ thisUser.user_field_of_study|default:'' }}">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="user_graduation_month">Graduation Month</label>
+                        <select id="user_graduation_month" name="user_graduation_month" class="form-select">
+                            <option value="">Select Month</option>
+                            <option value="1" {% if thisUser.user_graduation_month == 1 %}selected{% endif %}>January</option>
+                            <option value="2" {% if thisUser.user_graduation_month == 2 %}selected{% endif %}>February</option>
+                            <option value="3" {% if thisUser.user_graduation_month == 3 %}selected{% endif %}>March</option>
+                            <option value="4" {% if thisUser.user_graduation_month == 4 %}selected{% endif %}>April</option>
+                            <option value="5" {% if thisUser.user_graduation_month == 5 %}selected{% endif %}>May</option>
+                            <option value="6" {% if thisUser.user_graduation_month == 6 %}selected{% endif %}>June</option>
+                            <option value="7" {% if thisUser.user_graduation_month == 7 %}selected{% endif %}>July</option>
+                            <option value="8" {% if thisUser.user_graduation_month == 8 %}selected{% endif %}>August</option>
+                            <option value="9" {% if thisUser.user_graduation_month == 9 %}selected{% endif %}>September</option>
+                            <option value="10" {% if thisUser.user_graduation_month == 10 %}selected{% endif %}>October</option>
+                            <option value="11" {% if thisUser.user_graduation_month == 11 %}selected{% endif %}>November</option>
+                            <option value="12" {% if thisUser.user_graduation_month == 12 %}selected{% endif %}>December</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="user_graduation_year">Graduation Year</label>
+                        <select id="user_graduation_year" name="user_graduation_year" class="form-select">
+                            <option value="">Select Year</option>
+                            <script>
+                                const currentYear = new Date().getFullYear();
+                                for (let year = currentYear + 5; year >= 1950; year--) {
+                                    document.write(`<option value="${year}" ${year == "{{ thisUser.user_graduation_year|default:'' }}" ? "selected" : ""}>${year}</option>`);
+                                }
+                            </script>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary prev-step">Back</button>
+                    <button type="button" class="btn btn-primary next-step">Continue</button>
+                </div>
             </div>
             
-            <div class="mb-3">
-                <label class="form-label">Job Title</label>
-                <input type="text" name="user_job_title" class="form-control" placeholder="Enter your job title">
+            <!-- Step 3: Work Details -->
+            <div class="form-step d-none" id="step-3">
+                <h3 class="section-title">Work Details</h3>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_organization_name">Organization Name</label>
+                    <input type="text" id="user_organization_name" name="user_organization_name" class="form-control" placeholder="Enter your organization name" value="{{ thisUser.user_organization_name|default:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_job_title">Job Title</label>
+                    <input type="text" id="user_job_title" name="user_job_title" class="form-control" placeholder="Enter your job title" value="{{ thisUser.user_job_title|default:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_industry">Industry</label>
+                    <select id="user_industry" name="user_industry" class="form-select">
+                        <option value="">Select Industry</option>
+                        {% for industry in industries %}
+                        <option value="{{ industry.id }}" {% if thisUser.user_industry.id == industry.id %}selected{% endif %}>{{ industry.industry_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_location">Work Location</label>
+                    <input type="text" id="user_location" name="user_location" class="form-control" placeholder="Enter your work location" value="{{ thisUser.user_location|default:'' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_official_address">Official Address</label>
+                    <textarea id="user_official_address" name="user_official_address" class="form-control" rows="2" placeholder="Enter your official address">{{ thisUser.user_official_address|default:'' }}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="user_official_contact_number">Official Contact Number</label>
+                    <input type="tel" id="user_official_contact_number" name="user_official_contact_number" class="form-control" placeholder="Enter your official contact number" maxlength="15" value="{{ thisUser.user_official_contact_number|default:'' }}">
+                </div>
+                
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary prev-step">Back</button>
+                    <button type="submit" class="btn btn-primary">Complete Profile</button>
+                </div>
             </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Industry</label>
-                <select name="user_industry" class="form-select">
-                    <option value="">Select Industry</option>
-                    {% for industry in industries %}
-                    <option value="{{ industry.id }}" {% if thisUser.user_industry.id == industry.id %}selected{% endif %}>{{ industry.industry_name }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Work Location</label>
-                <input type="text" name="user_location" class="form-control" placeholder="Enter your work location">
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Official Address</label>
-                <textarea name="user_official_address" class="form-control" rows="2" placeholder="Enter your official address"></textarea>
-            </div>
-            
-            <div class="mb-3">
-                <label class="form-label">Official Contact Number</label>
-                <input type="tel" name="user_official_contact_number" class="form-control" placeholder="Enter your official contact number" maxlength="15">
-            </div>
-            
-            <button type="submit" class="btn btn-primary w-100">Complete Organizer Profile</button>
         </form>
     </div>
 
     <script>
+        // Multi-step form logic
+        const steps = document.querySelectorAll('.form-step');
+        const progressBar = document.getElementById('profileFormProgress');
+        const progressText = document.getElementById('progressText');
+        const progressSteps = document.querySelectorAll('.progress-step');
+        let currentStep = 0;
+        const totalSteps = steps.length;
+        const stepTitles = [
+            'Personal Information',
+            'Educational Information',
+            'Work Details'
+        ];
+
+        function showStep(idx) {
+            steps.forEach((step, i) => {
+                step.classList.toggle('d-none', i !== idx);
+            });
+            
+            // Update progress bar with animation
+            const percent = Math.round(((idx + 1) / totalSteps) * 100);
+            progressBar.style.width = percent + '%';
+            progressText.textContent = `Step ${idx + 1} of ${totalSteps} - ${stepTitles[idx]}`;
+            
+            // Update progress steps
+            progressSteps.forEach((step, i) => {
+                if (i < idx) {
+                    step.classList.remove('active');
+                    step.classList.add('completed');
+                } else if (i === idx) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('active', 'completed');
+                }
+            });
+            
+            // Add entrance animation
+            const currentStepElement = steps[idx];
+            currentStepElement.style.animation = 'none';
+            void currentStepElement.offsetWidth; // Trigger reflow
+            currentStepElement.style.animation = 'fadeSlideIn 0.5s ease';
+        }
+
+        document.querySelectorAll('.next-step').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (currentStep < totalSteps - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        document.querySelectorAll('.prev-step').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Add ripple effect to buttons
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                const x = e.clientX - e.target.getBoundingClientRect().left;
+                const y = e.clientY - e.target.getBoundingClientRect().top;
+                
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+        
         // Form validation for JSON format in links field
         document.getElementById('organizerProfileForm').addEventListener('submit', function(event) {
             const linksField = document.querySelector('textarea[name="user_links"]');
@@ -245,6 +771,11 @@
                     linksField.focus();
                 }
             }
+        });
+        
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            showStep(currentStep);
         });
     </script>
 </body>

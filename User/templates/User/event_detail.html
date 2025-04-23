@@ -1,347 +1,878 @@
-
-
-
 {% extends 'Guest/base.html' %}
 
+{% block title %}{{ event.event_title }} | VolHub{% endblock %}
+
 {% block content %}
+<!-- Keep the existing back button -->
 <a href="{% url 'User:volunteer_dashboard' %}" class="back-to-dashboard-icon" title="Back to Dashboard" aria-label="Back to Dashboard">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
 </a>
+
 <style>
-.back-to-dashboard-icon {
-    display: inline-block;
-    margin: 18px 0 10px 8px;
-    background: none;
-    border: none;
-    padding: 4px;
-    border-radius: 50%;
-    transition: background 0.14s;
-    line-height: 1;
-    vertical-align: middle;
-}
-.back-to-dashboard-icon:hover, .back-to-dashboard-icon:focus {
-    background: #e0e7ff;
-    outline: none;
-}
-</style>
-<style>
-.back-to-dashboard-link {
-    display: inline-block;
-    margin: 18px 0 10px 8px;
-    color: #6366f1;
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1.06em;
-    border-radius: 6px;
-    padding: 7px 16px 7px 10px;
-    transition: background 0.17s, color 0.17s;
-}
-.back-to-dashboard-link:hover {
-    background: #e0e7ff;
-    color: #3730A3;
-    text-decoration: underline;
-}
-</style>
-<style>
-    .event-container {
-        max-width: 1000px;
-        margin: 30px auto;
-        padding: 25px;
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    :root {
+        --primary: #4F46E5;
+        --primary-light: #818cf8;
+        --primary-dark: #3730A3;
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --background: #f9fafb;
+        --card-bg: #ffffff;
+        --text: #111827;
+        --text-secondary: #4b5563;
+        --text-tertiary: #6b7280;
+        --border: #e5e7eb;
+        --border-light: #f3f4f6;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius-sm: 0.25rem;
+        --radius: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
     }
 
-    .event-header {
-        display: flex;
-        gap: 30px;
-        flex-wrap: wrap;
+    /* Keep existing back button styles */
+    .back-to-dashboard-icon {
+        display: inline-block;
+        margin: 18px 0 10px 8px;
+        background: none;
+        border: none;
+        padding: 4px;
+        border-radius: 50%;
+        transition: background 0.14s;
+        line-height: 1;
+        vertical-align: middle;
+    }
+    .back-to-dashboard-icon:hover, .back-to-dashboard-icon:focus {
+        background: #e0e7ff;
+        outline: none;
     }
 
-    .event-image {
-        flex: 1 1 300px;
-        max-width: 300px;
-        height: 200px;
-        background-color: #f2f2f2;
-        border-radius: 10px;
+    /* Main container - more compact */
+    .event-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem 1.5rem;
+    }
+
+    /* Hero section - keep as requested */
+    .event-hero {
+        position: relative;
+        border-radius: var(--radius-lg);
         overflow: hidden;
+        margin-bottom: 1rem;
+        box-shadow: var(--shadow-md);
+        height: 280px;
     }
 
-    .event-image img {
+    .event-hero-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        display: block;
     }
 
-    .event-details {
-        flex: 2;
+    .event-hero-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--primary);
+        font-size: 1.5rem;
+        font-weight: 600;
     }
 
-    .event-details h1 {
-        font-size: 28px;
-        margin-bottom: 10px;
+    .event-hero-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+        padding: 1.5rem;
+        color: white;
     }
 
-    .industry-badge {
-        display: inline-block;
-        background-color: #4F46E5;
-        color: #fff;
-        font-size: 14px;
-        padding: 4px 10px;
-        border-radius: 8px;
-        margin-top: 6px;
+    .event-hero-title {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
-    .meta-info {
-        margin: 15px 0;
-        color: #555;
+    .event-hero-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 0.5rem;
     }
 
-    .event-content {
-        margin-top: 25px;
-        line-height: 1.6;
-    }
-
-    .action-buttons {
-        margin-top: 30px;
-    }
-
-    .action-buttons form button {
-        padding: 10px 20px;
-        background-color: #4F46E5;
-        border: none;
-        color: #fff;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        font-weight: bold;
-    }
-
-    .action-buttons form button:hover {
-        background-color: #3730A3;
-    }
-
-    .organizer-details-btn {
-        margin-top: 10px;
-        padding: 10px 20px;
-        background-color: #10B981;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background-color 0.3s ease;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-    }
-    .organizer-details-btn:hover {
-        background-color: #059669;
+    .event-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
     }
 
     .event-meta-icon {
-        margin-right: 5px;
-        color: #6B7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        background-color: rgba(255,255,255,0.2);
+        border-radius: 50%;
+        font-size: 0.8rem;
     }
 
-    .event-footer {
-        margin-top: 50px;
-        text-align: center;
-        font-size: 14px;
-        color: #999;
+    /* Content layout - more compact and modular */
+    .event-content-grid {
+        display: grid;
+        grid-template-columns: 3fr 2fr;
+        gap: 1rem;
     }
 
     @media (max-width: 768px) {
-        .event-header {
-            flex-direction: column;
-        }
-
-        .event-image, .event-details {
-            width: 100%;
+        .event-content-grid {
+            grid-template-columns: 1fr;
         }
     }
 
-    .message {
-        text-align: center;
-        margin: 15px 0;
-        padding: 10px;
-        border-radius: 8px;
+    /* Card styling - more compact */
+    .event-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        height: 100%;
+        margin-bottom: 1rem;
     }
 
-    .message.success {
-        background-color: #d4edda;
-        color: #155724;
+    .event-card-header {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
-    .message.warning {
-        background-color: #fff3cd;
-        color: #856404;
+    .event-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
 
-    .request-status {
-        margin-top: 10px;
-        font-weight: bold;
+    .event-card-title i {
+        color: var(--primary);
     }
+
+    .event-card-body {
+        padding: 1rem;
+    }
+
+    /* Description styling - more compact */
+    .event-description {
+        line-height: 1.5;
+        color: var(--text-secondary);
+        white-space: pre-line;
+        max-height: 200px;
+        overflow-y: auto;
+        font-size: 0.9rem;
+    }
+
+    /* Status badges */
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.35rem 0.75rem;
+        border-radius: 9999px;
+        font-weight: 500;
+        font-size: 0.8rem;
+    }
+
+    .status-badge i {
+        margin-right: 0.35rem;
+    }
+
     .status-pending {
-        color: orange;
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
     }
+
     .status-accepted {
-        color: green;
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success);
     }
+
     .status-rejected {
-        color: red;
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+    }
+
+    /* Industry badge */
+    .industry-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        background-color: var(--primary);
+        color: white;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+
+    /* Organizer card - keep as requested */
+    .organizer-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        border-radius: var(--radius);
+        background-color: var(--background);
+        color: var(--text);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .organizer-link:hover {
+        background-color: #e0e7ff;
+        transform: translateY(-2px);
+    }
+
+    .organizer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    .organizer-info {
+        flex: 1;
+    }
+
+    .organizer-name {
+        font-weight: 600;
+        color: var(--text);
+        font-size: 0.9rem;
+    }
+
+    .organizer-meta {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+
+    /* Action buttons - more compact */
+    .action-buttons {
+        margin-top: 0.75rem;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        border-radius: var(--radius);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: none;
+        width: 100%;
+        font-size: 0.9rem;
+    }
+
+    .btn-primary {
+        background-color: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .btn-danger {
+        background-color: var(--danger);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Event details list - more compact */
+    .event-details-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+
+    .event-details-item {
+        padding: 0.5rem;
+        background-color: var(--background);
+        border-radius: var(--radius-sm);
+    }
+
+    .event-details-label {
+        font-size: 0.7rem;
+        font-weight: 500;
+        color: var(--text-tertiary);
+        margin-bottom: 0.25rem;
+    }
+
+    .event-details-value {
+        font-size: 0.85rem;
+        color: var(--text);
+    }
+
+    /* Alert messages */
+    .alert {
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+        color: var(--success);
+    }
+
+    .alert-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+        color: var(--warning);
+    }
+
+    .alert-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: var(--danger);
+    }
+
+    /* Contact organizer box - more compact */
+    .contact-organizer-box {
+        background-color: var(--background);
+        border-radius: var(--radius);
+        padding: 0.75rem;
+        margin-top: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .contact-organizer-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .contact-organizer-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Share buttons - more compact */
+    .share-buttons {
+        display: flex;
+        gap: 0.35rem;
+        margin-top: 0.75rem;
+    }
+
+    .share-button {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--background);
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: all 0.2s;
+        font-size: 0.8rem;
+    }
+
+    .share-button:hover {
+        background-color: var(--primary);
+        color: white;
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    /* Footer - more compact */
+    .event-footer {
+        margin-top: 1rem;
+        text-align: center;
+        color: var(--text-tertiary);
+        font-size: 0.8rem;
+    }
+
+    .event-footer a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .event-footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Countdown timer - more compact */
+    .event-countdown {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .countdown-item {
+        flex: 1;
+        text-align: center;
+        background-color: var(--background);
+        border-radius: var(--radius-sm);
+        padding: 0.5rem 0.35rem;
+    }
+
+    .countdown-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary);
+        line-height: 1;
+    }
+
+    .countdown-label {
+        font-size: 0.65rem;
+        color: var(--text-tertiary);
+        margin-top: 0.15rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .event-content-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .event-hero-title {
+            font-size: 1.5rem;
+        }
+
+        .event-hero-meta {
+            gap: 0.75rem;
+        }
+
+        .event-meta-item {
+            font-size: 0.8rem;
+        }
+
+        .event-hero-overlay {
+            padding: 1rem;
+        }
+    }
+
+    /* Tabs for mobile view */
+    .mobile-tabs {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .mobile-tabs {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            scrollbar-width: none;
+        }
+        
+        .mobile-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .mobile-tab {
+            padding: 0.75rem 1rem;
+            white-space: nowrap;
+            color: var(--text-secondary);
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+        
+        .mobile-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+    }
+
+    /* Combined sections for more compact layout */
+    .combined-section {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .combined-section > div {
+        flex: 1;
+    }
+
+    /* Quick info section */
+    .quick-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .quick-info-item {
+        flex: 1;
+        min-width: 120px;
+        background-color: var(--background);
+        padding: 0.5rem 0.75rem;
+        border-radius: var(--radius-sm);
+    }
+
+    .quick-info-label {
+        font-size: 0.7rem;
+        color: var(--text-tertiary);
+        margin-bottom: 0.25rem;
+    }
+
+    .quick-info-value {
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .quick-info-value i {
+        color: var(--primary);
+        font-size: 0.9rem;
     }
 </style>
 
 <!-- Success/Error Messages -->
 {% if messages %}
     {% for message in messages %}
-        <div class="message {{ message.tags }}">{{ message }}</div>
+        <div class="alert alert-{{ message.tags }}">
+            <i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}exclamation-circle{% endif %}"></i>
+            {{ message }}
+        </div>
     {% endfor %}
 {% endif %}
 
-<div class="event-container">
-    <div class="event-header">
-        <div class="event-image">
-            {% if event.event_file %}
-                <img src="{{ event.event_file.url }}" alt="{{ event.event_title }}">
-            {% else %}
-                <div class="event-placeholder" style="height:100%;display:flex;align-items:center;justify-content:center;">No Image</div>
-            {% endif %}
-        </div>
-        <div class="event-details">
-            <h1>{{ event.event_title|escape }}</h1>
-            <span class="industry-badge">{{ event.industry.industry_name }}</span>
-            <div class="meta-info">
-                <p><i class="event-meta-icon">📅</i> {{ event.event_datetime|date:"F j, Y, g:i A" }}</p>
-                <p><i class="event-meta-icon">📍</i> {{ event.event_venue|default:"Location TBA" }}</p>
-                <a href="{% url 'User:organizer_profile' event.id %}" class="organizer-details-link" id="know-organizer-link">✨ Know the Organizer</a>
-<style>
-#know-organizer-link {
-    color: #6366f1;
-    text-decoration: none;
-    font-weight: 600;
-    display: inline-block;
-    margin-top: 4px;
-    font-size: 1.08em;
-    position: relative;
-    transition: color 0.2s, transform 0.2s;
-}
-#know-organizer-link::after {
-    content: '';
-    display: block;
-    width: 0%;
-    height: 2px;
-    background: linear-gradient(90deg, #6366f1 40%, #a21caf 100%);
-    transition: width 0.3s cubic-bezier(.4,2,.6,1), left 0.3s cubic-bezier(.4,2,.6,1);
-    position: absolute;
-    left: 0;
-    bottom: -2px;
-}
-#know-organizer-link:hover {
-    color: #a21caf;
-    transform: scale(1.07) rotate(-2deg);
-    text-shadow: 0 2px 10px #e0e7ff99;
-}
-#know-organizer-link:hover::after {
-    width: 100%;
-}
-</style>
+<div class="event-detail-container">
+    <!-- Hero Section - Kept as requested -->
+    <div class="event-hero">
+        {% if event.event_file %}
+            <img src="{{ event.event_file.url }}" alt="{{ event.event_title }}" class="event-hero-image">
+        {% else %}
+            <div class="event-hero-placeholder">
+                <i class="fas fa-calendar-alt fa-3x"></i>
             </div>
-            {% if has_requested %}
-                <div class="request-status">
-                    Your Request Status: 
-                    <span class="{% if request_status == 0 %}status-pending{% elif request_status == 1 %}status-accepted{% else %}status-rejected{% endif %}">
-                        {% if request_status == 0 %}Pending{% elif request_status == 1 %}Accepted{% else %}Rejected{% endif %}
-                    </span>
+        {% endif %}
+        <div class="event-hero-overlay">
+            <span class="industry-badge">
+                <i class="fas fa-briefcase"></i>
+                {{ event.industry.industry_name }}
+            </span>
+            <h1 class="event-hero-title">{{ event.event_title|escape }}</h1>
+            <div class="event-hero-meta">
+                <div class="event-meta-item">
+                    <div class="event-meta-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <span>{{ event.event_datetime|date:"F j, Y" }}</span>
                 </div>
-            {% endif %}
+                <div class="event-meta-item">
+                    <div class="event-meta-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <span>{{ event.event_datetime|date:"g:i A" }}</span>
+                </div>
+                <div class="event-meta-item">
+                    <div class="event-meta-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <span>{{ event.event_venue|default:"Location TBA" }}</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="event-content">
-        <h3>Description</h3>
-        <p>{{ event.event_content|linebreaksbr }}</p>
+    <!-- Mobile Tabs (for responsive view) -->
+    <div class="mobile-tabs">
+        <div class="mobile-tab active" data-tab="details">Details</div>
+        <div class="mobile-tab" data-tab="description">Description</div>
+        <div class="mobile-tab" data-tab="organizer">Organizer</div>
     </div>
 
-    <div class="action-buttons">
-        <form method="POST">
-            {% csrf_token %}
-            {% if has_requested %}
-                {% if request_status == 1 %}
-                    <div class="cant-make-it-box">
-                        <span>Can't make it to the event?</span>
-                        <a href="mailto:{{ event.user.user_email }}?subject=Unable to Attend Event: {{ event.event_title|urlencode }}&body=Dear {{ event.user.user_name }},%0D%0A%0D%0AI am unable to attend the event '{{ event.event_title }}' due to [your reason here].%0D%0A%0D%0ARegards,%0D%0A[Your Name]" class="contact-organizer-link">Contact the organizer</a>
+    <!-- Content Grid - More compact and modular -->
+    <div class="event-content-grid">
+        <!-- Left Column - Event Details -->
+        <div>
+            <!-- Quick Info Section -->
+            <div class="quick-info">
+                {% if event.event_datetime > now %}
+                    <div class="quick-info-item">
+                        <div class="quick-info-label">Event starts in</div>
+                        <div class="quick-info-value" id="countdown-display">
+                            <i class="fas fa-hourglass-half"></i>
+                            <span id="countdown-text">Loading...</span>
+                        </div>
                     </div>
-                    <style>
-                    .cant-make-it-box {
-                        background: #f8fafc;
-                        border: 1px solid #e0e7ff;
-                        border-radius: 8px;
-                        padding: 13px 18px;
-                        margin: 16px 0 0 0;
-                        font-size: 1em;
-                        color: #222;
-                        display: flex;
-                        align-items: center;
-                        gap: 0.7em;
-                    }
-                    .contact-organizer-link {
-                        color: #4F46E5;
-                        text-decoration: underline;
-                        font-weight: 500;
-                        transition: color 0.17s;
-                    }
-                    .contact-organizer-link:hover {
-                        color: #a21caf;
-                    }
-                    </style>
-                {% elif request_status == 2 %}
-                    <!-- Removed redundant status text -->
-                {% elif request_status == 0 %}
-                    <button type="submit" name="undo" onclick="return confirm('Are you sure you want to cancel your volunteer request?')">Cancel Request</button>
                 {% endif %}
-            {% else %}
-                <button type="submit" name="request" class="volunteer-request-btn-minimal" onclick="return confirm('Do you want to apply for this event?')">🤝 Request to Volunteer</button>
-<style>
-.volunteer-request-btn-minimal {
-    background: #fff;
-    color: #6366f1;
-    border: 1.2px solid #e0e7ff;
-    border-radius: 1.6em;
-    padding: 11px 28px;
-    font-weight: 500;
-    font-size: 1.07em;
-    cursor: pointer;
-    box-shadow: 0 2px 10px 0 rgba(99,102,241,0.04);
-    outline: none;
-    transition: color 0.18s, border 0.18s, background 0.18s, transform 0.18s, box-shadow 0.18s;
-    letter-spacing: 0.01em;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-}
-.volunteer-request-btn-minimal:hover, .volunteer-request-btn-minimal:focus {
-    background: #4F46E5;
-    color: #fff;
-    border-color: #4F46E5;
-    transform: scale(1.045);
-    box-shadow: 0 4px 16px 0 #6366f12a;
-}
-.volunteer-request-btn-minimal:active {
-    background: #3730A3;
-    color: #fff;
-    border-color: #3730A3;
-    transform: scale(0.98);
-}
-</style>
-            {% endif %}
-        </form>
+                
+                {% if has_requested %}
+                    <div class="quick-info-item">
+                        <div class="quick-info-label">Request Status</div>
+                        <div class="quick-info-value">
+                            {% if request_status == 0 %}
+                                <i class="fas fa-clock" style="color: var(--warning);"></i>
+                                <span style="color: var(--warning);">Pending</span>
+                            {% elif request_status == 1 %}
+                                <i class="fas fa-check-circle" style="color: var(--success);"></i>
+                                <span style="color: var(--success);">Accepted</span>
+                            {% else %}
+                                <i class="fas fa-times-circle" style="color: var(--danger);"></i>
+                                <span style="color: var(--danger);">Rejected</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
 
+            <!-- Combined Description and Organizer Section -->
+            <div class="event-card">
+                <div class="event-card-header">
+                    <h2 class="event-card-title">
+                        <i class="fas fa-info-circle"></i>
+                        About This Event
+                    </h2>
+                    <div class="share-buttons">
+                        <button class="share-button" onclick="shareEvent('facebook')" title="Share on Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="share-button" onclick="shareEvent('twitter')" title="Share on Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="share-button" onclick="copyEventLink()" title="Copy Link">
+                            <i class="fas fa-link"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="event-card-body">
+                    <div class="event-description">
+                        {{ event.event_content|linebreaksbr }}
+                    </div>
+                    
+                    <!-- Organizer Link - Kept as requested -->
+                    <div style="margin-top: 1rem;">
+                        <a href="{% url 'User:organizer_profile' event.id %}" class="organizer-link">
+                            <div class="organizer-avatar">
+                                {% if event.user.user_name|slice:":1" %}
+                                    {{ event.user.user_name|slice:":1" }}
+                                {% else %}
+                                    O
+                                {% endif %}
+                            </div>
+                            <div class="organizer-info">
+                                <div class="organizer-name">{{ event.user.user_name|default:"Event Organizer" }}</div>
+                                <div class="organizer-meta">Click to view organizer profile</div>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column - Actions and Info -->
+        <div>
+            <!-- Action Card -->
+            <div class="event-card">
+                <div class="event-card-header">
+                    <h2 class="event-card-title">
+                        <i class="fas fa-hands-helping"></i>
+                        Volunteer Now
+                    </h2>
+                </div>
+                <div class="event-card-body">
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <form method="POST">
+                            {% csrf_token %}
+                            {% if has_requested %}
+                                {% if request_status == 1 %}
+                                    <div class="contact-organizer-box">
+                                        <i class="fas fa-exclamation-circle" style="color: var(--warning);"></i>
+                                        <span>Can't make it?</span>
+                                        <a href="mailto:{{ event.user.user_email }}?subject=Unable to Attend Event: {{ event.event_title|urlencode }}&body=Dear {{ event.user.user_name }},%0D%0A%0D%0AI am unable to attend the event '{{ event.event_title }}' due to [your reason here].%0D%0A%0D%0ARegards,%0D%0A[Your Name]" class="contact-organizer-link">Contact organizer</a>
+                                    </div>
+                                {% elif request_status == 2 %}
+                                    <!-- No action needed for rejected status -->
+                                {% elif request_status == 0 %}
+                                    <button type="submit" name="undo" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel your volunteer request?')">
+                                        <i class="fas fa-times"></i> Cancel Request
+                                    </button>
+                                {% endif %}
+                            {% else %}
+                                <button type="submit" name="request" class="btn btn-primary" onclick="return confirm('Do you want to apply for this event?')">
+                                    <i class="fas fa-hands-helping"></i> Request to Volunteer
+                                </button>
+                            {% endif %}
+                        </form>
+                    </div>
+
+                    <!-- Event Details List -->
+                    <div style="margin-top: 1rem;">
+                        <div style="font-size: 0.85rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-secondary);">Event Details</div>
+                        <ul class="event-details-list">
+                            <li class="event-details-item">
+                                <div class="event-details-label">Date</div>
+                                <div class="event-details-value">{{ event.event_datetime|date:"F j, Y" }}</div>
+                            </li>
+                            <li class="event-details-item">
+                                <div class="event-details-label">Time</div>
+                                <div class="event-details-value">{{ event.event_datetime|date:"g:i A" }}</div>
+                            </li>
+                            <li class="event-details-item">
+                                <div class="event-details-label">Location</div>
+                                <div class="event-details-value">{{ event.event_venue|default:"TBA" }}</div>
+                            </li>
+                            <li class="event-details-item">
+                                <div class="event-details-label">Industry</div>
+                                <div class="event-details-value">{{ event.industry.industry_name }}</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="event-footer">
     <p>You're viewing this as a volunteer. Want to organize an event? <a href="{% url 'Guest:user_who' %}">Switch role</a></p>
 </div>
+
+<!-- Scripts -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Countdown timer - simplified
+        const countdownDisplay = document.getElementById('countdown-text');
+        if (countdownDisplay) {
+            // Get event date from Django template
+            const eventDate = new Date("{{ event.event_datetime|date:'Y-m-d H:i:s' }}");
+            
+            function updateCountdown() {
+                const now = new Date();
+                const diff = eventDate - now;
+                
+                if (diff <= 0) {
+                    countdownDisplay.textContent = "Happening now!";
+                    return;
+                }
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                
+                if (days > 0) {
+                    countdownDisplay.textContent = `${days}d ${hours}h`;
+                } else {
+                    countdownDisplay.textContent = `${hours}h ${minutes}m`;
+                }
+            }
+            
+            updateCountdown();
+            setInterval(updateCountdown, 60000); // Update every minute
+        }
+        
+        // Mobile tabs functionality
+        const mobileTabs = document.querySelectorAll('.mobile-tab');
+        if (mobileTabs.length > 0) {
+            mobileTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    mobileTabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    const tabName = this.getAttribute('data-tab');
+                    // Implementation would depend on your DOM structure
+                });
+            });
+        }
+    });
+    
+    // Share functionality
+    function shareEvent(platform) {
+        const eventTitle = "{{ event.event_title|escapejs }}";
+        const eventUrl = window.location.href;
+        const eventDescription = "Join me at this volunteer event: {{ event.event_title|escapejs }}";
+        
+        let shareUrl;
+        
+        switch(platform) {
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(eventUrl)}`;
+                break;
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(eventDescription)}&url=${encodeURIComponent(eventUrl)}`;
+                break;
+        }
+        
+        if (shareUrl) {
+            window.open(shareUrl, '_blank');
+        }
+    }
+    
+    // Copy link functionality
+    function copyEventLink() {
+        const eventUrl = window.location.href;
+        
+        // Create a temporary input element
+        const tempInput = document.createElement('input');
+        tempInput.value = eventUrl;
+        document.body.appendChild(tempInput);
+        
+        // Select and copy the link
+        tempInput.select();
+        document.execCommand('copy');
+        
+        // Remove the temporary element
+        document.body.removeChild(tempInput);
+        
+        // Show feedback
+        alert('Event link copied to clipboard!');
+    }
+</script>
+
+<!-- Add Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 {% endblock %}
