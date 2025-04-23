@@ -1,245 +1,726 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Edit Profile Page</title>
+    <title>Edit Profile | VolHub</title>
+    {% load static %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730A3;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #f9fafb;
+            --card-bg: #ffffff;
+            --text: #111827;
+            --text-secondary: #4b5563;
+            --text-tertiary: #6b7280;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.25rem;
+            --radius: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
         }
-        h2 {
-            text-align: center;
-        }
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
-        }
-        .tabs a {
-            padding: 10px 20px;
-            text-decoration: none;
-            color: #007BFF;
-            border-bottom: 2px solid transparent;
-        }
-        .tabs a.active {
-            border-bottom: 2px solid #007BFF;
-            font-weight: bold;
-        }
-        .container {
-            display: flex;
-            max-width: 1000px;
-            margin: 0 auto;
-            gap: 20px;
-        }
-        .section {
-            background: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-            flex: 1;
-        }
-        .section label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-        .section input, .section select, .section textarea {
-            width: 100%;
-            padding: 5px;
-            margin-bottom: 10px;
+
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
-        .section textarea {
-            height: 100px;
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
         }
-        .nav-buttons {
-            text-align: center;
-            margin-top: 20px;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        .nav-buttons button {
-            padding: 10px 20px;
-            margin: 0 5px;
-            background-color: #007BFF;
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        .back-button:hover {
+            color: var(--primary);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .profile-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 2rem;
             color: white;
-            border: none;
-            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
         }
-        .nav-buttons button:disabled {
-            background-color: #cccccc;
+
+        .profile-photo-container {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-photo-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .photo-upload-label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--primary-dark);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: background-color 0.2s;
+        }
+
+        .photo-upload-label:hover {
+            background-color: var(--primary);
+        }
+
+        .photo-upload-input {
+            display: none;
+        }
+
+        .profile-info h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .profile-info p {
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .profile-completion {
+            margin-top: 1rem;
+        }
+
+        .completion-bar {
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .completion-progress {
+            height: 100%;
+            background-color: white;
+            border-radius: 3px;
+        }
+
+        .completion-text {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            white-space: nowrap;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .tab:hover {
+            color: var(--primary);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .tab-content {
+            padding: 2rem;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .form-section {
+            margin-bottom: 2rem;
+        }
+
+        .form-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.9375rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background-color: var(--card-bg);
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-control:disabled {
+            background-color: var(--border-light);
             cursor: not-allowed;
         }
-        a {
-            display: inline-block;
-            margin: 10px 0;
-            color: #007BFF;
-            text-decoration: none;
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
         }
-        a:hover {
-            text-decoration: underline;
+
+        .form-hint {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 0.5rem;
         }
-        #save-status {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            background-color: #28a745;
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background-color: var(--border-light);
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
             color: white;
-            border-radius: 5px;
-            display: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-primary:disabled {
+            background-color: var(--primary-light);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--border-light);
+        }
+
+        .btn-secondary:disabled {
+            color: var(--text-tertiary);
+            cursor: not-allowed;
+        }
+
+        .save-status {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 0.75rem 1.5rem;
+            background-color: var(--success);
+            color: white;
+            border-radius: var(--radius);
+            font-weight: 500;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 100;
+            opacity: 0;
+            transform: translateY(1rem);
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .save-status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+                gap: 1rem;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <h2>Edit Profile Page</h2>
+    <div class="container">
+        <!-- Back Button -->
+        {% if request.session.last_dashboard_url %}
+            <a href="{{ request.session.last_dashboard_url }}" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        {% elif user_type == "organizer" %}
+            <a href="{% url 'User:organizer_dashboard' %}" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        {% else %}
+            <a href="{% url 'User:volunteer_dashboard' %}" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        {% endif %}
 
-    <!-- Quick-Fix Back Link -->
-    {% if user_type == "organizer" %}
-        <a href="{% url 'User:organizer_dashboard' %}">Back to Organizer Dashboard</a>
-    {% elif user_type == "volunteer" %}
-        <a href="{% url 'User:volunteer_dashboard' %}">Back to Volunteer Dashboard</a>
-    {% else %}
-        <a href="{% url 'User:volunteer_dashboard' %}">Back to Volunteer Dashboard</a>
-    {% endif %}
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Edit Profile</h1>
+        </div>
 
-    <!-- Save Status Indicator -->
-    <div id="save-status">All Changes Saved</div>
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-photo-container">
+                    {% if user.user_photo %}
+                        <img src="{{ user.user_photo.url }}" alt="{{ user.user_name }}" class="profile-photo">
+                    {% else %}
+                        <div class="profile-photo-placeholder">
+                            {% if user.user_name|slice:":1" %}
+                                {{ user.user_name|slice:":1" }}
+                            {% else %}
+                                U
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    <label for="photo-upload" class="photo-upload-label">
+                        <i class="fas fa-camera"></i>
+                    </label>
+                    <input type="file" id="photo-upload" name="user_photo" class="photo-upload-input" accept="image/*">
+                </div>
+                <div class="profile-info">
+                    <h1>{{ user.user_name|default:"Your Profile" }}</h1>
+                    <p>{{ user.user_email }}</p>
+                </div>
+            </div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-        <a href="{% url 'User:edit_profile' 1 %}" class="{% if page == 1 %}active{% endif %}">About</a>
-        <a href="{% url 'User:edit_profile' 2 %}" class="{% if page == 2 %}active{% endif %}">Education</a>
-        <a href="{% url 'User:edit_profile' 3 %}" class="{% if page == 3 %}active{% endif %}">Experience</a>
-        <a href="{% url 'User:edit_profile' 4 %}" class="{% if page == 4 %}active{% endif %}">Links</a>
-        <a href="{% url 'User:edit_profile' 5 %}" class="{% if page == 5 %}active{% endif %}">Contact</a>
+            <!-- Tabs Navigation -->
+            <div class="tabs">
+                <a href="{% url 'User:edit_profile' 1 %}" class="tab {% if page == 1 %}active{% endif %}">
+                    <i class="fas fa-user"></i> About
+                </a>
+                <a href="{% url 'User:edit_profile' 2 %}" class="tab {% if page == 2 %}active{% endif %}">
+                    <i class="fas fa-graduation-cap"></i> Education
+                </a>
+                <a href="{% url 'User:edit_profile' 3 %}" class="tab {% if page == 3 %}active{% endif %}">
+                    <i class="fas fa-briefcase"></i> Experience
+                </a>
+                <a href="{% url 'User:edit_profile' 4 %}" class="tab {% if page == 4 %}active{% endif %}">
+                    <i class="fas fa-link"></i> Links
+                </a>
+                <a href="{% url 'User:edit_profile' 5 %}" class="tab {% if page == 5 %}active{% endif %}">
+                    <i class="fas fa-address-book"></i> Contact
+                </a>
+            </div>
+
+            <!-- Tab Content -->
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="tab-content">
+                    {% if page == 1 %}
+                        <!-- Tab 1: About -->
+                        <div class="form-grid">
+                            <div class="form-section">
+                                <h3 class="section-title"><i class="fas fa-user-circle"></i> Basic Information</h3>
+                                <div class="form-group">
+                                    <label for="user_name" class="form-label">Full Name</label>
+                                    <input type="text" name="user_name" id="user_name" class="form-control" value="{{ user.user_name }}" data-field="user_name" placeholder="Enter your full name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_username" class="form-label">Username</label>
+                                    <input type="text" name="user_username" id="user_username" class="form-control" value="{{ user.user_username }}" data-field="user_username" placeholder="Enter your username">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_gender" class="form-label">Gender</label>
+                                    <select name="user_gender" id="user_gender" class="form-control" data-field="user_gender">
+                                        <option value="" {% if not user.user_gender %}selected{% endif %}>-- Select --</option>
+                                        <option value="Male" {% if user.user_gender == "Male" %}selected{% endif %}>Male</option>
+                                        <option value="Female" {% if user.user_gender == "Female" %}selected{% endif %}>Female</option>
+                                        <option value="Other" {% if user.user_gender == "Other" %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <h3 class="section-title"><i class="fas fa-comment-alt"></i> About You</h3>
+                                <div class="form-group">
+                                    <label for="user_bio" class="form-label">Bio</label>
+                                    <textarea name="user_bio" id="user_bio" class="form-control" data-field="user_bio" placeholder="Tell us about yourself...">{{ user.user_bio }}</textarea>
+                                    <div class="form-hint">Write a short bio that describes who you are and what you're passionate about.</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif page == 2 %}
+                        <!-- Tab 2: Education -->
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fas fa-graduation-cap"></i> Education</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="user_degree_type" class="form-label">Degree Type</label>
+                                    <select name="user_degree_type" id="user_degree_type" class="form-control" data-field="user_degree_type">
+                                        <option value="" {% if not user.user_degree_type %}selected{% endif %}>-- Select --</option>
+                                        <option value="High School" {% if user.user_degree_type == "High School" %}selected{% endif %}>High School</option>
+                                        <option value="Associate's" {% if user.user_degree_type == "Associate's" %}selected{% endif %}>Associate's</option>
+                                        <option value="Bachelor's" {% if user.user_degree_type == "Bachelor's" %}selected{% endif %}>Bachelor's</option>
+                                        <option value="Master's" {% if user.user_degree_type == "Master's" %}selected{% endif %}>Master's</option>
+                                        <option value="PhD" {% if user.user_degree_type == "PhD" %}selected{% endif %}>PhD</option>
+                                        <option value="Other" {% if user.user_degree_type == "Other" %}selected{% endif %}>Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_institution" class="form-label">Educational Institution</label>
+                                    <input type="text" name="user_institution" id="user_institution" class="form-control" value="{{ user.user_institution }}" data-field="user_institution" placeholder="Enter your school or university">
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="user_field_of_study" class="form-label">Field of Study</label>
+                                    <input type="text" name="user_field_of_study" id="user_field_of_study" class="form-control" value="{{ user.user_field_of_study }}" data-field="user_field_of_study" placeholder="Enter your major or field of study">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Graduation Date</label>
+                                    <div class="form-grid" style="gap: 1rem;">
+                                        <select name="user_graduation_month" id="user_graduation_month" class="form-control" data-field="user_graduation_month">
+                                            <option value="" {% if not user.user_graduation_month %}selected{% endif %}>-- Month --</option>
+                                            {% for month in months %}
+                                                <option value="{{ forloop.counter }}" {% if user.user_graduation_month == forloop.counter %}selected{% endif %}>{{ month }}</option>
+                                            {% endfor %}
+                                        </select>
+                                        <select name="user_graduation_year" id="user_graduation_year" class="form-control" data-field="user_graduation_year">
+                                            <option value="" {% if not user.user_graduation_year %}selected{% endif %}>-- Year --</option>
+                                            {% for year in years %}
+                                                <option value="{{ year }}" {% if user.user_graduation_year == year %}selected{% endif %}>{{ year }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif page == 3 %}
+                        <!-- Tab 3: Experience -->
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fas fa-briefcase"></i> Work Experience</h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="user_organization_name" class="form-label">Organization Name</label>
+                                    <input type="text" name="user_organization_name" id="user_organization_name" class="form-control" value="{{ user.user_organization_name }}" data-field="user_organization_name" placeholder="Enter your organization name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_job_title" class="form-label">Job Title</label>
+                                    <input type="text" name="user_job_title" id="user_job_title" class="form-control" value="{{ user.user_job_title }}" data-field="user_job_title" placeholder="Enter your job title">
+                                </div>
+                            </div>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="user_industry" class="form-label">Industry</label>
+                                    <input type="text" name="user_industry" id="user_industry" class="form-control" value="{{ user.user_industry }}" data-field="user_industry" placeholder="Enter your industry">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_location" class="form-label">Location</label>
+                                    <input type="text" name="user_location" id="user_location" class="form-control" value="{{ user.user_location }}" data-field="user_location" placeholder="Enter your work location">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fas fa-hands-helping"></i> Volunteering Experience</h3>
+                            <div class="form-group">
+                                <label for="user_past_volunteering" class="form-label">Past Volunteering Experience</label>
+                                <textarea name="user_past_volunteering" id="user_past_volunteering" class="form-control" data-field="user_past_volunteering" placeholder="Describe your past volunteering experiences...">{{ user.user_past_volunteering }}</textarea>
+                                <div class="form-hint">Share your previous volunteering experiences, roles, and organizations you've worked with.</div>
+                            </div>
+                        </div>
+                    {% elif page == 4 %}
+                        <!-- Tab 4: Links -->
+                        <div class="form-section">
+                            <h3 class="section-title"><i class="fas fa-link"></i> Social Media & Professional Links</h3>
+                            <div class="form-group">
+                                <label for="user_links" class="form-label">Links</label>
+                                <textarea name="user_links" id="user_links" class="form-control" data-field="user_links" placeholder="LinkedIn: https://linkedin.com/in/yourprofile&#10;GitHub: https://github.com/yourusername&#10;Twitter: https://twitter.com/yourusername">{{ user.user_links }}</textarea>
+                                <div class="form-hint">Add your social media and professional links (one per line). Format: Platform: URL</div>
+                            </div>
+                        </div>
+                    {% elif page == 5 %}
+                        <!-- Tab 5: Contact -->
+                        <div class="form-grid">
+                            <div class="form-section">
+                                <h3 class="section-title"><i class="fas fa-address-card"></i> Contact Information</h3>
+                                <div class="form-group">
+                                    <label for="user_email" class="form-label">Email Address</label>
+                                    <input type="email" name="user_email" id="user_email" class="form-control" value="{{ user.user_email }}" readonly>
+                                    <div class="form-hint">Email cannot be changed. Contact support if you need to update it.</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_contact" class="form-label">Phone Number</label>
+                                    <input type="text" name="user_contact" id="user_contact" class="form-control" value="{{ user.user_contact }}" data-field="user_contact" placeholder="Enter your phone number">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_address" class="form-label">Address</label>
+                                    <input type="text" name="user_address" id="user_address" class="form-control" value="{{ user.user_address }}" data-field="user_address" placeholder="Enter your address">
+                                </div>
+                            </div>
+                            <div class="form-section">
+                                <h3 class="section-title"><i class="fas fa-exclamation-circle"></i> Emergency Contact</h3>
+                                <div class="form-group">
+                                    <label for="user_emergency_name" class="form-label">Emergency Contact Name</label>
+                                    <input type="text" name="user_emergency_name" id="user_emergency_name" class="form-control" value="{{ user.user_emergency_name }}" data-field="user_emergency_name" placeholder="Enter emergency contact name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_emergency_phone" class="form-label">Emergency Contact Number</label>
+                                    <input type="text" name="user_emergency_phone" id="user_emergency_phone" class="form-control" value="{{ user.user_emergency_phone }}" data-field="user_emergency_phone" placeholder="Enter emergency contact number">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="user_official_address" class="form-label">Official Address</label>
+                                    <input type="text" name="user_official_address" id="user_official_address" class="form-control" value="{{ user.user_official_address }}" data-field="user_official_address" placeholder="Enter your official address">
+                                </div>
+                                <div class="form-group">
+                                    <label for="user_official_contact_number" class="form-label">Official Contact Number</label>
+                                    <input type="text" name="user_official_contact_number" id="user_official_contact_number" class="form-control" value="{{ user.user_official_contact_number }}" data-field="user_official_contact_number" placeholder="Enter your official contact number">
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <button type="submit" name="previous" class="btn btn-secondary" {% if page == 1 %}disabled{% endif %}>
+                        <i class="fas fa-arrow-left"></i> Previous
+                    </button>
+                    <button type="submit" name="next" class="btn btn-primary" {% if page == 5 %}disabled{% endif %}>
+                        Next <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <div class="container">
-            {% if page == 1 %}
-                <!-- Tab 1: About -->
-                <div class="section">
-                    <h3>Basic Information</h3>
-                    <label for="user_name">Name:</label>
-                    <input type="text" name="user_name" id="user_name" value="{{ user.user_name }}" data-field="user_name">
-                    
-                    <label for="user_gender">Gender:</label>
-                    <select name="user_gender" id="user_gender" data-field="user_gender">
-                        <option value="" {% if not user.user_gender %}selected{% endif %}>-- Select --</option>
-                        <option value="Male" {% if user.user_gender == "Male" %}selected{% endif %}>Male</option>
-                        <option value="Female" {% if user.user_gender == "Female" %}selected{% endif %}>Female</option>
-                        <option value="Other" {% if user.user_gender == "Other" %}selected{% endif %}>Other</option>
-                    </select>
-                </div>
-                <div class="section">
-                    <h3>About You</h3>
-                    <label for="user_bio">Bio:</label>
-                    <textarea name="user_bio" id="user_bio" data-field="user_bio">{{ user.user_bio }}</textarea>
-                </div>
-            {% elif page == 2 %}
-                <!-- Tab 2: Education -->
-                <div class="section">
-                    <h3>Education</h3>
-                    <label for="user_degree_type">Degree Type:</label>
-                    <select name="user_degree_type" id="user_degree_type" data-field="user_degree_type">
-                        <option value="" {% if not user.user_degree_type %}selected{% endif %}>-- Select --</option>
-                        <option value="Bachelor's" {% if user.user_degree_type == "Bachelor's" %}selected{% endif %}>Bachelor's</option>
-                        <option value="Master's" {% if user.user_degree_type == "Master's" %}selected{% endif %}>Master's</option>
-                        <option value="PhD" {% if user.user_degree_type == "PhD" %}selected{% endif %}>PhD</option>
-                    </select>
-                    
-                    <label for="user_institution">Educational Institution:</label>
-                    <input type="text" name="user_institution" id="user_institution" value="{{ user.user_institution }}" data-field="user_institution">
-                    
-                    <label for="user_field_of_study">Field of Study:</label>
-                    <input type="text" name="user_field_of_study" id="user_field_of_study" value="{{ user.user_field_of_study }}" data-field="user_field_of_study">
-                    
-                    <label for="user_graduation_month">Month of Graduation:</label>
-                    <select name="user_graduation_month" id="user_graduation_month" data-field="user_graduation_month">
-                        <option value="" {% if not user.user_graduation_month %}selected{% endif %}>-- Select --</option>
-                        {% for month in months %}
-                            <option value="{{ forloop.counter }}" {% if user.user_graduation_month == forloop.counter %}selected{% endif %}>{{ month }}</option>
-                        {% endfor %}
-                    </select>
-                    
-                    <label for="user_graduation_year">Year of Graduation:</label>
-                    <select name="user_graduation_year" id="user_graduation_year" data-field="user_graduation_year">
-                        <option value="" {% if not user.user_graduation_year %}selected{% endif %}>-- Select --</option>
-                        {% for year in years %}
-                            <option value="{{ year }}" {% if user.user_graduation_year == year %}selected{% endif %}>{{ year }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            {% elif page == 3 %}
-                <!-- Tab 3: Experience -->
-                <div class="section">
-                    <h3>Experience</h3>
-                    <label for="user_organization_name">Organization Name:</label>
-                    <input type="text" name="user_organization_name" id="user_organization_name" value="{{ user.user_organization_name }}" data-field="user_organization_name">
-                    
-                    <label for="user_job_title">Job Title:</label>
-                    <input type="text" name="user_job_title" id="user_job_title" value="{{ user.user_job_title }}" data-field="user_job_title">
-                    
-                    <label for="user_industry">Industry:</label>
-                    <input type="text" name="user_industry" id="user_industry" value="{{ user.user_industry }}" data-field="user_industry">
-                    
-                    <label for="user_location">Location:</label>
-                    <input type="text" name="user_location" id="user_location" value="{{ user.user_location }}" data-field="user_location">
-                </div>
-            {% elif page == 4 %}
-                <!-- Tab 4: Links -->
-                <div class="section">
-                    <h3>Links</h3>
-                    <label for="user_links">Links (e.g., GitHub, LinkedIn):</label>
-                    <textarea name="user_links" id="user_links" data-field="user_links">{{ user.user_links }}</textarea>
-                </div>
-            {% elif page == 5 %}
-                <!-- Tab 5: Contact -->
-                <div class="section">
-                    <h3>How can we reach you?</h3>
-                    <label for="user_email">Email:</label>
-                    <input type="email" name="user_email" id="user_email" value="{{ user.user_email }}" readonly>
-                    
-                    <label for="user_contact">Phone Number:</label>
-                    <input type="text" name="user_contact" id="user_contact" value="{{ user.user_contact }}" data-field="user_contact">
-                    
-                    <label for="user_city">City:</label>
-                    <select name="user_city" id="user_city" data-field="user_city">
-                        <option value="" {% if not user.user_city %}selected{% endif %}>-- Select --</option>
-                        {% for city in user_city.get_all_cities %}
-                            <option value="{{ city.id }}" {% if user.user_city.id == city.id %}selected{% endif %}>{{ city.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="section">
-                    <h3>Emergency Contact</h3>
-                    <label for="user_emergency_name">Emergency Contact Name:</label>
-                    <input type="text" name="user_emergency_name" id="user_emergency_name" value="{{ user.user_emergency_name }}" data-field="user_emergency_name">
-                    
-                    <label for="user_emergency_phone">Emergency Contact Number:</label>
-                    <input type="text" name="user_emergency_phone" id="user_emergency_phone" value="{{ user.user_emergency_phone }}" data-field="user_emergency_phone">
-                </div>
-            {% endif %}
-        </div>
-        
-        <!-- Navigation Buttons -->
-        <div class="nav-buttons">
-            <button type="submit" name="previous" {% if page == 1 %}disabled{% endif %}>Previous</button>
-            <button type="submit" name="next" {% if page == 5 %}disabled{% endif %}>Next</button>
-        </div>
-    </form>
+    <!-- Save Status Indicator -->
+    <div id="save-status" class="save-status">
+        <i class="fas fa-check-circle"></i> Changes saved successfully
+    </div>
 
-    <!-- Auto-Save Script -->
+    <!-- Scripts -->
     <script>
-        document.querySelectorAll('input, select, textarea').forEach(element => {
-            element.addEventListener('input', function() {
-                const field = this.getAttribute('data-field');
-                const value = this.value;
-                saveField(field, value);
+        // Profile Photo Upload Preview
+        const photoUpload = document.getElementById('photo-upload');
+        const photoContainer = document.querySelector('.profile-photo-container');
+        
+        if (photoUpload) {
+            photoUpload.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // Check if there's already an image
+                        let img = photoContainer.querySelector('.profile-photo');
+                        
+                        if (!img) {
+                            // If no image exists, create one and replace the placeholder
+                            const placeholder = photoContainer.querySelector('.profile-photo-placeholder');
+                            if (placeholder) {
+                                placeholder.remove();
+                            }
+                            
+                            img = document.createElement('img');
+                            img.className = 'profile-photo';
+                            photoContainer.prepend(img);
+                        }
+                        
+                        img.src = e.target.result;
+                        
+                        // Upload the image via AJAX
+                        const formData = new FormData();
+                        formData.append('user_photo', photoUpload.files[0]);
+                        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                        
+                        fetch("{% url 'User:update_profile_photo' %}", {
+                            method: 'POST',
+                            body: formData
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.status === 'success') {
+                                showSaveStatus();
+                            }
+                        });
+                    };
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
             });
+        }
+        
+        // Auto-save functionality
+        document.querySelectorAll('input, select, textarea').forEach(element => {
+            if (element.id !== 'photo-upload') {
+                element.addEventListener('input', function() {
+                    const field = this.getAttribute('data-field');
+                    if (field) {
+                        const value = this.value;
+                        saveField(field, value);
+                    }
+                });
+                
+                element.addEventListener('change', function() {
+                    const field = this.getAttribute('data-field');
+                    if (field) {
+                        const value = this.value;
+                        saveField(field, value);
+                    }
+                });
+            }
         });
-
+        
         function saveField(field, value) {
             fetch("{% url 'User:edit_profile' page %}", {
                 method: 'POST',
@@ -252,11 +733,18 @@
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    const saveStatus = document.getElementById('save-status');
-                    saveStatus.style.display = 'block';
-                    setTimeout(() => saveStatus.style.display = 'none', 2000);
+                    showSaveStatus();
                 }
             });
+        }
+        
+        function showSaveStatus() {
+            const saveStatus = document.getElementById('save-status');
+            saveStatus.classList.add('show');
+            
+            setTimeout(() => {
+                saveStatus.classList.remove('show');
+            }, 3000);
         }
     </script>
 </body>

@@ -14,6 +14,76 @@ from django.core.mail import send_mail
 from django.conf import settings
 import magic
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
+from datetime import datetime
+
+# Update profile photo via AJAX
+@login_required
+def update_profile_photo(request):
+    if request.method == 'POST' and request.FILES.get('user_photo'):
+        try:
+            user = tbl_user.objects.get(id=request.session['u_id'])
+            user.user_photo = request.FILES['user_photo']
+            user.save()
+            return JsonResponse({'status': 'success'})
+        except Exception:
+            return JsonResponse({'status': 'error'})
+    return JsonResponse({'status': 'error'})
+
+# Multi-step profile edit view with autosave
+@login_required
+def edit_profile(request, page=1):
+    if 'u_id' not in request.session:
+        return redirect('Guest:login')
+    user = tbl_user.objects.get(id=request.session['u_id'])
+    user_type = user.user_type
+    user_city = tbl_city
+
+    # Months and years for dropdowns
+    months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ]
+    current_year = datetime.now().year
+    years = list(range(current_year - 50, current_year + 10))
+
+    # Handle autosave AJAX
+    if request.method == 'POST' and request.POST.get('autosave') == 'true':
+        field = request.POST.get('field')
+        value = request.POST.get('value')
+        if field and hasattr(user, field):
+            if field == 'user_city':
+                try:
+                    city = tbl_city.objects.get(id=value)
+                    setattr(user, field, city)
+                except Exception:
+                    pass
+            else:
+                setattr(user, field, value)
+            user.save()
+            return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'error'})
+
+    # Handle regular form submission (Next/Previous)
+    if request.method == 'POST':
+        if 'previous' in request.POST and page > 1:
+            return redirect('User:edit_profile', page - 1)
+        if 'next' in request.POST and page < 5:
+            if page == 1:
+                user.is_basic_profile_complete = True
+            user.save()
+            return redirect('User:edit_profile', page + 1)
+
+    context = {
+        'user': user,
+        'user_type': user_type,
+        'user_city': user_city,
+        'page': page,
+        'months': months,
+        'years': years,
+        'request': request, # Pass request to template for session access
+    }
+    return render(request, 'User/edit_profile.html', context)
 
 # Create your views here.
 def logout(request):
@@ -223,6 +293,7 @@ def Event(request):
 #============ FROM HERE STARTS THE PAGES OF VOLUNTEER DASHBOARD ============
 
 def volunteer_dashboard(request):
+    request.session['last_dashboard_url'] = request.path
     user_id = request.session.get('u_id')
     if not user_id:
         return redirect('Guest:login')
@@ -411,6 +482,7 @@ def switch_dashboard(request):
         return redirect('User:volunteer_dashboard')
 
 def organizer_dashboard(request):
+    request.session['last_dashboard_url'] = request.path
     if 'u_id' not in request.session:
         return redirect('Guest:login')
     

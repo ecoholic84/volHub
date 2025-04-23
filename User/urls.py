@@ -48,5 +48,8 @@ urlpatterns = [
     path('converse/<int:event_id>/', views.converse, name='converse'),
     path('settings-page/', views.settings_page, name='settings_page'),
 
+    path('edit-profile/<int:page>/', views.edit_profile, name='edit_profile'),
+    path('update-profile-photo/', views.update_profile_photo, name='update_profile_photo'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

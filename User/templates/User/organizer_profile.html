@@ -244,161 +244,515 @@
         gap: 2rem;
     }
 
-    /* Tabs */
-    .tabs-container {
-        background-color: var(--card-bg);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        overflow: hidden;
+    /* Modern Tab Navigation */
+    .modern-tabs {
+        position: relative;
+        margin-bottom: 2rem;
     }
 
-    .tabs-header {
+    .tab-nav {
         display: flex;
-        border-bottom: 1px solid var(--border);
-        background-color: var(--background);
-        overflow-x: auto;
-        scrollbar-width: none;
-        -ms-overflow-style: none;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
     }
 
-    .tabs-header::-webkit-scrollbar {
-        display: none;
-    }
-
-    .tab-btn {
-        padding: 1rem 1.5rem;
-        background: none;
+    .tab-nav-item {
+        position: relative;
+        padding: 0.75rem 1.25rem;
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        cursor: pointer;
+        transition: all 0.3s ease;
         border: none;
-        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
         font-weight: 600;
         color: var(--text-secondary);
-        cursor: pointer;
-        transition: all 0.2s;
-        white-space: nowrap;
-        position: relative;
-    }
-
-    .tab-btn:hover {
-        color: var(--primary);
-    }
-
-    .tab-btn.active {
-        color: var(--primary);
-    }
-
-    .tab-btn.active::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background-color: var(--primary);
-    }
-
-    .tab-content {
-        padding: 1.5rem;
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    /* Timeline */
-    .timeline {
-        position: relative;
-    }
-
-    .timeline-item {
-        position: relative;
-        padding-left: 2rem;
-        padding-bottom: 2rem;
-    }
-
-    .timeline-item:last-child {
-        padding-bottom: 0;
-    }
-
-    .timeline-item::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0.25rem;
-        width: 1rem;
-        height: 1rem;
-        border-radius: 50%;
-        background-color: var(--primary-light);
         z-index: 1;
     }
 
-    .timeline-item::after {
+    .tab-nav-item:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-md);
+        color: var(--primary);
+    }
+
+    .tab-nav-item.active {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: white;
+    }
+
+    .tab-nav-item.active i {
+        color: white;
+    }
+
+    .tab-nav-item i {
+        color: var(--primary);
+        font-size: 1.25rem;
+    }
+
+    /* Tab Content Styles */
+    .tab-content-container {
+        position: relative;
+        min-height: 300px;
+    }
+
+    .tab-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.4s ease;
+    }
+
+    .tab-content.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        position: relative;
+    }
+
+    /* Education Section */
+    .education-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .education-card::before {
         content: '';
         position: absolute;
-        left: 0.5rem;
-        top: 1.25rem;
-        bottom: 0;
-        width: 1px;
-        background-color: var(--border);
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 100%;
+        background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
     }
 
-    .timeline-item:last-child::after {
-        display: none;
+    .education-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
     }
 
-    .timeline-date {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--primary);
-        margin-bottom: 0.5rem;
+    .education-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
     }
 
-    .timeline-card {
-        background-color: var(--background);
-        border-radius: var(--radius);
-        padding: 1.25rem;
+    .education-details {
+        flex: 1;
     }
 
-    .timeline-title {
-        font-size: 1rem;
-        font-weight: 600;
+    .education-degree {
+        font-size: 1.25rem;
+        font-weight: 700;
         color: var(--text);
         margin-bottom: 0.5rem;
     }
 
-    .timeline-subtitle {
-        font-size: 0.875rem;
-        color: var(--text-secondary);
-        margin-bottom: 0.75rem;
-    }
-
-    .timeline-description {
-        font-size: 0.875rem;
-        color: var(--text-tertiary);
-        line-height: 1.5;
-    }
-
-    .empty-state {
-        padding: 3rem 1.5rem;
-        text-align: center;
-        color: var(--text-secondary);
-    }
-
-    .empty-state-icon {
-        font-size: 2.5rem;
-        color: var(--border);
-        margin-bottom: 1rem;
-    }
-
-    .empty-state-title {
+    .education-institution {
         font-size: 1rem;
+        color: var(--primary);
         font-weight: 600;
         margin-bottom: 0.5rem;
     }
 
-    .empty-state-description {
+    .education-period {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+        border-radius: var(--radius-lg);
         font-size: 0.875rem;
-        max-width: 20rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .education-description {
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    /* Work Experience Section */
+    .work-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .work-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        border-top: 5px solid var(--primary);
+    }
+
+    .work-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .work-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .work-company {
+        font-size: 0.875rem;
+        color: var(--primary);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .work-company i {
+        color: var(--primary);
+    }
+
+    .work-period {
+        position: absolute;
+        top: 1.5rem;
+        right: 1.5rem;
+        padding: 0.25rem 0.75rem;
+        background-color: rgba(79, 70, 229, 0.1);
+        color: var(--primary);
+        border-radius: var(--radius-lg);
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .work-description {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        line-height: 1.6;
+    }
+
+    /* Volunteering Section */
+    .volunteer-timeline {
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .volunteer-timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+        border-radius: 3px;
+    }
+
+    .volunteer-item {
+        position: relative;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+    }
+
+    .volunteer-item:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .volunteer-item::before {
+        content: '';
+        position: absolute;
+        left: -2rem;
+        top: 0.5rem;
+        width: 1rem;
+        height: 1rem;
+        border-radius: 50%;
+        background-color: var(--primary);
+        border: 3px solid white;
+        box-shadow: var(--shadow-sm);
+        z-index: 1;
+    }
+
+    .volunteer-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .volunteer-card:hover {
+        transform: translateX(5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .volunteer-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .volunteer-event {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .volunteer-location {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .volunteer-status {
+        padding: 0.25rem 0.75rem;
+        border-radius: var(--radius-lg);
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .status-accepted {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+    }
+
+    .status-rejected {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+    }
+
+    .volunteer-date {
+        font-size: 0.875rem;
+        color: var(--text-tertiary);
+        margin-top: 0.5rem;
+    }
+
+    /* Events Section */
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .event-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-md);
+    }
+
+    .event-banner {
+        height: 120px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+    }
+
+    .event-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .event-date {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background-color: white;
+        color: var(--primary);
+        padding: 0.375rem 0.75rem;
+        border-radius: var(--radius);
+        font-size: 0.75rem;
+        font-weight: 600;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .event-content {
+        padding: 1.5rem;
+    }
+
+    .event-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .event-location {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .event-description {
+        font-size: 0.875rem;
+        color: var(--text-tertiary);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .event-footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* Skills Section */
+    .skills-container {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 2rem;
+    }
+
+    .skills-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .skills-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .skills-subtitle {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .skills-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+    }
+
+    .skill-item {
+        padding: 0.75rem 1.25rem;
+        background-color: var(--background);
+        border-radius: var(--radius-lg);
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+    }
+
+    .skill-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 100%;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        transition: width 0.3s ease;
+        z-index: -1;
+    }
+
+    .skill-item:hover {
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+    }
+
+    .skill-item:hover::before {
+        width: 100%;
+    }
+
+    .skill-item:hover i {
+        color: white;
+    }
+
+    .skill-item i {
+        color: var(--primary);
+        transition: color 0.3s ease;
+    }
+
+    /* Empty States */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: var(--border);
+        margin-bottom: 1.5rem;
+    }
+
+    .empty-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-description {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        max-width: 400px;
         margin: 0 auto;
     }
 
@@ -428,8 +782,31 @@
             gap: 0.75rem;
         }
 
-        .tab-btn {
-            padding: 0.75rem 1rem;
+        .tab-nav {
+            gap: 0.5rem;
+        }
+
+        .tab-nav-item {
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
+        }
+
+        .tab-nav-item i {
+            font-size: 1rem;
+        }
+
+        .education-header {
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .work-cards {
+            grid-template-columns: 1fr;
+        }
+
+        .events-grid {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -450,6 +827,16 @@
 
         .action-btn {
             width: 100%;
+        }
+
+        .tab-nav {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .tab-nav-item {
+            width: 100%;
+            justify-content: center;
         }
     }
 </style>
@@ -512,196 +899,197 @@
                 </div>
             </div>
             
-            <div class="profile-actions">
-                <a href="{% url 'User:edit_profile' 1 %}" class="action-btn btn-primary">
-                    <i class="fas fa-edit"></i> Edit Profile
-                </a>
-                <button id="share-profile-btn" class="action-btn btn-secondary">
-                    <i class="fas fa-share-alt"></i> Share Profile
-                </button>
-            </div>
+            <button id="share-profile-btn" class="action-btn btn-secondary">
+                <i class="fas fa-share-alt"></i> Share Profile
+            </button>
         </div>
     </div>
     
     <!-- Main Content -->
     <div class="profile-content">
-        <div class="tabs-container">
-            <div class="tabs-header">
-                <button class="tab-btn active" data-tab="education">
+        <!-- Modern Tab Navigation -->
+        <div class="modern-tabs">
+            <div class="tab-nav">
+                <button class="tab-nav-item active" data-tab="education">
                     <i class="fas fa-graduation-cap"></i> Education
                 </button>
-                <button class="tab-btn" data-tab="work">
+                <button class="tab-nav-item" data-tab="work">
                     <i class="fas fa-briefcase"></i> Work Experience
                 </button>
-                <button class="tab-btn" data-tab="volunteer">
+                <button class="tab-nav-item" data-tab="volunteer">
                     <i class="fas fa-hands-helping"></i> Volunteering
                 </button>
                 {% if organizer.user_type == 'organizer' or organizer.user_type == 'both' %}
-                    <button class="tab-btn" data-tab="events">
+                    <button class="tab-nav-item" data-tab="events">
                         <i class="fas fa-calendar-alt"></i> Organized Events
                     </button>
                 {% endif %}
-                <button class="tab-btn" data-tab="skills">
+                <button class="tab-nav-item" data-tab="skills">
                     <i class="fas fa-star"></i> Skills
                 </button>
             </div>
             
-            <div class="tab-content active" id="education">
-                <div class="timeline">
+            <div class="tab-content-container">
+                <!-- Education Tab -->
+                <div class="tab-content active" id="education-content">
                     {% if organizer.user_degree_type or organizer.user_institution or organizer.user_field_of_study or organizer.user_graduation_year %}
-                        <div class="timeline-item">
-                            <div class="timeline-date">{{ organizer.user_graduation_year|default:"N/A" }} - {{ organizer.user_industry|default:"Industry" }}</div>
-                            <div class="timeline-card">
-                                <h3 class="timeline-title">{{ organizer.user_degree_type|default:"Degree" }} in {{ organizer.user_field_of_study|default:"Field of Study" }}</h3>
-                                <p class="timeline-subtitle">{{ organizer.user_institution|default:"Institution" }}</p>
-                                <p class="timeline-description">{{ organizer.user_bio|default:"No description available" }}</p>
+                        <div class="education-card">
+                            <div class="education-header">
+                                <div class="education-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <div class="education-details">
+                                    <h3 class="education-degree">{{ organizer.user_degree_type|default:"Degree" }} in {{ organizer.user_field_of_study|default:"Field of Study" }}</h3>
+                                    <p class="education-institution">{{ organizer.user_institution|default:"Institution" }}</p>
+                                    <span class="education-period">{{ organizer.user_graduation_month|default:"Month" }} {{ organizer.user_graduation_year|default:"Year" }}</span>
+                                    <p class="education-description">{{ organizer.user_bio|default:"No description available" }}</p>
+                                </div>
                             </div>
                         </div>
                     {% else %}
                         <div class="empty-state">
-                            <div class="empty-state-icon">
+                            <div class="empty-icon">
                                 <i class="fas fa-graduation-cap"></i>
                             </div>
-                            <h3 class="empty-state-title">No education records</h3>
-                            <p class="empty-state-description">Add your education details to complete your profile.</p>
+                            <h3 class="empty-title">No education records</h3>
+                            <p class="empty-description">Add your education details to complete your profile.</p>
                         </div>
                     {% endif %}
                 </div>
-            </div>
-            
-            <div class="tab-content" id="work">
-                <div class="timeline">
+                
+                <!-- Work Experience Tab -->
+                <div class="tab-content" id="work-content">
                     {% if organizer.user_job_title or organizer.user_organization_name or organizer.user_industry %}
-                        <div class="timeline-item">
-                            <div class="timeline-date">{{ organizer.user_graduation_year|default:"N/A" }} - Present</div>
-                            <div class="timeline-card">
-                                <h3 class="timeline-title">{{ organizer.user_job_title|default:"Job Title" }}</h3>
-                                <p class="timeline-subtitle">{{ organizer.user_organization_name|default:"Organization" }}</p>
-                                <p class="timeline-description">{{ organizer.user_bio|default:"No description available" }}</p>
+                        <div class="work-cards">
+                            <div class="work-card">
+                                <h3 class="work-title">{{ organizer.user_job_title|default:"Job Title" }}</h3>
+                                <p class="work-company">
+                                    <i class="fas fa-building"></i>
+                                    {{ organizer.user_organization_name|default:"Organization" }}
+                                </p>
+                                <span class="work-period">{{ organizer.user_graduation_year|default:"Year" }} - Present</span>
+                                <p class="work-description">{{ organizer.user_bio|default:"No description available" }}</p>
                             </div>
                         </div>
                     {% else %}
                         <div class="empty-state">
-                            <div class="empty-state-icon">
+                            <div class="empty-icon">
                                 <i class="fas fa-briefcase"></i>
                             </div>
-                            <h3 class="empty-state-title">No work experience</h3>
-                            <p class="empty-state-description">Add your work experience to showcase your professional background.</p>
+                            <h3 class="empty-title">No work experience</h3>
+                            <p class="empty-description">Add your work experience to showcase your professional background.</p>
                         </div>
                     {% endif %}
                 </div>
-            </div>
-            
-            <div class="tab-content" id="volunteer">
-                <div class="timeline">
-                    {% for request in organizer.volunteer_requests.all %}
-                        {% if request.request_status == 1 or request.request_status == 2 %}
-                            <div class="timeline-item">
-                                <div class="timeline-date">{{ request.request_datetime|date:"M Y" }}</div>
-                                <div class="timeline-card">
-                                    <h3 class="timeline-title">{{ request.event.event_title }}</h3>
-                                    <p class="timeline-subtitle">
-                                        <i class="fas fa-map-marker-alt"></i> {{ request.event.event_venue }}, {{ request.event.event_city.city_name }}
-                                    </p>
-                                    <p class="timeline-description">
-                                        Status: 
-                                        {% if request.request_status == 1 %}
-                                            <span style="color: var(--success);">Accepted</span>
-                                        {% elif request.request_status == 2 %}
-                                            <span style="color: var(--danger);">Rejected</span>
-                                        {% endif %}
-                                        on {{ request.request_datetime|date:"F d, Y" }}
-                                    </p>
-                                </div>
-                            </div>
-                        {% endif %}
-                    {% empty %}
+                
+                <!-- Volunteering Tab -->
+                <div class="tab-content" id="volunteer-content">
+                    {% if organizer.volunteer_requests.all %}
+                        <div class="volunteer-timeline">
+                            {% for request in organizer.volunteer_requests.all %}
+                                {% if request.request_status == 1 or request.request_status == 2 %}
+                                    <div class="volunteer-item">
+                                        <div class="volunteer-card">
+                                            <div class="volunteer-header">
+                                                <div>
+                                                    <h3 class="volunteer-event">{{ request.event.event_title }}</h3>
+                                                    <p class="volunteer-location">
+                                                        <i class="fas fa-map-marker-alt"></i>
+                                                        {{ request.event.event_venue }}, {{ request.event.event_city.city_name }}
+                                                    </p>
+                                                </div>
+                                                <span class="volunteer-status status-{% if request.request_status == 1 %}accepted{% else %}rejected{% endif %}">
+                                                    {% if request.request_status == 1 %}
+                                                        <i class="fas fa-check-circle"></i> Accepted
+                                                    {% elif request.request_status == 2 %}
+                                                        <i class="fas fa-times-circle"></i> Rejected
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                            <p class="volunteer-date">
+                                                <i class="fas fa-calendar-alt"></i>
+                                                {{ request.request_datetime|date:"F d, Y" }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% else %}
                         <div class="empty-state">
-                            <div class="empty-state-icon">
+                            <div class="empty-icon">
                                 <i class="fas fa-hands-helping"></i>
                             </div>
-                            <h3 class="empty-state-title">No volunteering history</h3>
-                            <p class="empty-state-description">Apply to volunteer opportunities to build your volunteering history.</p>
+                            <h3 class="empty-title">No volunteering history</h3>
+                            <p class="empty-description">Apply to volunteer opportunities to build your volunteering history.</p>
                         </div>
-                    {% endfor %}
+                    {% endif %}
                 </div>
-            </div>
-            
-            <div class="tab-content" id="events">
-                <div class="timeline">
-                    {% for event in organizer.event_set.all %}
-                        <div class="timeline-item">
-                            <div class="timeline-date">{{ event.event_datetime|date:"M Y" }}</div>
-                            <div class="timeline-card">
-                                <h3 class="timeline-title">{{ event.event_title }}</h3>
-                                <p class="timeline-subtitle">
-                                    <i class="fas fa-map-marker-alt"></i> {{ event.event_venue }}, {{ event.event_city.city_name }}
-                                </p>
-                                <p class="timeline-description">{{ event.event_content }}</p>
-                                <div style="margin-top: 0.75rem;">
-                                    <a href="{% url 'User:event_action' event.id %}" class="action-btn btn-secondary" style="font-size: 0.75rem; padding: 0.375rem 0.75rem;">
-                                        <i class="fas fa-eye"></i> View Details
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    {% empty %}
-                        <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-calendar-alt"></i>
-                            </div>
-                            <h3 class="empty-state-title">No organized events</h3>
-                            <p class="empty-state-description">Create events to build your organizer portfolio.</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-            
-            <div class="tab-content" id="skills">
-                <div class="skills-container">
-                    {% if organizer.skills.all %}
-                        <div class="skills-grid">
-                            {% for skill in organizer.skills.all %}
-                                <div class="skill-badge">
-                                    <i class="fas fa-check-circle"></i> {{ skill.skill_name }}
+                
+                <!-- Organized Events Tab -->
+                <div class="tab-content" id="events-content">
+                    {% if organizer.event_set.all %}
+                        <div class="events-grid">
+                            {% for event in organizer.event_set.all %}
+                                <div class="event-card">
+                                    <div class="event-banner">
+                                        <i class="fas fa-calendar-alt"></i>
+                                        <span class="event-date">{{ event.event_datetime|date:"M d, Y" }}</span>
+                                    </div>
+                                    <div class="event-content">
+                                        <h3 class="event-title">{{ event.event_title }}</h3>
+                                        <p class="event-location">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            {{ event.event_venue }}, {{ event.event_city.city_name }}
+                                        </p>
+                                        <p class="event-description">{{ event.event_content }}</p>
+                                        <div class="event-footer">
+                                            <a href="{% url 'User:event_action' event.id %}" class="action-btn btn-secondary" style="font-size: 0.75rem; padding: 0.375rem 0.75rem;">
+                                                <i class="fas fa-eye"></i> View Details
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>
                     {% else %}
                         <div class="empty-state">
-                            <div class="empty-state-icon">
-                                <i class="fas fa-star"></i>
+                            <div class="empty-icon">
+                                <i class="fas fa-calendar-alt"></i>
                             </div>
-                            <h3 class="empty-state-title">No skills added</h3>
-                            <p class="empty-state-description">Add skills to showcase your abilities to event organizers.</p>
+                            <h3 class="empty-title">No organized events</h3>
+                            <p class="empty-description">Create events to build your organizer portfolio.</p>
                         </div>
                     {% endif %}
                 </div>
                 
-                <style>
-                    .skills-grid {
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 0.75rem;
-                        margin-top: 1rem;
-                    }
-                    
-                    .skill-badge {
-                        background-color: var(--background);
-                        color: var(--text-secondary);
-                        padding: 0.5rem 1rem;
-                        border-radius: 9999px;
-                        font-size: 0.875rem;
-                        font-weight: 500;
-                        display: flex;
-                        align-items: center;
-                        gap: 0.5rem;
-                    }
-                    
-                    .skill-badge i {
-                        color: var(--primary);
-                    }
-                </style>
+                <!-- Skills Tab -->
+                <div class="tab-content" id="skills-content">
+                    {% if organizer.skills.all %}
+                        <div class="skills-container">
+                            <div class="skills-header">
+                                <h3 class="skills-title">Professional Skills</h3>
+                                <p class="skills-subtitle">Skills and expertise that make a difference</p>
+                            </div>
+                            <div class="skills-cloud">
+                                {% for skill in organizer.skills.all %}
+                                    <div class="skill-item">
+                                        <i class="fas fa-check-circle"></i>
+                                        {{ skill.skill_name }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <h3 class="empty-title">No skills added</h3>
+                            <p class="empty-description">Add skills to showcase your abilities to event organizers.</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -748,7 +1136,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Tab functionality
-        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabButtons = document.querySelectorAll('.tab-nav-item');
         const tabContents = document.querySelectorAll('.tab-content');
         
         tabButtons.forEach(button => {
@@ -761,7 +1149,7 @@
                 this.classList.add('active');
                 
                 // Show corresponding tab content
-                const tabId = this.getAttribute('data-tab');
+                const tabId = this.getAttribute('data-tab') + '-content';
                 document.getElementById(tabId).classList.add('active');
             });
         });
@@ -839,30 +1227,11 @@
             });
         }
         
-        // Add impact score animation
-        const statValues = document.querySelectorAll('.stat-value');
+        // Add animations for skill items
+        const skillItems = document.querySelectorAll('.skill-item');
         
-        statValues.forEach(value => {
-            const finalValue = parseInt(value.textContent);
-            
-            if (!isNaN(finalValue) && finalValue > 0) {
-                let currentValue = 0;
-                const duration = 1500;
-                const increment = finalValue / (duration / 16);
-                
-                const animate = () => {
-                    currentValue += increment;
-                    
-                    if (currentValue < finalValue) {
-                        value.textContent = Math.floor(currentValue);
-                        requestAnimationFrame(animate);
-                    } else {
-                        value.textContent = finalValue;
-                    }
-                };
-                
-                animate();
-            }
+        skillItems.forEach((item, index) => {
+            item.style.animationDelay = `${index * 0.1}s`;
         });
     });
 </script>
