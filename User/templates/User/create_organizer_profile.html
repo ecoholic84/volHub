@@ -531,7 +531,7 @@
             <div class="progress-text" id="progressText">Step 1 of 3 - Personal Information</div>
         </div>
 
-        <form method="POST" id="organizerProfileForm" action="{% url 'User:create_vol_profile' %}">
+        <form method="POST" id="organizerProfileForm" action="{% url 'User:create_organizer_profile' %}">
             {% csrf_token %}
             
             <!-- Step 1: Personal Information -->

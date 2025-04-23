@@ -472,10 +472,32 @@ def switch_dashboard(request):
     if user.user_type != 'both':
         user.user_type = 'both'
         user.save()
+
     from_dashboard = request.GET.get('from')
+    # Determine which profiles are required for switching
+    # If switching from volunteer, require basic + organizer
+    # If switching from organizer, require basic + volunteer
+    is_basic_complete = getattr(user, 'is_basic_profile_complete', False)
+    is_org_complete = getattr(user, 'is_organizer_profile_complete', False)
+    is_vol_complete = getattr(user, 'is_volunteer_profile_complete', False)
+    from django.contrib import messages
     if from_dashboard == 'volunteer':
+        if not (is_basic_complete and is_org_complete):
+            if not is_basic_complete:
+                messages.error(request, 'You must complete your basic profile before switching to the organizer dashboard.')
+                return redirect('User:edit_profile')
+            if not is_org_complete:
+                messages.error(request, 'You must complete your organizer profile before switching to the organizer dashboard.')
+                return redirect('User:create_organizer_profile')
         return redirect('User:organizer_dashboard')
     elif from_dashboard == 'organizer':
+        if not (is_basic_complete and is_vol_complete):
+            if not is_basic_complete:
+                messages.error(request, 'You must complete your basic profile before switching to the volunteer dashboard.')
+                return redirect('User:edit_profile')
+            if not is_vol_complete:
+                messages.error(request, 'You must complete your volunteer profile before switching to the volunteer dashboard.')
+                return redirect('User:create_vol_profile')
         return redirect('User:volunteer_dashboard')
     # fallback to user_type logic
     if user.user_type in ["organizer", "both"]:
