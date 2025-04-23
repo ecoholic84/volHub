@@ -328,7 +328,8 @@ def applied_volunteer_profile(request, req_id):
         return redirect('User:organizer_dashboard')
     volunteer = user_request.user
     return render(request, 'User/applied_volunteer_profile.html', {
-        'volunteer': volunteer
+        'volunteer': volunteer,
+        'user_request': user_request
     })
 
 
@@ -419,9 +420,19 @@ def organizer_dashboard(request):
     
     # Fetch events created by this organizer
     organizer_events = tbl_event.objects.filter(user=user).select_related('industry', 'event_city')
-    
+    active_events = organizer_events.filter(event_status=1)
+
+    # Unique volunteers across all events
+    from django.db.models import Q
+    volunteer_ids = set()
+    for event in organizer_events:
+        volunteer_ids.update(event.requests.values_list('user_id', flat=True))
+    total_volunteers = tbl_user.objects.filter(id__in=volunteer_ids)
+
     return render(request, 'User/organizer-dashboard.html', {
         'events': organizer_events,
+        'active_events': active_events,
+        'total_volunteers': total_volunteers,
         'organizer': user,
         'dashboard_type': 'organizer'
     })

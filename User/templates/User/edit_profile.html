@@ -99,7 +99,7 @@
     {% elif user_type == "volunteer" %}
         <a href="{% url 'User:volunteer_dashboard' %}">Back to Volunteer Dashboard</a>
     {% else %}
-        <a href="{% url 'Guest:user_who' %}">Back to User Selection</a>
+        <a href="{% url 'User:volunteer_dashboard' %}">Back to Volunteer Dashboard</a>
     {% endif %}
 
     <!-- Save Status Indicator -->

@@ -287,6 +287,19 @@
         border: none;
         z-index: 20;
     }
+    .mobile-only {
+        display: none;
+    }
+    @media (max-width: 768px) {
+        .mobile-only {
+            display: flex !important;
+        }
+    }
+    @media (min-width: 769px) {
+        .mobile-only {
+            display: none !important;
+        }
+    }
 
     .create-button:hover {
         background-color: var(--primary-dark);
@@ -495,7 +508,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'User:settings' %}" class="nav-link">
+                        <a href="{% url 'User:settings_page' %}" class="nav-link">
                             <i class="fas fa-cog"></i>
                             <span>Settings</span>
                         </a>
@@ -580,14 +593,7 @@
                     </div>
                 </div>
                 <div class="stat-value">
-                    {% with active_count=0 %}
-                        {% for event in events %}
-                            {% if event.status == 'Approved' %}
-                                {% with active_count=active_count|add:1 %}{% endwith %}
-                            {% endif %}
-                        {% endfor %}
-                        {{ active_count }}
-                    {% endwith %}
+                    {{ active_events|length }}
                 </div>
                 <div class="stat-description">Currently active</div>
             </div>
@@ -599,7 +605,7 @@
                         <i class="fas fa-users"></i>
                     </div>
                 </div>
-                <div class="stat-value">0</div>
+                <div class="stat-value">{{ total_volunteers|length }}</div>
                 <div class="stat-description">Total volunteers</div>
             </div>
         </section>
@@ -633,8 +639,8 @@
             {% endif %}
         </section>
 
-        <!-- Create Event FAB -->
-        <a href="{% url 'User:Event' %}" class="create-button" title="Create Event">
+        <!-- Create Event FAB (Mobile only) -->
+        <a href="{% url 'User:Event' %}" class="create-button mobile-only" title="Create Event">
             <i class="fas fa-plus"></i>
         </a>
     </main>

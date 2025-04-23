@@ -405,10 +405,17 @@
 
 {% block content %}
 <div class="event-edit-container">
+
+    <a href="{% url 'User:organizer_dashboard' %}" class="back-button tooltip">
+        <i class="fas fa-arrow-left"></i>
+        <span class="tooltip-text">Back to Dashboard</span>
+    </a>
+    
   <div class="event-edit-title">
       <i class="fa fa-edit event-form-icon"></i>
       Edit Event
   </div>
+  
 
   <form action="" method="POST" enctype="multipart/form-data" autocomplete="off" id="event-form">
       {% csrf_token %}

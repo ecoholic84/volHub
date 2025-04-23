@@ -467,6 +467,12 @@
 
 {% block content %}
 <div class="event-create-container">
+    <a href="{% url 'User:organizer_dashboard' %}" class="back-button tooltip">
+        <i class="fas fa-arrow-left"></i>
+        <span class="tooltip-text">Back to Dashboard</span>
+    </a>
+
+
     <div class="event-create-title">
         <i class="fa fa-calendar-plus event-form-icon"></i>
         Create New Event
