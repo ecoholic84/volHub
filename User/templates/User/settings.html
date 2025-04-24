@@ -55,17 +55,26 @@
 .settings-form button:hover {
     background: #3730A3;
 }
-.delete-btn {
-    background: #ef4444 !important;
-    color: #fff !important;
-    margin-top: 0.5rem;
-    width: 100%;
+.delete-account-btn {
+    background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+    color: #fff;
     border: none;
-    transition: background 0.2s;
+    padding: 0.9rem 0;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-size: 1.08rem;
+    width: 100%;
+    margin-top: 1.5rem;
+    box-shadow: 0 2px 10px rgba(239,68,68,0.08);
+    letter-spacing: 0.03em;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
 }
-.delete-btn:hover {
-    background: #b91c1c !important;
+.delete-account-btn:hover {
+    background: linear-gradient(90deg, #b91c1c 0%, #991b1b 100%);
+    box-shadow: 0 4px 16px rgba(185,28,28,0.12);
+    transform: translateY(-1px) scale(1.02);
 }
+
 .custom-back-btn {
     display: flex;
     align-items: center;
@@ -118,11 +127,10 @@
         </form>
     </div>
     <div class="settings-section">
-        <h2>Delete Account</h2>
-        <form method="post" action="{% url 'User:settings_page' %}" class="settings-form" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+        <h2>Danger Zone</h2>
+        <form method="post" action="{% url 'User:settings_page' %}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
             {% csrf_token %}
-            <button type="button" class="delete-btn" id="deleteAccountBtn">Delete Account</button>
-            <input type="hidden" name="action" value="delete_account">
+            <button type="submit" name="action" value="delete_account" class="delete-account-btn">Delete Account</button>
         </form>
     </div>
 </div>
@@ -161,15 +169,7 @@ function showToast(message) {
     {% endfor %}
 {% endif %}
 <script>
-// Delete account confirmation
-const deleteBtn = document.getElementById('deleteAccountBtn');
-if (deleteBtn) {
-    deleteBtn.addEventListener('click', function() {
-        if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-            this.closest('form').submit();
-        }
-    });
-}
+
 </script>
 <style>
 .toast-bottom-right {
@@ -186,16 +186,7 @@ if (deleteBtn) {
     opacity: 0;
     transition: opacity 0.3s;
 }
-.delete-btn {
-    background: #ef4444 !important;
-    color: #fff !important;
-    margin-top: 0.5rem;
-    width: 100%;
-    border: none;
-    transition: background 0.2s;
-}
-.delete-btn:hover {
-    background: #b91c1c !important;
-}
+
+
 </style>
 {% endblock %}

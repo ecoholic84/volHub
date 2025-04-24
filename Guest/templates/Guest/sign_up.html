@@ -1,27 +1,415 @@
 {% extends 'Guest/base.html' %}
 {% load static %}
 
-{% block title %}Sign Up - Volhub{% endblock %}
+{% block title %}Sign Up - VolHub{% endblock %}
+
+{% block extra_head %}
+<style>
+    :root {
+        --primary: #4F46E5;
+        --primary-light: #818cf8;
+        --primary-dark: #3730A3;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --background: #f9fafb;
+        --card-bg: #ffffff;
+        --text: #111827;
+        --text-secondary: #4b5563;
+        --text-tertiary: #6b7280;
+        --border: #e5e7eb;
+        --border-light: #f3f4f6;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --radius-sm: 0.25rem;
+        --radius: 0.5rem;
+        --radius-md: 0.75rem;
+        --radius-lg: 1rem;
+    }
+
+    body {
+        background-color: var(--background);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+    }
+
+    .auth-container {
+        min-height: calc(100vh - 80px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    .auth-card {
+        background-color: var(--card-bg);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        width: 100%;
+        max-width: 450px;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .auth-header {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: white;
+        padding: 2.5rem 2rem 2rem;
+        text-align: center;
+        position: relative;
+    }
+
+    .auth-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    .auth-logo {
+        width: 60px;
+        height: 60px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1rem;
+        font-size: 1.75rem;
+    }
+
+    .auth-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+        position: relative;
+    }
+
+    .auth-subtitle {
+        font-size: 1rem;
+        opacity: 0.9;
+        margin: 0.5rem 0 0;
+        position: relative;
+    }
+
+    .auth-body {
+        padding: 2rem;
+    }
+
+    .auth-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .form-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-secondary);
+    }
+
+    .form-input {
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        font-size: 1rem;
+        background-color: var(--background);
+        transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .form-btn {
+        padding: 0.875rem 1.5rem;
+        background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 100%);
+        color: white;
+        border: none;
+        border-radius: var(--radius);
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 0.5rem;
+    }
+
+    .form-btn:hover {
+        background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
+        box-shadow: var(--shadow-md);
+        transform: translateY(-1px);
+    }
+
+    .form-btn:active {
+        transform: translateY(0);
+    }
+
+    .auth-footer {
+        text-align: center;
+        margin-top: 1.5rem;
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+    }
+
+    .auth-footer a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    .auth-divider {
+        display: flex;
+        align-items: center;
+        margin: 1.5rem 0;
+        color: var(--text-tertiary);
+        font-size: 0.875rem;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background-color: var(--border);
+    }
+
+    .auth-divider::before {
+        margin-right: 1rem;
+    }
+
+    .auth-divider::after {
+        margin-left: 1rem;
+    }
+
+    .social-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .social-btn {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background-color: white;
+        color: var(--text);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .social-btn:hover {
+        background-color: var(--background);
+        border-color: var(--border-light);
+    }
+
+    .social-btn i {
+        font-size: 1.125rem;
+    }
+
+    .google-btn i {
+        color: #EA4335;
+    }
+
+    .facebook-btn i {
+        color: #1877F2;
+    }
+
+    .message {
+        padding: 0.75rem 1rem;
+        border-radius: var(--radius);
+        margin-bottom: 1.5rem;
+        font-size: 0.875rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .message.error {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-left: 3px solid var(--danger);
+        color: var(--danger);
+    }
+
+    .message.success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border-left: 3px solid var(--success);
+        color: var(--success);
+    }
+
+    .auth-decoration {
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, var(--primary-light) 0%, transparent 70%);
+        opacity: 0.1;
+        z-index: 0;
+    }
+
+    .auth-decoration-1 {
+        top: -150px;
+        right: -150px;
+    }
+
+    .auth-decoration-2 {
+        bottom: -150px;
+        left: -150px;
+    }
+
+    @media (max-width: 480px) {
+        .auth-header {
+            padding: 2rem 1.5rem 1.5rem;
+        }
+
+        .auth-body {
+            padding: 1.5rem;
+        }
+
+        .auth-logo {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-    <section class="signup">
-        <div class="container">
-            <div class="form-container">
-                <h2>Join Volhub</h2>
-                <p class="form-description">Enter your email to get started</p>
-                {% if failed %}
-                    <div class="message error">{{ failed }}</div>
-                {% endif %}
-                <form id="signupForm" method="POST" action="{% url 'Guest:sign_up' %}">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" name="txt_email" required>
-                    </div>
-                    <button type="submit" class="form-btn">Continue</button>
-                </form>
-                <p class="form-footer">Already have an account? <a href="{% url 'Guest:login' %}">Log in</a></p>
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-decoration auth-decoration-1"></div>
+        <div class="auth-decoration auth-decoration-2"></div>
+        
+        <div class="auth-header">
+            <div class="auth-logo">
+                <i class="fas fa-hands-helping"></i>
+            </div>
+            <h1 class="auth-title">Join VolHub</h1>
+            <p class="auth-subtitle">Enter your email to get started</p>
+        </div>
+        
+        <div class="auth-body">
+            {% if failed %}
+            <div class="message error">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>{{ failed }}</span>
+            </div>
+            {% endif %}
+            
+            <form id="signupForm" class="auth-form" method="POST" action="{% url 'Guest:sign_up' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" id="email" name="txt_email" class="form-input" placeholder="you@example.com" required>
+                </div>
+                
+                <button type="submit" class="form-btn">
+                    <i class="fas fa-arrow-right"></i>
+                    Continue
+                </button>
+            </form>
+            
+            <div class="auth-divider">or continue with</div>
+            
+            <div class="social-buttons">
+                <button type="button" class="social-btn google-btn">
+                    <i class="fab fa-google"></i>
+                    <span>Google</span>
+                </button>
+                <button type="button" class="social-btn facebook-btn">
+                    <i class="fab fa-facebook-f"></i>
+                    <span>Facebook</span>
+                </button>
+            </div>
+            
+            <div class="auth-footer">
+                Already have an account? <a href="{% url 'Guest:login' %}">Log in</a>
             </div>
         </div>
-    </section>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add focus and blur effects for form inputs
+        const formInputs = document.querySelectorAll('.form-input');
+        
+        formInputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.classList.remove('focused');
+            });
+        });
+        
+        // Simple form validation
+        const signupForm = document.getElementById('signupForm');
+        
+        if (signupForm) {
+            signupForm.addEventListener('submit', function(e) {
+                const emailInput = document.getElementById('email');
+                const emailValue = emailInput.value.trim();
+                
+                if (!emailValue) {
+                    e.preventDefault();
+                    emailInput.classList.add('error');
+                    
+                    // Create error message if it doesn't exist
+                    let errorMessage = emailInput.parentElement.querySelector('.error-message');
+                    if (!errorMessage) {
+                        errorMessage = document.createElement('div');
+                        errorMessage.className = 'error-message';
+                        errorMessage.style.color = 'var(--danger)';
+                        errorMessage.style.fontSize = '0.75rem';
+                        errorMessage.style.marginTop = '0.25rem';
+                        emailInput.parentElement.appendChild(errorMessage);
+                    }
+                    
+                    errorMessage.textContent = 'Please enter a valid email address';
+                }
+            });
+        }
+        
+        // Social login buttons (these would need backend implementation)
+        const socialButtons = document.querySelectorAll('.social-btn');
+        
+        socialButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                alert('Social login integration would be implemented here.');
+            });
+        });
+    });
+</script>
 {% endblock %}

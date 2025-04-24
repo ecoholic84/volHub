@@ -929,6 +929,12 @@ def skill_search_ajax(request):
     return JsonResponse(list(skills), safe=False)
 
 # Settings View
+def delete_account(request, user):
+    user.delete()
+    request.session.flush()
+    messages.success(request, 'Your account has been deleted.')
+    return redirect('Guest:login')
+
 def settings_page(request):
     if 'u_id' not in request.session:
         return redirect('Guest:login')
@@ -945,15 +951,14 @@ def settings_page(request):
                 messages.error(request, 'New passwords do not match.')
             elif not new_password:
                 messages.error(request, 'New password cannot be empty.')
+            elif len(new_password) < 6:
+                messages.error(request, 'Password must be at least 6 characters long.')
             else:
                 user.user_password = new_password
                 user.save()
                 messages.success(request, 'Password changed successfully!')
         elif action == 'delete_account':
-            user.delete()
-            request.session.flush()
-            messages.success(request, 'Your account has been deleted.')
-            return redirect('Guest:login')
+            return delete_account(request, user)
     return render(request, 'User/settings.html')
 
 # Public Profile View
