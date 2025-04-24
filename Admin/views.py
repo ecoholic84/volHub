@@ -10,6 +10,12 @@ from django.conf import settings
 
 # Create your views here.
 
+def feedback_list(request):
+    if 'a_id' not in request.session:
+        return redirect('Guest:login')
+    feedbacks = tbl_feedback.objects.select_related('user_id').all().order_by('-feedback_date')
+    return render(request, 'Admin/feedback_list.html', {'feedbacks': feedbacks})
+
 # Logout
 def logout(request):
     del request.session["a_id"]
@@ -96,7 +102,7 @@ def replyCompliant(request,rid):
         thisCompliant.save()
         return redirect('Admin:complaintInbox')  
     else:
-        return render(request,'Admin/replyCompliant.html')
+        return render(request,'Admin/replyCompliant.html', {"reply_text": thisCompliant.complaint_reply or ""})
 
 # Industry and Skills Views
 def industrySkills(request):

@@ -2,12 +2,16 @@ from django.urls import path,include
 from Admin import views
 app_name='Admin'
 urlpatterns = [
+
+    path('adminDashboard/',views.adminDashboard,name='adminDashboard'),
+    
+    path('feedbacks/', views.feedback_list, name='feedback_list'),
     path('logout/', views.logout, name='logout'),
 
     path('adminRegistration/',views.adminRegistration,name='adminRegistration'),
     path('deleteAdmin/<int:did>',views.deleteAdmin,name='deleteAdmin'),
     path('editAdmin/<int:eid>',views.editAdmin,name='editAdmin'),
-    path('adminDashboard/',views.adminDashboard,name='adminDashboard'),
+
 
     path('type/',views.types,name="type"),
     path('deleteType/<int:did>',views.deleteType,name="deleteType"),

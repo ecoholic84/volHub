@@ -1,51 +1,249 @@
+{% load static %}
 <!DOCTYPE html>
-<html>
-    <body>
-        <h1 align="center">User Complaints</h1>
-        <form method="POST">
-            {% csrf_token %}
-            <table border="1" align="center">
-                <tr>
-                    <td>Complaint Title</td>
-                    <td><input type="text" name="txt_complaint_title" id="txt_complaint_title" value="{{ editComplaint.complaint_title }}" required></td>
-                </tr>
-                <tr>
-                    <td>Complaint</td>
-                    <td><textarea name="txt_complaint_content" id="txt_complaint_content" required>{{ editComplaint.complaint_content }}</textarea></td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center"><input type="submit" value="Submit"></td>
-                </tr>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Complaints</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #3730A3;
+            --bg-card: #f8f9fd;
+            --text-light: #444;
+            --border-color: #e5e7eb;
+            --table-header-bg: #6366f1;
+            --table-header-text: #fff;
+            --table-row-bg: #fff;
+            --table-row-alt-bg: #f3f4f6;
+            --table-border: #e5e7eb;
+            --btn-primary: #6366f1;
+            --btn-primary-hover: #3730A3;
+            --btn-danger: #ef4444;
+            --btn-danger-hover: #b91c1c;
+            --btn-warning: #f59e42;
+            --btn-warning-hover: #b45309;
+        }
+        body {
+            font-family: 'Outfit', 'Poppins', Arial, sans-serif;
+            background: var(--bg-card);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0;
+            background: transparent;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(99,102,241,0.06);
+            padding: 32px 28px 24px 28px;
+            margin-bottom: 32px;
+            transition: box-shadow 0.2s;
+            overflow: hidden;
+        }
+        .card:hover {
+            box-shadow: 0 4px 24px rgba(99,102,241,0.10);
+        }
+        .complaint-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--primary-color);
+            font-size: 1.07em;
+        }
+        .subtitle {
+            font-size: 1.13em;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 10px;
+            font-size: 1.07em;
+            background: #f5f6fa;
+            transition: border 0.18s;
+        }
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+        textarea {
+            min-height: 62px;
+            resize: vertical;
+        }
+        .btn, .submit-btn {
+            background: var(--btn-primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 9px 22px;
+            font-size: 1.07em;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-weight: 500;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.06);
+        }
+        .btn:hover, .submit-btn:hover {
+            background: var(--btn-primary-hover);
+            box-shadow: 0 2px 8px rgba(99,102,241,0.13);
+        }
+        .delete-link {
+            background: var(--btn-danger);
+            color: #fff;
+            border-radius: 6px;
+            padding: 7px 16px;
+            text-decoration: none;
+            transition: background 0.18s, box-shadow 0.18s, filter 0.18s;
+            border: none;
+            font-size: 1em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            box-shadow: 0 1px 4px rgba(239,68,68,0.08);
+        }
+        .delete-link:hover {
+            background: var(--btn-danger-hover);
+            box-shadow: 0 2px 8px rgba(239,68,68,0.16);
+            filter: brightness(1.1);
+        }
+        .edit-link {
+            background: var(--btn-warning);
+            color: #fff;
+            border-radius: 6px;
+            padding: 7px 16px;
+            text-decoration: none;
+            transition: background 0.18s, box-shadow 0.18s, filter 0.18s;
+            border: none;
+            font-size: 1em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            box-shadow: 0 1px 4px rgba(245,158,66,0.08);
+        }
+        .edit-link:hover {
+            background: var(--btn-warning-hover);
+            box-shadow: 0 2px 8px rgba(245,158,66,0.16);
+            filter: brightness(1.1);
+        }
+        .complaint-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.04);
+        }
+        thead th {
+            background: var(--table-header-bg);
+            color: var(--table-header-text);
+            padding: 14px 10px;
+            text-align: left;
+            font-size: 1.05em;
+            border-bottom: 2px solid var(--table-border);
+        }
+        thead th:first-child {
+            border-top-left-radius: 12px;
+        }
+        thead th:last-child {
+            border-top-right-radius: 12px;
+        }
+        tbody td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--table-border);
+        }
+        tbody tr:nth-child(even) {
+            background: #fff;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+        tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'User:dashboard' %}" class="btn" style="margin-bottom: 18px; margin-left: 2px; background: #e0e7ff; color: #3730A3; font-weight: 600; font-size: 1.01em;"><i class="fa fa-arrow-left"></i> Back to Dashboard</a>
+        <h1 style="margin-bottom: 8px;">User Complaints</h1>
+        <div class="card complaint-card">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="txt_complaint_title" class="complaint-label">Complaint Title</label>
+                    <input type="text" name="txt_complaint_title" id="txt_complaint_title" value="{{ editComplaint.complaint_title }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="txt_complaint_content" class="complaint-label">Complaint</label>
+                    <textarea name="txt_complaint_content" id="txt_complaint_content" required>{{ editComplaint.complaint_content }}</textarea>
+                </div>
+                <button type="submit" class="btn submit-btn"><i class="fa fa-paper-plane"></i> Submit</button>
+            </form>
+        </div>
+        <div class="card previous-complaints-card">
+            <div class="subtitle"><i class="fa fa-list-alt"></i> Previous Complaints</div>
+            <table class="complaint-table">
+                <thead>
+                    <tr>
+                        <th>SL No.</th>
+                        <th>Title</th>
+                        <th>Complaint</th>
+                        <th>Date</th>
+                        <th>Reply</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for complaint in comp %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ complaint.complaint_title }}</td>
+                        <td>{{ complaint.complaint_content }}</td>
+                        <td>{{ complaint.complaint_date }}</td>
+                        <td>{{ complaint.complaint_reply }}</td>
+                        <td>{{ complaint.complaint_status }}</td>
+                        <td style="display: flex; gap: 8px;">
+                            <a href="{% url 'User:deleteComplaint' complaint.id %}" class="delete-link"><i class="fa fa-trash"></i> Delete</a>
+                            <a href="{% url 'User:editComplaint' complaint.id %}" class="edit-link"><i class="fa fa-edit"></i> Edit</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="text-align:center; color: #888;">No complaints yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
-        </form>
-    </body>
-</html>
-
-<html>
-    <body>
-        <h1 align="center">Previous Complaints</h1>
-        <table border="1" align="center">
-            <tr>
-                <td>SL No.</td>
-                <td>Title</td>
-                <td>Complaint</td>
-                <td>Date</td>
-                <td>Reply</td>
-                <td>Status</td>
-                <td>Action</td>
-            </tr>
-            {% for complaint in comp %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ complaint.complaint_title }}</td>
-                <td>{{ complaint.complaint_content }}</td>
-                <td>{{ complaint.complaint_date }}</td>
-                <td>{{ complaint.complaint_reply }}</td>
-                <td>{{ complaint.complaint_status }}</td>
-                <td><a href="{% url 'User:deleteComplaint' complaint.id %}">Delete</a>
-                <a href="{% url 'User:editComplaint' complaint.id %}">Edit</a></td>
-            </tr>
-            {% endfor %}
-        </table>
-    </body>
+        </div>
+    </div>
+</body>
 </html>

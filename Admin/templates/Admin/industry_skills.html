@@ -1,68 +1,209 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Industry & Skills Table</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #3730A3;
+            --bg-card: #f8f9fd;
+            --text-light: #444;
+            --border-color: #e5e7eb;
+            --table-header-bg: #6366f1;
+            --table-header-text: #fff;
+            --btn-primary: #6366f1;
+            --btn-primary-hover: #3730A3;
+            --btn-danger: #ef4444;
+            --btn-danger-hover: #b91c1c;
+            --btn-warning: #f59e42;
+            --btn-warning-hover: #b45309;
+        }
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
+            font-family: 'Outfit', 'Poppins', Arial, sans-serif;
+            background: var(--bg-card);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1050px;
+            margin: 40px auto 0 auto;
+            padding: 0;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(99,102,241,0.06);
+            padding: 36px 32px 28px 32px;
+            margin-bottom: 32px;
+            transition: box-shadow 0.2s;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+        .card:hover {
+            box-shadow: 0 4px 24px rgba(99,102,241,0.10);
         }
         h2 {
+            color: var(--primary-color);
+            font-weight: 700;
             text-align: center;
+            margin-bottom: 22px;
         }
-        table {
+        .section-title {
+            font-size: 1.13em;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .industry-table {
             width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.04);
+            margin: 0;
         }
-        th, td {
-            padding: 10px;
+        thead th {
+            background: var(--table-header-bg);
+            color: var(--table-header-text);
+            padding: 14px 10px;
             text-align: left;
-            border: 1px solid #ddd;
+            font-size: 1.05em;
+            border-bottom: 2px solid var(--border-color);
         }
-        th {
-            background-color: #007BFF;
-            color: white;
+        thead th:first-child {
+            border-top-left-radius: 12px;
         }
-        button, input[type="submit"] {
-            padding: 5px 10px;
-            background-color: #28a745;
-            color: white;
+        thead th:last-child {
+            border-top-right-radius: 12px;
+        }
+        tbody td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: top;
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+        tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+        ul {
+            padding-left: 18px;
+            margin: 0 0 8px 0;
+        }
+        .form-container, .skill-form-inline {
+            margin: 6px 0 0 0;
+            display: flex;
+            gap: 7px;
+            align-items: center;
+        }
+        input[type="text"], input[type="hidden"] {
+            border: 1.5px solid var(--border-color);
+            border-radius: 7px;
+            padding: 8px 10px;
+            font-size: 1.07em;
+            background: #f5f6fa;
+            transition: border 0.18s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+        input[type="submit"], .btn {
+            background: var(--btn-primary);
+            color: #fff;
             border: none;
+            border-radius: 6px;
+            padding: 7px 18px;
+            font-size: 1em;
             cursor: pointer;
-            margin-top: 5px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.18s, box-shadow 0.18s, filter 0.18s;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.08);
         }
-        button:hover, input[type="submit"]:hover {
-            background-color: #218838;
+        input[type="submit"]:hover, .btn:hover {
+            background: var(--btn-primary-hover);
+            filter: brightness(1.1);
         }
         .delete-btn {
-            background-color: #dc3545;
+            background: #f3f4f6;
+            color: var(--btn-danger);
+            border-radius: 4px;
+            font-size: 0.93em;
+            padding: 4px 10px;
+            margin-left: 2px;
+            border: 1px solid var(--btn-danger);
+            font-weight: 500;
+            box-shadow: none;
+            transition: background 0.16s, color 0.16s;
         }
         .delete-btn:hover {
-            background-color: #c82333;
+            background: var(--btn-danger);
+            color: #fff;
         }
         .edit-btn {
-            background-color: #ffc107;
-            color: black;
+            background: #f3f4f6;
+            color: var(--btn-warning);
+            border-radius: 4px;
+            font-size: 0.93em;
+            padding: 4px 10px;
+            margin-left: 8px;
+            margin-right: 2px;
+            border: 1px solid var(--btn-warning);
+            font-weight: 500;
+            box-shadow: none;
+            transition: background 0.16s, color 0.16s;
         }
         .edit-btn:hover {
-            background-color: #e0a800;
+            background: var(--btn-warning);
+            color: #fff;
         }
-        .form-container {
-            margin: 5px 0;
+        .error-msg {
+            color: var(--btn-danger);
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+        @media (max-width: 700px) {
+            .container, .card {
+                padding: 12px 4px;
+            }
+            .industry-table th, .industry-table td {
+                font-size: 0.96em;
+                padding: 7px 4px;
+            }
         }
     </style>
 </head>
 <body>
-    <h2>Industry & Skills Table</h2>
-    
-    <!-- Error Message -->
-    {% if error %}
+    <div class="container">
+        <div class="card">
+            <h2>Industry & Skills Table</h2>
+            
+            <!-- Error Message -->
+            {% if error %}
+                <p class="error-msg">{{ error }}</p>
+            {% endif %}
         <p style="color: red;">{{ error }}</p>
-    {% endif %}
 
     <!-- Add Industry Form -->
     <form method="post" action="{% url 'Admin:addIndustry' %}" class="form-container">
@@ -80,7 +221,7 @@
         </form>
     {% endif %}
 
-    <table>
+    <table class="industry-table">
         <thead>
             <tr>
                 <th>Industry</th>
@@ -93,14 +234,14 @@
                 <tr>
                     <td>{{ industry.industry_name }}</td>
                     <td>
-                        <ul>
+                        <ul style="margin-bottom: 10px;">
                             {% for skill in industry.skills.all %}
-                                <li>
-                                    {{ skill.skill_name }}
-                                    <form method="get" action="{% url 'Admin:editSkill' skill.id %}" style="display: inline;">
+                                <li style="margin-bottom: 4px;">
+                                    <span style="display: inline-block; min-width: 120px;">{{ skill.skill_name }}</span>
+                                    <form method="get" action="{% url 'Admin:editSkill' skill.id %}" style="display: inline; margin: 0;">
                                         <input type="submit" value="Edit" class="edit-btn">
                                     </form>
-                                    <form method="post" action="{% url 'Admin:deleteSkill' skill.id %}" style="display: inline;">
+                                    <form method="post" action="{% url 'Admin:deleteSkill' skill.id %}" style="display: inline; margin: 0;">
                                         {% csrf_token %}
                                         <input type="submit" value="Delete" class="delete-btn">
                                     </form>

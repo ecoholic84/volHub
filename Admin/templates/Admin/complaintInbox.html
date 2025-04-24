@@ -1,26 +1,161 @@
-<html>
-    <body>
-        <h1 align="center">Complaint Inbox</h1>
-        <table border="1" align="center">
-            <tr>
-                <td>SL No.</td>
-                <td>User</td>
-                <td>Title</td>
-                <td>Complaint</td>
-                <td>Date</td>
-                <td>Action</td>
-            </tr>
-            {% for i in complaintsInbox %}
-            <tr>
-                <td>{{ forloop.counter }}</td>
-                <td>{{ i.user_id.user_name }}</td>
-                <td>{{ i.complaint_title }}</td>
-                <td>{{ i.complaint_content }}</td>
-                <td>{{ i.complaint_date }}</td>
-                <td><a href="{% url 'Admin:replyCompliant' i.id %}">Reply</a></td>
-                
-            </tr>
-            {% endfor %}
-        </table>
-    </body>     
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Inbox</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #3730A3;
+            --bg-card: #f8f9fd;
+            --text-light: #444;
+            --border-color: #e5e7eb;
+            --table-header-bg: #6366f1;
+            --table-header-text: #fff;
+            --table-row-bg: #fff;
+            --table-row-alt-bg: #f3f4f6;
+            --table-border: #e5e7eb;
+            --btn-primary: #6366f1;
+            --btn-primary-hover: #3730A3;
+        }
+        body {
+            font-family: 'Outfit', 'Poppins', Arial, sans-serif;
+            background: var(--bg-card);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 950px;
+            margin: 40px auto;
+            padding: 0;
+            background: transparent;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(99,102,241,0.06);
+            padding: 32px 28px 24px 28px;
+            margin-bottom: 32px;
+            transition: box-shadow 0.2s;
+            overflow: hidden;
+        }
+        .card:hover {
+            box-shadow: 0 4px 24px rgba(99,102,241,0.10);
+        }
+        h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 18px;
+        }
+        .subtitle {
+            font-size: 1.13em;
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .inbox-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.04);
+        }
+        thead th {
+            background: var(--table-header-bg);
+            color: var(--table-header-text);
+            padding: 14px 10px;
+            text-align: left;
+            font-size: 1.05em;
+            border-bottom: 2px solid var(--table-border);
+        }
+        thead th:first-child {
+            border-top-left-radius: 12px;
+        }
+        thead th:last-child {
+            border-top-right-radius: 12px;
+        }
+        tbody td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--table-border);
+        }
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+        tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+        .reply-link {
+            background: var(--btn-primary);
+            color: #fff;
+            border-radius: 6px;
+            padding: 7px 18px;
+            text-decoration: none;
+            transition: background 0.18s, box-shadow 0.18s, filter 0.18s;
+            border: none;
+            font-size: 1em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.08);
+        }
+        .reply-link:hover {
+            background: var(--btn-primary-hover);
+            box-shadow: 0 2px 8px rgba(99,102,241,0.16);
+            filter: brightness(1.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'Admin:adminDashboard' %}" class="btn" style="margin-bottom: 18px; margin-left: 2px; background: #e0e7ff; color: #3730A3; font-weight: 600; font-size: 1.01em;"><i class="fa fa-arrow-left"></i> Back to Dashboard</a>
+        <div class="card">
+            <h1>Complaint Inbox</h1>
+            <div class="subtitle"><i class="fa fa-inbox"></i> All User Complaints</div>
+            <table class="inbox-table">
+                <thead>
+                    <tr>
+                        <th>SL No.</th>
+                        <th>User</th>
+                        <th>Title</th>
+                        <th>Complaint</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in complaintsInbox %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.user_id.user_name }}</td>
+                        <td>{{ i.complaint_title }}</td>
+                        <td>{{ i.complaint_content }}</td>
+                        <td>{{ i.complaint_date }}</td>
+                        <td><a href="{% url 'Admin:replyCompliant' i.id %}" class="reply-link"><i class="fa fa-reply"></i> Reply</a></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; color: #888;">No complaints in inbox.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
 </html>

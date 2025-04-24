@@ -1,20 +1,113 @@
-<html>
-    <head>
-        <title>Reply Page</title>
-    </head>
-    <body>
-        <h1 align="center">Review and Reply</h1>
-        <form method="POST">
-            {% csrf_token %}
-            <table align="center" border="1">
-                <tr>
-                    <td>Reply</td>
-                    <td><textarea name="txt_compliant_content" rows="5" cols="50" id="txt_compliant_content" required></textarea></td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center"><input type="submit" value="Reply"></td>
-                </tr>
-            </table>
-        </form>
-    </body>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reply to Complaint</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #3730A3;
+            --bg-card: #f8f9fd;
+            --text-light: #444;
+            --border-color: #e5e7eb;
+            --btn-primary: #6366f1;
+            --btn-primary-hover: #3730A3;
+        }
+        body {
+            font-family: 'Outfit', 'Poppins', Arial, sans-serif;
+            background: var(--bg-card);
+            color: var(--text-light);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 500px;
+            margin: 60px auto 0 auto;
+            padding: 0;
+        }
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(99,102,241,0.08);
+            padding: 36px 32px 28px 32px;
+            margin-bottom: 32px;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 4px 24px rgba(99,102,241,0.12);
+        }
+        h1 {
+            color: var(--primary-color);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 22px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        label {
+            font-weight: 500;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            display: block;
+            font-size: 1.08em;
+        }
+        textarea {
+            width: 100%;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 12px;
+            font-size: 1.08em;
+            background: #f5f6fa;
+            transition: border 0.18s;
+            min-height: 100px;
+            resize: vertical;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+        .btn-reply {
+            background: var(--btn-primary);
+            color: #fff;
+            border: none;
+            border-radius: 7px;
+            padding: 11px 28px;
+            font-size: 1.09em;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.08);
+        }
+        .btn-reply:hover {
+            background: var(--btn-primary-hover);
+            box-shadow: 0 2px 8px rgba(99,102,241,0.13);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1><i class="fa fa-reply"></i> Review & Reply</h1>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="txt_compliant_content">Your Reply</label>
+                    <textarea name="txt_compliant_content" id="txt_compliant_content" required>{{ reply_text|default:'' }}</textarea>
+                </div>
+                <div style="text-align:center;">
+                    <button type="submit" class="btn-reply"><i class="fa fa-paper-plane"></i> Send Reply</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
 </html>
