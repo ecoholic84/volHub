@@ -1,143 +1,1037 @@
-<html>
-    <body>
-        <h1 align="center">Welcome Admin</h1>
-        <a href = "{%  url 'Admin:complaintInbox' %}">User Complaints</a><br>
-        <a href = "{%  url 'Admin:industrySkills' %}">Add and View Industries</a><br>
-        <a href = "{%  url 'Admin:country_state_city' %}">Add and View Country, State and City</a><br>
-        <a href = "{%  url 'Admin:feedback_list' %}">User Feedbacks</a><br>
-        <a href = "{%  url 'Admin:logout' %}">Logout</a>
-    </body>
-</html>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #818cf8;
+            --primary-dark: #3730A3;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --background: #f9fafb;
+            --card-bg: #ffffff;
+            --text: #111827;
+            --text-secondary: #4b5563;
+            --text-tertiary: #6b7280;
+            --border: #e5e7eb;
+            --border-light: #f3f4f6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius-sm: 0.25rem;
+            --radius: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
         }
-        h2 {
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 240px;
+            background-color: var(--card-bg);
+            color: var(--text);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+            z-index: 100;
+            border-right: 1px solid var(--border);
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .sidebar-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: none;
+        }
+
+        .sidebar-menu {
+            padding: 1rem 0;
+        }
+
+        .sidebar-title {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-tertiary);
+            font-weight: 600;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            position: relative;
+        }
+
+        .sidebar-link:hover {
+            background-color: rgba(79, 70, 229, 0.05);
+            color: var(--primary);
+        }
+
+        .sidebar-link.active {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .sidebar-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background-color: var(--primary);
+        }
+
+        .sidebar-icon {
+            margin-right: 0.75rem;
+            font-size: 1rem;
+            width: 1.25rem;
             text-align: center;
         }
-        table {
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 240px;
+            transition: all 0.3s ease;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.25rem;
+            margin-right: 1rem;
+            display: none;
+        }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .admin-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .admin-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text);
+        }
+
+        .admin-email {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Dashboard Content Styles */
+        .dashboard {
+            padding: 2rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .welcome-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .welcome-content h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .welcome-content p {
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        .dashboard-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-title {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .stat-icon.primary {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-icon.success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-icon.warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-icon.danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-description {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .chart-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .table-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .table-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
         }
-        th, td {
-            padding: 10px;
+
+        .table th {
+            background-color: var(--border-light);
+            color: var(--text-secondary);
+            font-weight: 500;
             text-align: left;
-            border: 1px solid #ddd;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--border);
         }
-        th {
-            background-color: #007BFF;
-            color: white;
+
+        .table td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-light);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
         }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background-color: var(--border-light);
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
         .status-pending {
-            color: orange;
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
         }
+
         .status-approved {
-            color: green;
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success);
         }
+
         .status-rejected {
-            color: red;
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
         }
-        .accept-btn {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            padding: 5px 10px;
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 500;
             cursor: pointer;
-            margin-right: 5px;
-        }
-        .accept-btn:hover {
-            background-color: #218838;
-        }
-        .reject-btn {
-            background-color: #dc3545;
-            color: white;
+            transition: all 0.2s ease;
             border: none;
-            padding: 5px 10px;
-            cursor: pointer;
         }
-        .reject-btn:hover {
-            background-color: #c82333;
+
+        .btn-sm {
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #0da271;
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .alert-container {
+            max-width: 100%;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            animation: slideInDown 0.3s ease-out;
+        }
+
+        .alert-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .alert-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-10px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Sidebar Toggle Button */
+        .sidebar-toggle-btn {
+            position: fixed;
+            top: 100px;
+            left: 1rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--card-bg);
+            color: var(--primary);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: var(--shadow-md);
+            cursor: pointer;
+            z-index: 30;
+            border: 1px solid var(--border);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar-toggle-btn {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 1.5rem;
+            }
+
+            .welcome-section {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
 <body>
-    <h2>Admin Dashboard - Organizer Events</h2>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>Admin Panel</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidebar-menu">
+            <div class="sidebar-title">Main</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="{% url 'Admin:adminDashboard' %}" class="sidebar-link active">
+                        <i class="fas fa-tachometer-alt sidebar-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'Admin:complaintInbox' %}" class="sidebar-link">
+                        <i class="fas fa-inbox sidebar-icon"></i>
+                        <span>User Complaints</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'Admin:feedback_list' %}" class="sidebar-link">
+                        <i class="fas fa-comment-alt sidebar-icon"></i>
+                        <span>User Feedbacks</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-title">Management</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="{% url 'Admin:industrySkills' %}" class="sidebar-link">
+                        <i class="fas fa-industry sidebar-icon"></i>
+                        <span>Industries & Skills</span>
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a href="{% url 'Admin:country_state_city' %}" class="sidebar-link">
+                        <i class="fas fa-globe sidebar-icon"></i>
+                        <span>Locations</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-title">Account</div>
+            <ul class="sidebar-nav">
+                <li class="sidebar-item">
+                    <a href="{% url 'Admin:logout' %}" class="sidebar-link">
+                        <i class="fas fa-sign-out-alt sidebar-icon"></i>
+                        <span>Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
 
-    <!-- Success/Error Messages -->
-    {% if success %}
-        <p style="color: green;">{{ success }}</p>
-    {% endif %}
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
+    <!-- Sidebar Toggle Button (Mobile) -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn">
+        <i class="fas fa-bars"></i>
+    </button>
 
-    <!-- Events Table -->
-    <table>
-        <thead>
-            <tr>
-                <th>Event Title</th>
-                <th>Organizer Email</th>
-                <th>Venue</th>
-                <th>City</th>
-                <th>Industry</th>
-                <th>Date & Time</th>
-                <th>Stipend</th>
-                <th>Status</th>
-                <th>Created At</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for event in events %}
-                <tr>
-                    <td>{{ event.event_title }}</td>
-                    <td>{{ event.user.user_email }}</td>
-                    <td>{{ event.event_venue }}</td>
-                    <td>{{ event.event_city.name }}</td>
-                    <td>{{ event.industry.industry_name }}</td>
-                    <td>{{ event.event_datetime }}</td>
-                    <td>{{ event.event_stipend }}</td>
-                    <td class="{% if event.event_status == 0 %}status-pending{% elif event.event_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
-                        {% if event.event_status == 0 %}
-                            Pending
-                        {% elif event.event_status == 1 %}
-                            Approved
-                        {% else %}
-                            Rejected
-                        {% endif %}
-                    </td>
-                    <td>{{ event.event_created_at }}</td>
-                    <td>
-                        <form method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="event_id" value="{{ event.id }}">
-                            <input type="hidden" name="action" value="accept">
-                            <input type="submit" value="Accept" class="accept-btn">
-                        </form>
-                        <form method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="event_id" value="{{ event.id }}">
-                            <input type="hidden" name="action" value="reject">
-                            <input type="submit" value="Reject" class="reject-btn">
-                        </form>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="10">No events created yet.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <h1 class="header-title">Admin Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="admin-info">
+                    <div class="admin-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="admin-details">
+                        <span class="admin-name">{{ admin.admin_name }}</span>
+                        <span class="admin-email">{{ admin.admin_email }}</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard">
+            <!-- Success/Error Messages -->
+            {% if success %}
+                <div class="alert-container">
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        {{ success }}
+                    </div>
+                </div>
+            {% endif %}
+            {% if error %}
+                <div class="alert-container">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i>
+                        {{ error }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Welcome Section -->
+            <section class="welcome-section">
+                <div class="welcome-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="welcome-content">
+                    <h1>Welcome, {{ admin.admin_name }}!</h1>
+                    <p>Manage events, users, and system settings from your admin dashboard</p>
+                </div>
+            </section>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Events</div>
+                        <div class="stat-icon primary">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">{{ events|length }}</div>
+                    <div class="stat-description">All registered events</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Approved Events</div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    {% with approved_count=0 %}
+                        {% for event in events %}
+                            {% if event.event_status == 1 %}
+                                {% with approved_count=approved_count|add:1 %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="stat-value">{{ approved_count }}</div>
+                    {% endwith %}
+                    <div class="stat-description">Events that have been approved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Pending Events</div>
+                        <div class="stat-icon warning">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    {% with pending_count=0 %}
+                        {% for event in events %}
+                            {% if event.event_status == 0 %}
+                                {% with pending_count=pending_count|add:1 %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="stat-value">{{ pending_count }}</div>
+                    {% endwith %}
+                    <div class="stat-description">Events awaiting approval</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Rejected Events</div>
+                        <div class="stat-icon danger">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                    </div>
+                    {% with rejected_count=0 %}
+                        {% for event in events %}
+                            {% if event.event_status == 2 %}
+                                {% with rejected_count=rejected_count|add:1 %}{% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                        <div class="stat-value">{{ rejected_count }}</div>
+                    {% endwith %}
+                    <div class="stat-description">Events that were rejected</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Events by Status</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="eventsStatusChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Events by Industry</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="eventsIndustryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Table -->
+            <div class="table-container">
+                <div class="table-header">
+                    <div class="table-title">Organizer Events</div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Event Title</th>
+                                <th>Organizer Email</th>
+                                <th>Venue</th>
+                                <th>City</th>
+                                <th>Industry</th>
+                                <th>Date & Time</th>
+                                <th>Stipend</th>
+                                <th>Status</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events %}
+                                <tr>
+                                    <td>{{ event.event_title }}</td>
+                                    <td>{{ event.user.user_email }}</td>
+                                    <td>{{ event.event_venue }}</td>
+                                    <td>{{ event.event_city.name }}</td>
+                                    <td>{{ event.industry.industry_name }}</td>
+                                    <td>{{ event.event_datetime }}</td>
+                                    <td>{{ event.event_stipend }}</td>
+                                    <td>
+                                        <span class="status {% if event.event_status == 0 %}status-pending{% elif event.event_status == 1 %}status-approved{% else %}status-rejected{% endif %}">
+                                            {% if event.event_status == 0 %}
+                                                Pending
+                                            {% elif event.event_status == 1 %}
+                                                Approved
+                                            {% else %}
+                                                Rejected
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td>{{ event.event_created_at }}</td>
+                                    <td>
+                                        <form method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="event_id" value="{{ event.id }}">
+                                            <input type="hidden" name="action" value="accept">
+                                            <button type="submit" class="btn btn-sm btn-success">
+                                                <i class="fas fa-check"></i> Accept
+                                            </button>
+                                        </form>
+                                        <form method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="event_id" value="{{ event.id }}">
+                                            <input type="hidden" name="action" value="reject">
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-times"></i> Reject
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="10" style="text-align: center; padding: 2rem;">No events created yet.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Sidebar Toggle
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+
+        sidebarToggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnToggle = sidebarToggleBtn.contains(event.target);
+            
+            if (!isClickInsideSidebar && !isClickOnToggle && window.innerWidth <= 1024) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // Responsive adjustments
+        function handleResize() {
+            if (window.innerWidth > 1024) {
+                sidebar.classList.remove('active');
+            }
+        }
+        
+        window.addEventListener('resize', handleResize);
+
+        // Auto-hide alerts after 5 seconds
+        const alerts = document.querySelectorAll('.alert');
+        if (alerts.length > 0) {
+            setTimeout(function() {
+                alerts.forEach(alert => {
+                    alert.style.opacity = '0';
+                    alert.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => {
+                        alert.style.display = 'none';
+                    }, 500);
+                });
+            }, 5000);
+        }
+
+        // Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Count events by status
+            const events = Array.from(document.querySelectorAll('.table tbody tr'));
+            const pendingCount = events.filter(event => event.querySelector('.status-pending')).length;
+            const approvedCount = events.filter(event => event.querySelector('.status-approved')).length;
+            const rejectedCount = events.filter(event => event.querySelector('.status-rejected')).length;
+
+            // Events Status Chart
+            const statusCtx = document.getElementById('eventsStatusChart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Pending', 'Approved', 'Rejected'],
+                    datasets: [{
+                        label: 'Events by Status',
+                        data: [pendingCount, approvedCount, rejectedCount],
+                        backgroundColor: [
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(239, 68, 68, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(16, 185, 129, 1)',
+                            'rgba(239, 68, 68, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Get industries and count events
+            const industries = {};
+            events.forEach(event => {
+                const industryCell = event.querySelectorAll('td')[4];
+                if (industryCell) {
+                    const industry = industryCell.textContent.trim();
+                    industries[industry] = (industries[industry] || 0) + 1;
+                }
+            });
+
+            // Events Industry Chart
+            const industryCtx = document.getElementById('eventsIndustryChart').getContext('2d');
+            new Chart(industryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(industries),
+                    datasets: [{
+                        data: Object.values(industries),
+                        backgroundColor: [
+                            'rgba(79, 70, 229, 0.7)',
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(245, 158, 11, 0.7)',
+                            'rgba(239, 68, 68, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(236, 72, 153, 0.7)',
+                            'rgba(168, 85, 247, 0.7)',
+                            'rgba(249, 115, 22, 0.7)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                boxWidth: 12,
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 </html>
