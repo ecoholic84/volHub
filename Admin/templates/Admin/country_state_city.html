@@ -3,114 +3,221 @@
 <head>
     <title>Country, State & City Insertion</title>
     <style>
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4338ca;
+            --card-bg: #fff;
+            --border: #e5e7eb;
+            --header-bg: #6366f1;
+            --header-color: #fff;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --input-bg: #f3f4f6;
+            --input-focus: #fff;
+        }
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            padding: 20px;
-            background-color: #f4f4f4;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 950px;
+            margin: 32px auto;
+            padding: 0 18px;
+        }
+        .card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            box-shadow: 0 2px 16px rgba(99,102,241,0.08);
+            padding: 34px 32px 28px 32px;
+            margin-bottom: 32px;
+            overflow: hidden;
+        }
+        .back-btn {
+            display: inline-block;
+            background: #e0e7ff;
+            color: #3730A3;
+            font-weight: 600;
+            font-size: 1.01em;
+            border-radius: 6px;
+            padding: 7px 18px;
+            text-decoration: none;
+            margin-bottom: 18px;
+            margin-left: 2px;
+            transition: background 0.18s;
+        }
+        .back-btn:hover {
+            background: #c7d2fe;
         }
         h2 {
             text-align: center;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        th {
-            background-color: #007BFF;
-            color: white;
-        }
-        input[type="submit"] {
-            padding: 5px 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        input[type="submit"]:hover {
-            background-color: #218838;
+            color: var(--primary);
+            margin-bottom: 18px;
         }
         .form-container {
-            margin: 5px 0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin: 12px 0 18px 0;
         }
-        ul {
-            list-style-type: none;
-            padding-left: 20px;
+        .form-container input[type="text"],
+        .form-container input[type="number"] {
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            padding: 8px 10px;
+            font-size: 1.07em;
+            background: var(--input-bg);
+            transition: border 0.18s, background 0.18s;
+        }
+        .form-container input[type="text"]:focus,
+        .form-container input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--input-focus);
+        }
+        .form-container input[type="submit"] {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 7px 18px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.18s;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.08);
+        }
+        .form-container input[type="submit"]:hover {
+            background: var(--primary-hover);
+        }
+        .status-msg {
+            font-size: 1.07em;
+            margin-bottom: 10px;
+            padding: 8px 18px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        .status-msg.success {
+            background: #e7fbe9;
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        .status-msg.danger {
+            background: #fef2f2;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        .country-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 4px rgba(99,102,241,0.04);
+            margin: 0;
+        }
+        .country-table th, .country-table td {
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            vertical-align: top;
+        }
+        .country-table th {
+            background: var(--header-bg);
+            color: var(--header-color);
+            font-size: 1.08em;
+        }
+        .country-table td {
+            background: #f8fafc;
+            font-size: 1.01em;
+        }
+        .country-table ul {
+            list-style-type: disc;
+            padding-left: 18px;
+            margin: 0 0 8px 0;
+        }
+        .country-table ul ul {
+            list-style-type: circle;
+            padding-left: 18px;
+            margin: 0;
+        }
+        .country-table li {
+            margin-bottom: 6px;
+        }
+        .add-form-inline {
+            margin-top: 8px;
+            margin-bottom: 8px;
         }
     </style>
 </head>
 <body>
-    <h2>Country, State & City Insertion</h2>
-    
-    <!-- Success/Error Messages -->
-    {% if success %}
-        <p style="color: green;">{{ success }}</p>
-    {% endif %}
-    {% if error %}
-        <p style="color: red;">{{ error }}</p>
-    {% endif %}
+    <div class="container">
+        <a href="{% url 'Admin:adminDashboard' %}" class="back-btn"><i class="fa fa-arrow-left"></i> Back to Dashboard</a>
+        <div class="card">
+            <h2>Country, State & City Insertion</h2>
 
-    <!-- Add Country Form -->
-    <form method="post" action="{% url 'Admin:add_country' %}" class="form-container">
-        {% csrf_token %}
-        <input type="text" name="txt_country_code" placeholder="Country Code (e.g., US)" required>
-        <input type="text" name="txt_country_name" placeholder="Country Name (e.g., United States)" required>
-        <input type="number" name="txt_phone_code" placeholder="Phone Code (e.g., 1)" required>
-        <input type="submit" value="Add Country">
-    </form>
+            {% if success %}
+                <span class="status-msg success">{{ success }}</span>
+            {% endif %}
+            {% if error %}
+                <span class="status-msg danger">{{ error }}</span>
+            {% endif %}
 
-    <!-- Country List with Nested State and City Forms -->
-    <table>
-        <thead>
-            <tr>
-                <th>Country</th>
-                <th>States & Cities</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for country in countries %}
-                <tr>
-                    <td>{{ country.country_name }} ({{ country.country_code }}, +{{ country.country_phone_code }})</td>
-                    <td>
-                        <ul>
-                            {% for state in country.tbl_state_set.all %}
-                                <li>
-                                    {{ state.name }}
-                                    <ul>
-                                        {% for city in state.tbl_city_set.all %}
-                                            <li>{{ city.name }}</li>
-                                        {% endfor %}
-                                    </ul>
-                                    <!-- Add City Form -->
-                                    <form method="post" action="{% url 'Admin:add_city' %}" class="form-container">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="state_id" value="{{ state.id }}">
-                                        <input type="text" name="txt_city_name" placeholder="New City (e.g., New York)" required>
-                                        <input type="submit" value="Add City">
-                                    </form>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                        <!-- Add State Form -->
-                        <form method="post" action="{% url 'Admin:add_state' %}" class="form-container">
-                            {% csrf_token %}
-                            <input type="hidden" name="country_id" value="{{ country.id }}">
-                            <input type="text" name="txt_state_name" placeholder="New State (e.g., California)" required>
-                            <input type="submit" value="Add State">
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+            <!-- Add Country Form -->
+            <form method="post" action="{% url 'Admin:add_country' %}" class="form-container">
+                {% csrf_token %}
+                <input type="text" name="txt_country_code" placeholder="Country Code (e.g., US)" required>
+                <input type="text" name="txt_country_name" placeholder="Country Name (e.g., United States)" required>
+                <input type="number" name="txt_phone_code" placeholder="Phone Code (e.g., 1)" required>
+                <input type="submit" value="Add Country">
+            </form>
+
+            <!-- Country List with Nested State and City Forms -->
+            <table class="country-table">
+                <thead>
+                    <tr>
+                        <th>Country</th>
+                        <th>States & Cities</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for country in countries %}
+                        <tr>
+                            <td>{{ country.country_name }} ({{ country.country_code }}, +{{ country.country_phone_code }})</td>
+                            <td>
+                                <ul>
+                                    {% for state in country.tbl_state_set.all %}
+                                        <li>
+                                            <span style="font-weight: 600; color: var(--primary);">{{ state.name }}</span>
+                                            <ul>
+                                                {% for city in state.tbl_city_set.all %}
+                                                    <li>{{ city.name }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                            <!-- Add City Form -->
+                                            <form method="post" action="{% url 'Admin:add_city' %}" class="form-container add-form-inline">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="state_id" value="{{ state.id }}">
+                                                <input type="text" name="txt_city_name" placeholder="New City (e.g., New York)" required>
+                                                <input type="submit" value="Add City">
+                                            </form>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                                <!-- Add State Form -->
+                                <form method="post" action="{% url 'Admin:add_state' %}" class="form-container add-form-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="country_id" value="{{ country.id }}">
+                                    <input type="text" name="txt_state_name" placeholder="New State (e.g., California)" required>
+                                    <input type="submit" value="Add State">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
