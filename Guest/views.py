@@ -80,6 +80,7 @@ def login(request):
             user = tbl_user.objects.get(user_email=email, user_password=password)
             request.session['u_id'] = user.id
             request.session["username"] = user.user_username
+            request.session['name'] = user.user_name
             # Set gender and profile photo URL in session if available
             request.session['gender'] = getattr(user, 'user_gender', '')
             if getattr(user, 'user_photo', None):
