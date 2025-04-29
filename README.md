@@ -90,7 +90,7 @@ The project uses the following key configurations:
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the Apache-2.0 license - see the LICENSE file for details.
 
 ## Contact
 
