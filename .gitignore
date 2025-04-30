@@ -31,8 +31,8 @@ staticfiles/
 *.sqlite3-journal
 
 # Migrations
-*/migrations/[0-9]*_*.py
-*/migrations/__pycache__/
+*/migrations/*.py
+!*/migrations/__init__.py
 
 # Virtual Environment
 venv/

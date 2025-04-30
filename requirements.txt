@@ -1,2 +1,13 @@
-Django==5.1.5
-python-magic==0.4.27
+Django
+python-magic-bin # Windows support for python-magic
+
+# Pillow==10.2.0  # For image handling
+# django-crispy-forms==2.1  # For form rendering
+# crispy-bootstrap5==2024.2  # Bootstrap 5 template pack for crispy-forms
+# python-dotenv==1.0.1  # For environment variables
+# django-environ==0.11.2  # For better environment variable handling
+# django-widget-tweaks==1.5.0  # For form field customization
+# django-cleanup==8.1.0  # For automatic file cleanup
+# django-storages==1.14.2  # For handling static and media files
+# django-debug-toolbar==4.3.0  # For development debugging
+# django-countries-states-cities # For country, state, and city data
