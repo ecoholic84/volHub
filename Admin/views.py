@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect, get_object_or_404
 from django.http import JsonResponse
 from Admin.models import *
+from Guest.models import *
 from User.models import *
 from datetime import datetime
 from django.urls import reverse
@@ -9,7 +10,6 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 # Create your views here.
-
 def feedback_list(request):
     if 'a_id' not in request.session:
         return redirect('Guest:login')
@@ -45,48 +45,6 @@ def editAdmin(request,eid):
         return redirect('Admin:adminRegistration')
     else:
         return render(request,'Admin/adminRegistration.html',{"editadmin":editadmin})
-
-# Category Section
-def category(request):
-    category=tbl_category.objects.all()
-    if request.method=="POST":
-        tbl_category.objects.create(category_name=request.POST.get('txt_category'))
-        return redirect('Admin:category')
-    else:
-        return render(request,'Admin/Category.html',{"category":category})
-def deleteCategory(request,did):
-    tbl_category.objects.get(id=did).delete()
-    return redirect('Admin:category')
-def editCategory(request,eid):
-    cat=tbl_category.objects.get(id=eid)
-    if request.method=="POST":
-        cat.category_name=request.POST.get('txt_category')
-        cat.save()
-        return redirect('Admin:category')
-    else:
-        return render(request,'Admin/Category.html',{"editcat":cat})
-
-# Type
-def types(request):
-        typ=tbl_type.objects.all()
-        if request.method=="POST":
-            tbl_type.objects.create(type_name=request.POST.get('txt_type_name'))
-            return redirect('Admin:type')
-        else:    
-            return render(request,'Admin/type.html',{"type":typ}) # here 'type' is a variable name and its assigned data is the variable 'typ'.
-
-def deleteType(request,did):
-    tbl_type.objects.get(id=did).delete()
-    return redirect('Admin:type')
-
-def editType(request,eid):
-    thisType=tbl_type.objects.get(id=eid)
-    if request.method=="POST":
-        thisType.type_name=request.POST.get('txt_type_name')
-        thisType.save()
-        return redirect('Admin:type')
-    else:
-        return render(request,'Admin/type.html',{"editType":thisType})
 
 # Compliant Inbox
 def complaintInbox(request):
@@ -164,12 +122,6 @@ def deleteIndustry(request, iid):
         return redirect('Guest:login')
     tbl_industry.objects.get(id=iid).delete()
     return redirect('Admin:industrySkills')
-
-# Admin/views.py
-from django.shortcuts import render, redirect
-from Admin.models import *
-from Guest.models import *
-from User.models import *
 
 # Country, State, City Insertion Page
 def country_state_city(request):

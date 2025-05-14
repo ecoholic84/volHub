@@ -574,7 +574,7 @@ def organizer_analytics(request):
         status_label = status_map.get(event.event_status, 'Pending')
         status_counts[status_label] = status_counts.get(status_label, 0) + 1
 
-    # Volunteer signups per event
+    # Volunteer signup's per event
     volunteer_counts = {}
     total_volunteers = 0
     for event in events:
@@ -696,8 +696,6 @@ def event_action(request, event_id):
         'approved_count': approved_count,
         'rejected_count': rejected_count,
     })
-
-
 
 
 
