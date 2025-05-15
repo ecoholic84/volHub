@@ -12,11 +12,6 @@ urlpatterns = [
     path('deleteAdmin/<int:did>',views.deleteAdmin,name='deleteAdmin'),
     path('editAdmin/<int:eid>',views.editAdmin,name='editAdmin'),
 
-
-    path('type/',views.types,name="type"),
-    path('deleteType/<int:did>',views.deleteType,name="deleteType"),
-    path('editType/<int:eid>',views.editType,name="editType"),
-
     path('complaintInbox/',views.complaintInbox,name="complaintInbox"),
     path('replyCompliant/<int:rid>',views.replyCompliant, name='replyCompliant'),
 
