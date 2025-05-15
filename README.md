@@ -18,9 +18,9 @@ volHub/
 ├── Guest/          # Guest user features
 ├── User/           # Registered user features
 ├── MainProject/    # Main project configuration
-├── templates/      # HTML templates
 ├── media/          # User-uploaded media files
 ├── assets/         # Static assets
+├── fixtures/       # Initial data fixtures
 └── manage.py       # Django management script
 ```
 
@@ -41,8 +41,8 @@ cd volHub
 2. Create and activate a virtual environment:
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+venv\Scripts\activate # On Linux: source venv/bin/activate
+``` 
 
 3. Install dependencies:
 ```bash
@@ -51,12 +51,13 @@ pip install -r requirements.txt
 
 4. Run migrations:
 ```bash
+python manage.py makemigrations
 python manage.py migrate
 ```
 
-5. Create a superuser (optional):
+5. Load initial location data:
 ```bash
-python manage.py createsuperuser
+python manage.py loaddata fixtures/initial_location_data.json
 ```
 
 6. Run the development server:
@@ -91,7 +92,3 @@ The project uses the following key configurations:
 ## License
 
 This project is licensed under the Apache-2.0 license - see the LICENSE file for details.
-
-## Contact
-
-For any queries or support, please contact: volhubofecoholic@gmail.com 
